@@ -826,7 +826,7 @@ class xarGallery2Helper
       $g2loginredirect = xarModGetVar('gallery2','g2.loginredirect');
       $g2basefile = xarModGetVar('gallery2','g2.basefile');
     }
-    
+   
     // return if the path is wrong or G2 is not installed
     if (!file_exists($g2IncludePath . 'embed.php')) {
       $msg = xarML('I could not find a G2 installation at "[#(1)]"! Please correct the path!', $g2IncludePath);
@@ -1448,6 +1448,9 @@ class xarGallery2Helper
     /*
      * 3. import G2 users to xaraya
      */
+
+    // First disable "each user has a unique email" in xaraya, because G2 has not this requirement
+    xarModSetVar('roles','uniqueemail',0);
     // Foreach user: a) create if nonexistent, b) add group memberships
     foreach ($g2UserNames as $g2UserName) {
       $g2User = $g2Users[strtolower($g2UserName)]['user'];
@@ -1457,9 +1460,12 @@ class xarGallery2Helper
 	if (!xarGallery2Helper::in_array_cin($g2UserName, array_keys($xarUsers))) {
 	  // add user to xaraya if there wasn't such a user
 	  // create xar user
+	  // if the G2 user has no email, generate a dummy email
+	  $userEmail = $g2User->getemail();
+	  $userEmail =  empty($userEmail) ? 'dummyEmail@G2Integration.xyz' : $userEmail;
 	  $uid = xarmodapifunc('roles','admin','create',
 			       array('uname' => $g2UserName,
-				     'realname' => $g2User->getfullName(), 'email' => $g2User->getemail(),
+				     'realname' => $g2User->getfullName(), 'email' => $userEmail,
 				     'cryptpass' => $g2User->gethashedPassword(), 'date' => $g2User->getcreationTimestamp(),
 				     'state' => ROLES_STATE_ACTIVE, 'valcode' => xarModAPIFunc('roles', 'user', 'makepass')));
 	  if (!isset($uid) || !is_int($uid) || $uid <= 1) {
