@@ -1,0 +1,724 @@
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id$
+ */
+
+/*
+ * Matrix Trans Theme for Gallery 2
+ * by Ross A. Reyman, Jon Huang, Chad Kieffer and Laurentiu Nicolae
+ *
+ * /themes/styles/theme.css
+ *
+ * The CSS defintions in this file determine styles for font, color,
+ * border, background, list, etc.
+ *
+ * !!!!!! DO NOT PLACE POSITIONING ELEMENTS IN THIS STYLE SHEET !!!!!!
+ * Instead, edit themes/matrix/styles/layout.css (for admin pages) or
+ * the appropriate layout style sheet for album/images pages.
+ */
+
+/*
+ * Colors
+ * Orange: #F4560F / #F62A0E / #F9C190
+ * Blue:   #6B8CB7 / #99B4CC / #C2D6E1
+ *
+ * font-size using ems
+ * assumes browser is set to Medium Size or 16px
+ * 62.5%   = 10px
+ * 2.0em   = 20px
+ * 1.5em   = 15px
+ * 1.3em   = 13px
+ * 1.0em   = 10px
+ * 0.8em   = 8px
+ *
+ * BEWARE OF NESTED EMS!!!
+ * Ems are relational font units. For example, if you assign 1.0em to a block, it is
+ * _related_ to the parent block. In most cases, this is the body block (62.5%). However,
+ * if you assign a font-size to a block that is nested inside of a block that has changed
+ * the font-size, font-sizes will render in relation to the already adjusted size.
+ *
+ * Example:
+ * body {62.5% } All font-sizes go to 10px
+ * p {1.2em } Font in <p> become 12px
+ * p span {1.0em } Font size for <span> (inside <p>) is now 12px
+ * span {1.0em } Font size for <span> (not inside <p>) is 10px
+ *
+ * For more info: http://www.clagnut.com/blog/348/
+ */
+
+
+/* ******************************************************************************************
+ * Standard CSS definitions, redefine HTML tags
+ */
+
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 62.5%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
+}
+
+a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #6B8CB7;
+}
+a:link { }
+a:visited { }
+a:hover {
+    color: #F4560F;
+    text-decoration: underline;
+}
+a:active {
+    color: #F9C190;
+    text-decoration: none;
+}
+
+textarea:focus, input:focus {
+    background-color: #ffc;
+}
+
+
+/* ******************************************************************************************
+ * GALLERY
+ * Category 1: Gallery
+ * declare Gallery Module Borders, etc
+ */
+
+#gallery { }
+
+
+/* ******************************************************************************************
+ * SECTIONS
+ * Category 2: section definitions
+ * declare section styles
+ */
+
+#gsHeader {
+    border-bottom: 1px solid #ddd;
+}
+
+#gsFooter {
+    border-top: 1px solid #ccc;
+}
+
+#gsFooter img {
+    border: none;
+}
+
+#gsSidebar, #gsAdminSidebar {
+    border-top: 1px solid #ccc;
+    background-color: #fff;
+}
+
+#gsAlbumContents, #gsAdminContents, #gsOtherContents {
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
+
+.gbExif { }
+
+.gbCustomFields { }
+
+/* .gbDataTable */
+/*      count from 0 Ñ first row is even...     */
+
+.gsOtherContents table.gbDataTable { }
+
+.gsOtherContents .giActionSelect, .gbDataEntry .giActionSelect {
+    font-size: 1.2em;
+    background: #eee;
+}
+
+table.gbDataTable th {
+    text-align: left;
+    background: #e7e7e7;
+}
+
+.gbEven {
+    background-color: #fff;
+}
+
+.gbOdd {
+    background-color: #eee;
+}
+
+.gbExif .gbEven {
+    text-align: right;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+}
+
+.gbExif .gbOdd {
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.gbCartInfo li {
+    list-style: none;
+}
+
+table.gbDataTable td {
+    font-weight: normal;
+}
+
+table.gbDataTable img {
+    border: none;
+}
+
+#gsComments {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+#gsSearchContents { }
+
+#gsSearchContents .gbItemImage { }
+
+#gsStatus {
+    text-align: left;
+}
+
+#gsItemImages { }
+
+#gsAlbumImages { }
+
+/* ******************************************************************************************
+ * BOXES
+ * Category 3: box definitions
+ * This also includes Category 4: items that are defined
+ * with respect to sections.
+ */
+
+.gbDataEntry { }
+
+ul.gbAdminList {
+    list-style-type: none;
+}
+
+ul.gbAdminList li { }
+
+ul.gbAdminList li label {
+    vertical-align: super;
+}
+
+/*  tabs for admin pages    */
+.gbTabBar {
+    background: #eee url('../images/tab_bg.jpg') repeat-x bottom;
+    font-size: 0.9em;
+    line-height: normal;
+}
+
+.gbTabBar ul {
+    list-style: none;
+}
+
+.gbTabBar li {
+    background: url('../images/tab_left.jpg') no-repeat left top;
+    list-style: none;
+}
+
+.gbTabBar span {
+    background: url('../images/tab_right.jpg') no-repeat right top;
+    text-decoration: none;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+.gbTabBar a {
+    color: #777;
+}
+
+/* commented Backslash Hack hides rule from IE5-Mac \*/
+.gbTabBar a { }
+/* End IE5-Mac hack */
+
+.gbTabBar a:hover {
+    color: #333;
+}
+
+.gbTabBar .giSelectedTab {
+    background-image: url('../images/tab_left_on.jpg');
+}
+
+.gbTabBar .giSelectedTab span {
+    background-image: url('../images/tab_right_on.jpg');
+    color: #333;
+    padding-bottom: 5px;
+}
+
+/*      first and default module settings */
+
+.gbMenu {
+    border-bottom: 1px solid #ddd;
+}
+
+/*      subsequent menu modules can have different settings */
+.gbMenu + .gbMenu {}
+
+/*      last gbMenu item has no bottom border   */
+.gbMenu:last-child {
+    border-bottom: 1px none #ddd;
+}
+
+
+/*  icons for admin menu    */
+.gbMenu li {
+    font-size: 1.0em;
+}
+
+.gbMenu ul, .gbMenu ol {
+    list-style-type: none;
+}
+
+.gbMenu:after { }
+
+/* Hides from IE-mac \*/
+* html .gbMenu {}
+/* End hide from IE-mac */
+
+/*  text inside the title bar */
+.giTitle {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+/*      horizontal history links - 'trail of breadcrumbs' */
+.gbBreadCrumb {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.gbBreadCrumb li {
+    background-image: url('../images/icon_path_separator.gif');
+    background-repeat: no-repeat;
+    background-position: left;
+}
+
+.gbBreadCrumb li.giBreadCrumbFirst {
+    background-image: none;
+}
+
+/*      inside gsAlbumContents or gsAdmiinContents */
+
+.gbTopFlag, .gbBottomFlag {
+    background-color: #eee;
+}
+
+.gbTopFlag:after, .gbBottomFlag:after {}
+
+/* Hides from IE-mac \*/
+* html .gbTopFlag {height: 1%;}
+* html .gbBottomFlag {height: 1%;}
+/* End hide from IE-mac */
+
+.gbNavBar {
+    background-color: #e7e7e7;
+}
+
+.gbNavBar .gbAdmin {
+    padding: 3px;
+}
+
+/* Put in to fix viewCart action selector.
+ * Without this, the go button wraps because of
+ * giActionSelect below with dipslay: block.
+ */
+.gbAdmin .giActionSelect { }
+
+.gbNavBar:after { }
+
+/* Hides from IE-mac \*/
+* html .gbNavBar {}
+/* End hide from IE-mac */
+
+.gbTitleBanner { }
+
+.gbTitleBanner h1 {
+    font-size: 1.3em;
+}
+
+table.gbTitleBanner { }
+
+table.gbTitleBanner tr td {
+    vertical-align: top;
+}
+
+.gbTitleBanner .giTitle { }
+
+.gbTitle { }
+
+#gbThumbMatrix { }
+
+td.gbItemAlbum, td.gbItemImage, td.gbItemMovie, td.gbItemOther {
+    vertical-align: top;
+    background-color: #fff;
+}
+
+td.gbItemAlbum {
+    background-color: #eee;
+}
+
+.gsSingleImage { }
+
+/*    #gsComments    */
+
+.gbComment {
+    border-bottom: 1px dotted #ddd;
+}
+
+.gbComment span {
+    font-size: 0.9em;
+    color: #bbb;
+}
+
+.gbComment p { }
+
+/*      #gsSidebar  */
+#gsSidebar div { }
+
+#gsSidebar .giThumbImage { }
+
+/*      #gsSearchContents  */
+
+/*      small grey border around all the thumbnails */
+#gsSearchContents .giThumbImage, #gsSearchContents .giThumbMovie, #gsSearchContents .giThumbOther {
+    border: 0px solid #ccc;
+}
+
+/*      override the normal title clear so as to wrap information on the right of the thumbnail */
+
+#gsSearchContents .gbItemImage .giTitle {
+    border-width: 0;
+}
+
+#gsSearchContents .gbItemImage img, #gsSearchContents .gbItemAlbum img {
+    border: none;
+}
+
+#gsSearchContents .giTitle { }
+
+/*      #gsAdminContents    */
+
+#gsAdminContents .gbAdmin {
+    background-color: #fff;
+    border-bottom: 1px solid #bbb;
+}
+
+/*      hides border on last occurence  */
+.gbAdmin:last-child {
+    border-bottom: 1px none #bbb;
+}
+
+.gbButtons {
+    background-color: #eee;
+}
+
+input[type=submit], input[type=button] {
+    color: #333;
+    background:#eee;
+    border: 2px solid #e7e7e7;
+    border-right: 2px solid #666;
+    border-bottom: 2px solid #666;
+    text-decoration: none;
+    text-transform: capitalize;
+}
+
+.gbButtons input {
+    border-top-color: #fff;
+    border-left-color: #fff;
+}
+
+
+/*      for tabular data */
+#gsAdminContents .gbDataTable {
+    border-width: 0;
+    font-size: 1.0em;
+}
+
+/*      Status section  */
+
+/*      error inside a gsStatus section */
+
+#gsStatus { }
+
+#gsStatus .giError, #gsStatus .giWarning, #gsStatus .giStatus  {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+#gsStatus .giError {
+    color: #a44;
+}
+
+/*      Warning inside a gsStatus section */
+
+#gsStatus .giWarning {
+    color: #dd7;
+}
+
+#gsStatus .giEmpty {
+    font-weight: bold;
+}
+
+/*      Status inside a gsStatus section */
+
+#gsStatus .giStatus {
+    color: #4a4;
+}
+
+
+/* ******************************************************************************************
+ * ITEMS
+ * Category 4: item and span definitions
+ * declares styles for items that are defined globally or
+ * with respect to boxes. items defined uniquely per
+ * section are in the BOXES part of this file.
+ */
+
+/*      Global / Defaults */
+
+.giMarkupBar input {
+    font-size: 1.1em;
+}
+
+.giDescription {
+    font-size: 1.1em;
+    line-height: 1.4em;
+}
+
+.giInfo {
+    font-size: 0.9em;
+    color: #888;
+    list-style: none;
+}
+
+.giInfo li { }
+
+.giInfoToday {
+    color: #900;
+}
+
+/*      horizontal link styles page navigations */
+.giHorizontalLinks, .giHorizontalLinksLeft {
+    font-size: 0.9em;
+}
+
+.gbNavBar .giHorizontalLinks { }
+
+.giHorizontalLinks li, .giHorizontalLinksLeft li {
+    list-style-type: none;
+ }
+
+.giHorizontalLinks a, .giHorizontalLinksLeft a {
+    text-decoration: none;
+}
+
+.giHorizontalLinksLeft { }
+
+.gbExif .giHorizontalLinks, .gbExif li, .gbComment .giHorizontalLinks, .gbComment li {
+    color: #888;
+}
+
+
+/*  thumbnails */
+.giThumbImage, .giThumbMovie, .giThumbOther {
+    border: 0;
+}
+
+.giThumbImage img {
+    border: 0;
+}
+
+select.giActionSelect {
+    font-size: 1.2em;
+    background: #eee;
+}
+
+ #gsAlbumContents select.giActionSelect {
+    font-size: 1.0em;
+ }
+
+/*      .giThumbBorder {}
+...giBorders...
+discused the options of generating a table-based border (ie_test) and alistapart.com http://www.alistapart.com/articles/customcorners/ method. Defer until completion of initial theme.
+*/
+
+.giPageNumber {
+    font-size: 0.9em;
+}
+
+.giSelected {
+    color: #111;
+    font-weight: bold;
+    list-style-type: none;
+}
+
+/*    Form elements */
+
+.giFormButton, .giFormInput { }
+
+.giFormCheckbox {
+    vertical-align: middle;
+}
+
+.gbForm, .giFormTextarea, .giFormRadio, .giFormSelect, .giFormFile, .giFormText { }
+
+.giFormUsername {
+    background: url('../images/userinfo.png') no-repeat scroll 0 1px;
+    padding-left: 17px;
+}
+
+.giFormPassword {
+    background: url('../images/key7-16-bw.gif') no-repeat scroll 0 1px;
+    padding-left: 17px;
+}
+
+.giFormGroupname {
+    background: url('../images/groupinfo.png') no-repeat scroll 0 1px;
+    padding-left: 17px;
+}
+
+/* Status class local error, warning and success */
+
+.giError {
+    color: #AA4444;
+    font-weight: bold;
+}
+
+.giWarning {
+    color: #CC5500;
+    font-weight: bold;
+}
+
+.giSuccess {
+    color: #55CC00;
+    font-weight: bold;
+}
+
+/*    .gbTopFlag   */
+
+/*    .gbBottomFlag   */
+
+.gbBottomFlag .giHorizontalLinks {
+    font-size: 0.9em;
+}
+
+/*    .gbDataEntry */
+
+.gbDataEntry .giFormButton {
+    font-size: 1.0em;
+}
+
+.gbAdmin p.giDescription { }
+
+/*   Search page and form styles   */
+
+.giMarkupBar { }
+
+input, textarea {
+    border:1px solid #ccc;
+    color: #333;
+    background: #fff;
+}
+
+#SearchSystemContent input {
+    font-size: 1.0em;
+}
+
+#gsSearchContents .gbAdmin {
+    border-bottom: 1px solid #ddd;
+}
+
+#gsSearchContents ul.giSearchCheck { }
+
+#gsSearchContents ul.giSearchCheck li { }
+
+#gsSearchContents .giSearchHighlight {
+    font-weight: bold;
+    background: #ff6;
+}
+
+/* Login form on sidebar */
+
+#LoginSystemContent input {
+    font-size: 1.0em;
+}
+
+/* */
+
+#gsAdminSidebar ul {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #999;
+}
+
+#gsAdminSidebar ul li > ul {
+    font-size: 1.0em;
+}
+
+#gpDebug span pre {
+    font-family: Courier New;
+    font-size: 12px;
+}
+
+/* New definitions that need to be moved to the right place */
+.autoCompleteBackground {
+  border-left: solid #ccc 1px;
+  border-right: solid #ccc 1px;
+  border-bottom: solid #ccc 1px;
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.autoCompleteHighlight {
+  border: none;
+  text-decoration: underline;
+}
+
+.autoCompleteNotSelected {
+  background-color: #eee;
+  padding: 4px 4px 4px 17px;
+}
+
+.autoCompleteSelected {
+  background-color: #ffc;
+  padding: 4px 4px 4px 17px;
+}
+
+.gbStatusTable {
+  width: 100%;
+  margin: 0 0 0 -6px;
+  padding: 0;
+}
+
+.gbStatusTable h4 {
+  font-size: 0.9em;
+}
+.giStatusProgressMade {
+  background-color: #fd6704;
+  border: thin solid #ddd;
+}
+
+.giStatusProgressToGo {
+  background-color: #eee;
+  border: thin solid #ddd;
+}

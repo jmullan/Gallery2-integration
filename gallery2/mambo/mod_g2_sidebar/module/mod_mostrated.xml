@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall type="module">
+    <name>Gallery2 Sidebar</name>
+    <author>Drbob</author>
+    <creationDate>February 2005</creationDate>
+    <copyright>n/a</copyright>
+    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <authorEmail>n/a</authorEmail>
+    <version>4.5.1</version>
+    <description>This module shows the sidebar of Gallery G2</description>
+    <files>
+        <filename module="mod_galleryside">mod_galleryside.php</filename>
+    </files>
+</mosinstall>

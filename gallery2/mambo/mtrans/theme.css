@@ -1,0 +1,269 @@
+/* ********************************************************************************
+ * Matrix Theme for Gallery 2
+ * by Ross A. Reyman, Jon Huang, and Chad Kieffer
+ * updated by Alan Harder
+ */
+
+/* ********************************************************************************
+ * Building blocks
+ * #gallery              Default font/color settings
+ * .gcBackground1,2..    Palette of backgrounds
+ * .gcBorder1,2..        Palette of borders
+ * a, h2, h3, etc        Standard html tags
+ * .giTitle, .giSubtitle, .giDescription, .giInfo, .giSuccess, .giWarning, .giError
+ *                       Palette of text styles
+ * ul.gbBreadCrumb       List of links/path elements
+ * table.gbDataTable     Table for data/form elements with styles for shading rows
+ * ul.gbTabBar           UI component for selectable tabs
+ * .autoComplete*        Styles for autoComplete popup lists
+ */
+
+#gallery {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 62.5%;
+    color: #333;
+}
+body.gallery {
+}
+
+.gcBackground1 {
+}
+
+.gcBackground2 {
+}
+
+.gcBorder1 {
+    border: 0px solid #ccc;
+}
+
+.gcBorder2 {
+    border: 0px solid #888;
+}
+
+#gallery a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #6b8cb7;
+}
+#gallery a:hover {
+    text-decoration: underline;
+    color: #f4560f;
+}
+#gallery a:active {
+    text-decoration: none;
+    color: #f9c190;
+}
+
+#gallery img {
+    border-width: 0;
+}
+
+#gallery h2, #gallery h3, #gallery h4 {
+    font-family: "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
+}
+
+#gallery input:focus, #gallery textarea:focus {
+    background-color: #ffc;
+}
+
+#gallery input.inputTypeSubmit, #gallery input.inputTypeButton {  /* No input[type=submit] in IE */
+    color: #333;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #e7e7e7 #666 #666 #e7e7e7;
+}
+
+#gallery select {
+    font-size: 1em;
+}
+
+.giTitle, #gallery h2, #gallery h3, #gallery h4 {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+#gallery pre, #gallery tt {
+    font-family: Courier New;
+    font-size: 1.2em;
+}
+
+.giSubtitle {
+    font-size: 0.9em;
+    font-weight: normal;
+    vertical-align: text-bottom;
+}
+
+.giDescription {
+    font-size: 1.1em;
+    line-height: 1.4em;
+}
+
+.giInfo {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.giSuccess, .giWarning, .giError  {
+    font-weight: bold;
+}
+
+.giSuccess { color: #5c0; }
+.giWarning { color: #c50; }
+.giError { color: #a44; }
+
+
+ul.gbBreadCrumb {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+ul.gbBreadCrumb li {
+    padding: 0 0 0 14px;
+    background: url('../matrix/images/icon_path_separator.gif') no-repeat left;
+}
+
+ul.gbBreadCrumb li.firstChild {   /* no :first-child in IE */
+    padding-left: 0;
+    background-image: none;
+}
+
+
+table.gbDataTable th {
+    text-align: left;
+}
+
+.gbEven {
+}
+
+.gbOdd {
+}
+
+
+ul.gbTabBar {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 0.8em 0 0;
+    padding: 6px;
+    background: url('../matrix/images/tab_bg.gif') repeat-x bottom;
+}
+
+ul.gbTabBar li {
+    display: inline;
+    padding: 6px 0 5px 8px;
+    background: url('../matrix/images/tab_left.jpg') no-repeat left top;
+}
+* html ul.gbTabBar li {  /* IE adds li+span padding instead of overlapping */
+    padding: 0 0 0 8px;
+}
+* html ul.gbTabBar li.giSelected {
+    padding-bottom: 0;
+}
+
+ul.gbTabBar span {
+    padding: 6px 12px 5px 4px;
+    background: url('../matrix/images/tab_right.jpg') no-repeat right top;
+}
+
+#gallery ul.gbTabBar a {
+    color: #777;
+    text-decoration: none;
+}
+
+ul.gbTabBar a:hover {
+    color: #333;
+}
+
+ul.gbTabBar li.giSelected {
+    padding-bottom: 6px;
+    background-image: url('../matrix/images/tab_left_on.jpg');
+}
+
+ul.gbTabBar li.giSelected span {
+    color: #333;
+    padding-bottom: 6px;
+    background-image: url('../matrix/images/tab_right_on.jpg');
+}
+
+
+.autoCompleteBackground {
+    border: 1px solid #ccc;
+    border-top-style: none;
+    margin: 0;
+}
+
+.autoCompleteHighlight {
+    text-decoration: underline;
+}
+
+.autoCompleteNotSelected {
+    background-color: #eee;
+    padding: 3px 4px 3px 17px;
+}
+
+.autoCompleteSelected {
+    background-color: #ffc;
+    padding: 3px 4px 3px 17px;
+}
+
+
+#gallery .gbMarkupBar input {
+    font-size: 1.1em;
+}
+
+
+.giStatusProgressMade {
+    background-color: #fd6704;
+    border: thin solid #ddd;
+}
+
+.giStatusProgressToGo {
+    background-color: #eee;
+    border: thin solid #ddd;
+}
+
+
+.giSearchHighlight {
+    font-weight: bold;
+    background-color: #ff6;
+}
+
+
+/* ********************************************************************************
+ * Sections
+ * #gallery         Page container
+ * #gsSystemLinks   Top bar with breadcrumb and other links
+ * #gsSidebar       Sidebar
+ * #gsContent       Main content
+ * #giFormUsername  Form field for entering a username
+ * #giFormGroupname Form field for entering a group name
+ */
+
+#gsSystemLinks div {
+    margin-top: 0.1em;  /* Align system links with breadcrumb */
+    font-weight: bold;
+}
+
+#gsSidebar div ul {   /* no > in IE */
+    font-size: 1.1em;
+    font-weight: bold;
+}
+#gsSidebar div ul ul { font-size: 1.0em; }
+
+#gsSidebar ul span {
+    color: #999;
+}
+
+#giFormUsername, .giFormUsername {
+    background: url('../matrix/images/userinfo.png') no-repeat 0 1px;
+    padding-left: 17px;
+}
+
+#giFormGroupname {
+    background: url('../matrix/images/groupinfo.png') no-repeat 0 1px;
+    padding-left: 17px;
+}
+
+#giFormPassword {
+    background: url('images/key7-16-bw.gif') no-repeat 0 1px;
+    padding-left: 17px;
+}
