@@ -1,0 +1,21 @@
+Installation Instructions
+-------------------------
+
+1.) Install Gallery 2 and Drupal (see their respective installation
+  documents) 
+
+2.) Copy gallery.module to your drupal modules/ directory.
+
+3.) Enable the gallery module in administer -> modules in your drupal
+  installation.
+
+4.) Enable the "Gallery Navigation" block in administer -> blocks. (You
+  can optionally also enable the "Gallery Image Block"). 
+
+  The "Gallery Navigation" block is required.
+
+
+Note: this is beta software, so it might not always work. If you have
+questions or problems contact:
+
+James Walker <walkah@walkah.net>

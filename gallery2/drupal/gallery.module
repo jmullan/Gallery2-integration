@@ -1,0 +1,294 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_help
+ */
+function gallery_help($section) {
+  switch($section) {
+    case 'admin/modules#description':
+      return t('Integration with Gallery2 (%gallery_url)', array('%gallery_url' => 'http://gallery.menalto.com/'));
+  }
+}
+
+/**
+ * Implementation of hook_menu
+ */
+function gallery_menu($may_cache) {
+  $items = array();
+  
+  if ($may_cache) {
+    $items[] = array('path' => 'gallery', 'title' => t('gallery'),
+                     'callback' => 'gallery_page',
+                     'access' => user_access('access content'),
+                     'type' => MENU_SUGGESTED_ITEM);
+  }
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_settings
+ */
+function gallery_settings() {
+  $output = '';
+  $output.= form_textfield(t('Location of Gallery2'), 'gallery_dir', variable_get('gallery_dir', 'gallery2/'), 64, 64, t('relative path to your gallery2 directory. Please include a trailing slash ("/").'));
+
+  $types = array('randomImage' => t('Random Image'),
+                 'recentImage' => t('Newest Image'),
+                 'viewedImage' => t('Most Viewed Image'),
+                 'randomAlbum' => t('Random Album'),
+                 'recentAlbum' => t('Newest Album'),
+                 'viewedAlbum' => t('Most Viewed Album'));
+  $show = array('title' => t('Title'),
+                'date' => t('Date'),
+                'views' => t('Views'),
+                'owner' => t('Owner'));
+  $blocks = form_checkboxes(t('Image Blocks'), 'gallery_blocks', variable_get('gallery_blocks', array()), $types);
+  $blocks.= form_checkboxes(t('Show'), 'gallery_show', variable_get('gallery_show', array()), $show);
+  $output.= form_group(t('Gallery Block'), $blocks);
+  return $output;
+}
+
+/**
+ * Implementation of hook_user
+ */
+function gallery_user($op, &$edit, &$user, $category) {
+  switch ($op) {
+    case 'insert':
+      _gallery_init();
+
+      $ret = GalleryEmbed::createUser($user->uid,
+                                      array('username' => $user->name,
+                                            'email' => $user->mail,
+                                            'fullname' => $user->name,
+                                            'language' => $user->language,
+                                            'hashedpassword' => $user->pass,
+                                            'hashmethod' => 'md5'
+                                            ));
+      if ($ret->isError()) {
+        drupal_set_message(t('Error creating gallery user'));
+      }
+      GalleryEmbed::done();
+      break;
+    case 'update':
+      _gallery_init();
+
+      $ret = GalleryEmbed::updateUser($user->uid,
+                                      array('username' => $edit['name'],
+                                            'email' => $edit['mail']));
+      if ($ret->isError()) {
+        // try to create user then.
+        $ret = GalleryEmbed::createUser($user->uid,
+                                         array('username' => $edit['name'],
+                                               'email' => $edit['mail'],
+                                               'language' => $edit['language'],
+                                               ));
+        if ($ret->isError()) {
+          drupal_set_message(t('Error updating gallery user'));
+        }
+      }
+      GalleryEmbed::done();
+      break;
+    case 'delete':
+      _gallery_init();
+
+      $ret = GalleryEmbed::deleteUser($user->uid);
+      if ($ret->isError()) {
+        drupal_set_message(t('Error deleting gallery user'));
+      }
+      GalleryEmbed::done();
+      break;
+  }  
+}
+
+/**
+ * Implementation of hook_block
+ *
+ * - gallery navigation block (recommended)
+ * - gallery imageblock (random, most viewed, etc)
+ */
+function gallery_block($op = 'list', $delta = 0) {
+  if ($op == 'list') {
+    $block[0]['info'] = t('Gallery Navigation');
+    $block[1]['info'] = t('Gallery Image Block');
+  }
+  else {
+    switch ($delta) {
+      case 0: 
+        if (arg(0) == 'gallery') {
+          $result = _gallery_handle_request();
+          
+          if (!$result['isDone'] && $result['layoutData']) {
+            $list = array();
+            foreach ($result['layoutData']['itemLinks'] as $itemLink) {
+              $list[] = '<a href="'.$itemLink['url'] .'">'.$itemLink['text'] ."</a>\n";
+            }
+            foreach ($result['layoutData']['systemLinks'] as $systemLink) {
+              $list[] = '<a href="'.$systemLink['url'] .'">'.$systemLink['text'] ."</a>\n";
+              
+            }
+            $block['subject'] = t('gallery');
+            $block['content'] = theme('item_list', $list);
+          }
+        }
+        break;
+      case 1:
+        _gallery_init();
+        $params = array('blocks' => implode('|', variable_get('gallery_blocks', array())),
+                        'show' => implode('|', variable_get('gallery_show', array())),
+                        'header' => 1,
+                        'maxsize' => 140);
+        list($ret, $content) = GalleryEmbed::getImageBlock($params);
+        
+        if ($content) {
+          $block['subject'] = t('gallery');
+          $block['content'] = $content;
+        }
+        
+        GalleryEmbed::done();
+        break;
+    }
+  }
+
+  return $block;
+}
+
+/**
+ * implementation of hook_search
+ */
+function gallery_search($op = 'search', $keys = null) {
+  switch ($op) {
+    case 'name':
+      return t('gallery');
+    case 'search':
+      $find = array();
+      
+      _gallery_init();
+      list ($ret, $results) = GalleryEmbed::searchScan($keys, 20);
+      if (!$ret->isError()) {
+        $urlGenerator =& $GLOBALS['gallery']->getUrlGenerator();
+        foreach ($results as $name => $module) {
+          if (count($module['results']) > 0) {
+            foreach ($module['results'] as $result) {
+              $excerpt = array();
+              foreach ($result['fields'] as $field) {
+                $words = search_keywords_split($keys);
+                foreach ($words as $word) {
+                  if (preg_match("/$word/", $field['value'])) {
+                    $excerpt[] = $field['key'] .': '.search_excerpt($keys, $field['value']);
+                  }
+                }
+              }
+              $find[] = array('title' => $result['fields'][0]['value'],
+                              'link'  => $urlGenerator->generateUrl(array('itemId' => $result['itemId'])),
+                              'type'  => $module['name'],
+                              'snippet' => implode('<br />', $excerpt));
+            }
+          }
+        }
+      }
+      return $find;
+  }
+}
+
+/**
+ * implementation of hook_link
+ */
+function gallery_link($type, $node = 0, $main = 0) {
+  
+}
+
+/**
+ * Main gallery display page
+ */
+function gallery_page() {
+  $result = _gallery_handle_request();
+  
+  if (!$result['isDone']) {
+    list($title, $css, $javascript) = GalleryEmbed::parseHead($result['headHtml']);
+    drupal_set_html_head(implode("\n",$javascript));
+    drupal_set_html_head(implode("\n",$css));
+    // hack to cleanup matrix when embedded
+    drupal_set_html_head('<style type="text/css">#gsAlbumContents, #gsOtherContents { width : 98%; }</style>');
+
+    
+    print theme('page', $result['bodyHtml']);
+  }
+}
+
+/**
+ * fetch a galleryEmbed object
+ */
+function _gallery_init($full = false) {
+  global $user, $base_url;
+
+  $galleryDir = variable_get('gallery_dir', 'gallery2/');
+
+  include_once($galleryDir . '/embed.php');
+  $relativeG2Path = $galleryDir;
+  $embedUri = url('gallery', NULL, NULL, TRUE);
+  if (variable_get('clean_url', 0)) {
+    if (arg(0) != 'gallery' && trim('http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], '/') != $base_url) {
+      for ($i = 0; $i < count(explode('/', $_GET['q'])); $i++ ) {
+        $relativeG2Path = '../' . $relativeG2Path;
+      }
+    }
+  }
+  $params = array('embedUri' => $embedUri,
+                  'relativeG2Path' => $relativeG2Path,
+                  'loginRedirect' => url('user/login', NULL, NULL, TRUE),
+                  'activeUserId' => $user->uid,
+                  'activeLanguage' => $user->language,
+                  'fullInit' => $full);
+  GalleryEmbed::init($params);
+
+  $ret = GalleryEmbed::checkActiveUser($user->uid);
+  // Make sure we've got an active user... otherwise our mapping may be
+  // off.. so we'll try to correct.
+  if ($ret->isError()) {
+    if ($user->uid == 1) {
+      // make sure that the super users are appropriately mapped
+      list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('admin');
+      if (!$ret->isError()) {
+	GalleryCoreApi::requireOnce($galleryDir. 'modules/core/classes/ExternalIdMap.class');
+        ExternalIdMap::addMapEntry(array('externalId' => 1,
+                                         'entityType' => 'GalleryUser',
+                                         'entityId' => $user->getId()));
+      }
+    }
+    else {
+      GalleryEmbed::createUser($user->uid, array('username' => $user->name,
+                                                 'email' => $user->mail,
+                                                 'fullname' => $user->name,
+                                                 'language' => $user->language,
+                                                 'hashedpassword' => $user->pass,
+                                                 'hashmethod' => 'md5'));
+    }
+  }
+}
+
+function _gallery_handle_request() {
+  static $result;
+
+  if (!$result) {
+    _gallery_init();
+
+    GalleryCapabilities::set('showSidebar', false);
+    GalleryCapabilities::set('showPathbar', false);
+    $result = GalleryEmbed::handleRequest();
+    if (isset($result['layoutData'])) {
+      $urlGenerator =& $GLOBALS['gallery']->getUrlGenerator();
+      $breadcrumb = array(l(t('Home'), ''));
+      foreach ($result['layoutData']['parents'] as $parent) {
+        $breadcrumb[] = '<a href="'.$urlGenerator->generateUrl(array('itemId' => $parent['id'])) .'">'.$parent['title']."</a>";
+      }
+      drupal_set_breadcrumb($breadcrumb);
+      drupal_set_title($result['layoutData']['item']['title']);
+    }
+    
+  }
+
+  return $result;
+}
+?>
