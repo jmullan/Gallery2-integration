@@ -6,12 +6,9 @@
 	$activeUserId = $gTikiUser->isRegistered() ? $gTikiUser->mUserId : NULL;
 	$status = GalleryEmbed::init( array( 'embedUri' => 'index.php', 'relativeG2Path' => 'gallery2', 'loginRedirect' => '/users/login.php', 'activeUserId' => $activeUserId ));
 	$gallerySessionId = GalleryEmbed::getSessionId();
-print "	$status = GalleryEmbed::init( array( 'embedUri' => 'index.php', 'relativeG2Path' => 'gallery2', 'loginRedirect' => '/users/login.php', 'activeUserId' => $activeUserId ))";
 
 	if ($status->isError()) {
 		if( $status->getErrorCode() & ERROR_MISSING_OBJECT ) {
-vd( $gTikiUser->mUserId );
-vd( $gallery->getActiveUserId() );
 			if( $g2User = GalleryEmbed::createUser( $gTikiUser->mUserId, array( 
 	'username' => $gTikiUser->mInfo['login'],
 	'email' => $gTikiUser->mInfo['email'],
