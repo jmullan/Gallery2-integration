@@ -862,10 +862,12 @@ class xarGallery2Helper
     }
 
     $g2Version = split('\.', $g2VersionString);
+    $g2VersionNum = 100*$g2Version[0] + 10*$g2Version[1] + $g2Version[2];
     $minG2VersionString = xarmodGetvar('gallery2', 'g2.minCoreVersion');
     $minG2Version = split('\.', $minG2VersionString );
+    $minG2VersionNum = 100*$minG2Version[0] + 10*$minG2Version[1] + $minG2Version[2];
     // FIXME: before packaging and releasing the module
-    if ($g2Version[1] < $minG2Version[1] || $g2Version[2] < $minG2Version[2]) { // min version nr is 0.8.5
+    if ($minG2VersionNum > $g2VersionNum) {
       $msg = xarML('Your G2 version is not compatible with this module. Your version is [#(1)], the minimum
             version number required is #(2). Please upgrade your G2 installation.', $g2VersionString, $minG2VersionString);
       if ($raiseexceptions) {
