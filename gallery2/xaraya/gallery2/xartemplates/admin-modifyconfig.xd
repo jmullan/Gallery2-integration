@@ -1,0 +1,123 @@
+<div class="xar-mod-head"><span class="xar-mod-title"><xar:mlstring>Gallery2 Administration</xar:mlstring></span></div>
+<div class="xar-mod-body"><h2><xar:mlstring>Modify Gallery2 Configuration</xar:mlstring></h2><br />
+<xar:if condition="xarTplAddStyleLink('base', 'navtabs')">
+</xar:if>
+<dl class="xar-tabs">
+    <dt class="help" title="Choose a set of configuration options">
+        <xar:mlstring>
+            Actions
+        </xar:mlstring>
+        : 
+    </dt>
+	<xar:if condition="$tab eq 'setup'">
+        <dd class="active">
+            <a href="#xarModURL('gallery2', 'admin', 'modifyconfig', array('tab' => 'setup'))#" class="active">
+                <xar:mlstring>Setup</xar:mlstring>
+            </a>
+        </dd>    
+    <xar:else />
+        <dd>
+            <a href="#xarModURL('gallery2', 'admin', 'modifyconfig', array('tab' => 'setup'))#">    
+                <xar:mlstring>Setup</xar:mlstring>
+            </a>
+        </dd>    
+    </xar:if>
+	<xar:if condition="$showimportexport eq 1">
+    <xar:if condition="$tab eq 'importexport'">
+        <dd class="active">
+            <a href="#xarModURL('gallery2', 'admin', 'modifyconfig', array('tab' => 'importexport'))#" class="active">
+                <xar:mlstring>Import/Export roles</xar:mlstring>
+            </a>
+        </dd>    
+    <xar:else />
+        <dd>
+            <a href="#xarModURL('gallery2', 'admin', 'modifyconfig', array('tab' => 'importexport'))#">    
+                <xar:mlstring>Import/Export roles</xar:mlstring>
+            </a>
+        </dd>    
+    </xar:if>
+	</xar:if>
+	</dl>
+    <div style="border: 1px solid #ccc; text-align: left; width: 100%; border-top: none; padding-left: 5px;">
+
+<xar:comment> ------------------- Begin Setup Options --------------------- </xar:comment>
+	<xar:if condition="$tab eq 'setup'">
+		<form method="post" action="#xarModUrl('gallery2', 'admin', 'updateconfig')#" enctype="application/x-www-form-urlencoded">
+            <input type="hidden" name="authid" value="#$authid#" />
+			<input type="hidden" name="tab" id="tab" value="#$tab#" />
+			<div style="clear: both; padding-top: 10px;">
+                <h4><xar:mlstring>Gallery2 module setup</xar:mlstring></h4>
+            </div>
+		
+			<p><xar:mlstring>Status of the Gallery2 module: <b></xar:mlstring>#$status#</b></p>
+		
+			<div style="clear: both; padding-top: 10px;">
+				<span style="float: left; width: 20%; text-align: right;">
+					<span class="help" title="#xarML('The relative url from http://yoursite.com/path/xaraya/ to http://yoursite.com/path/to/G2/.')#"><label for="path[g2-relative-url]"><xar:mlstring>Relative Url to G2</xar:mlstring></label>:</span>
+				</span>
+				<span style="float: right; width: 78%; text-align: left;">
+					<input type="text" name="path[g2-relative-url]" value="#$path['g2-relative-url']#" size="40" />
+					<br />
+					<xar:mlstring>
+						This is the relative url path from xaraya url to the G2 url. Relative means the relative path from the directory where the index.php of xaraya is installed to the directory where the main.php of G2 is installed.
+						<ul>
+						  <li>Example: xaraya is in Document Root: www.domain.com/index.php. G2 is installed in www.domain.com/gallery/main.php. The relative path would be "gallery/" or "./gallery/"</li>
+						  <li>Example: xaraya is in Document Root: www.domain.com/index.php. G2 is installed in www.domain.com/modules/gallery2/g2/main.php. The relative path is "modules/gallery2/g2/".</li>
+						  <li>Example: xaraya is in www.domain.com/xaraya/index.php. G2 is installed in www.domain.com/photos/main.php. The relative path is "../photos/".</li>
+						</ul>
+					</xar:mlstring>
+				</span>
+			</div>
+			<div style="clear: both; padding-top: 10px;">
+				<span style="float: left; width: 20%; text-align: right;">
+					<span class="help" title="#xarML('If your setup has symlinks or webserver alias for the xaraya or G2 directories, you may have to specify the filesystem include path separately.')#"><label for="path[g2-include-path]"><xar:mlstring>G2 Include path (optional)</xar:mlstring></label>:</span>
+				</span>
+				<span style="float: right; width: 78%; text-align: left;">
+					<input type="text" name="path[g2-include-path]" value="#$path['g2-include-path']#" size="40" />
+					<br />
+					<xar:mlstring>
+						If your setup has symlinks or webserver alias for the xaraya or G2 directories, you may have to specify the filesystem include path separately. This (absolute) path should point to the directory where G2 is installed. You can leave this field empty if "symlink" or "alias" don't ring a bell in this context.
+					</xar:mlstring>
+				</span>
+			</div>
+			<div style="clear: both; padding-top: 10px;">
+				<span style="float: left; width: 20%; text-align: right;">
+					<span class="help" title="#xarML('Whether to show the sidebar menu of G2 inside G2.')#"><label for="sidebarInside"><xar:mlstring>Show sidebar menu in G2 inside the module container?</xar:mlstring></label>:</span>
+				</span>
+				<span style="float: right; width: 78%; text-align: left;">
+				    <xar:if condition="$sidebarInside eq 1">
+        				<input id="sidebarInside" name="sidebarInside" checked="checked" type="checkbox">
+				    <xar:else />
+        				<input id="sidebarInside" name="sidebarInside" type="checkbox">
+				    </xar:if>
+					<br />
+					<xar:mlstring>
+						If you disable this option you may want to instantiate the "sidebar" block of the gallery2 module. This will instantiate the G2 sidebar menu as a xaraya block.
+<br />Advantage: If you disable the sidebar menu inside the module container you'll have more area for contant (thumbnails, ...).
+<br /> Disadvantage: Currently, the sidebar menu is only available separately (as a block) for the most common G2 views (i.e. not for admin views).
+					</xar:mlstring>
+				</span>
+			</div>
+			<div style="clear: both; padding-top: 10px;">
+			<p><xar:mlstring>Hitting this button will update the configuration parameters. If the status of the configuration is currently not ok, it will also synchronize xaraya and G2 users / groups.</xar:mlstring></p>			
+			</div>
+			<br />
+			<input type="submit" name="update" value="#xarMl('Update Configuration')#" />			
+		</form>
+<xar:comment> ----------------- Begin Import/export Options ------------------- </xar:comment>
+    <xar:elseif condition="$tab eq 'importexport' and $showimportexport eq 1" />
+		<form method="post" action="#xarModUrl('gallery2', 'admin', 'updateconfig')#" enctype="application/x-www-form-urlencoded">
+				<input type="hidden" name="authid" value="#$authid#" />
+				<input type="hidden" name="tab" id="tab" value="#$tab#" />
+				<div style="clear: both; padding-top: 10px;">
+					<h4><xar:mlstring>Manual user and group synchronization, xaraya and G2 import/export</xar:mlstring></h4>
+				</div>
+				
+				<p><xar:mlstring>Hitting this button will synchronize xaraya and G2 users / groups. As this module is currently configured properly, the user and group management of G2 and xaraya should actually be in sync'. But maybe you experienced some inconsistencies. Please raise a bug if this is the case. However, hitting this button may fix your problem.</xar:mlstring></p>
+				<br />
+				<br />
+				<input type="submit" name="update" value="#xarMl('Import/Export roles')#" />
+		</form>
+  	</xar:if>
+</div>
+</div>

@@ -1,0 +1,24 @@
+<h2><xar:mlstring>Search in Gallery2</xar:mlstring></h2>
+
+<xar:foreach in="$results" value="$result">
+    <h3>#$result['description']#:</h3>
+    <ul>
+    <xar:foreach in="$result['items']" value="$item">
+        <li>
+            <xar:if condition="!empty($item['categories']) and count($item['categories']) gt 0">
+                [ <xar:foreach in="$item['categories']" value="$cat">
+                    #$cat['cjoin']# <a href="#$cat['clink']#">#$cat['cname']#</a>
+                </xar:foreach> ]
+            </xar:if>
+            <a href="#$item['link']#">#$item['title']#</a> #$item['date']#
+        </li>
+    </xar:foreach>
+    </ul>
+    #$result['pager']#
+</xar:foreach>
+
+<xar:if condition="!empty($status)">
+<br />#$status#<br />
+</xar:if>
+
+<br />

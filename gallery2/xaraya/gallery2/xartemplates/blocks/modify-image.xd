@@ -1,0 +1,101 @@
+            <div style="clear: both; padding-top: 10px;">
+                <span style="float: left; width: 20%; text-align: right;">
+                    <span class="help" title="#xarML('Select the kind of image block you want.')#"><label for="objectid#$blockid#"><xar:mlstring>Image Block</xar:mlstring></label>:</span>
+                </span>	
+                <span style="float: right; width: 78%; text-align: left;">
+		    <select name="ibtype" id="ibtype">
+		    <xar:if condition="$ibtype eq 0">
+		    <option value="0" selected="selected">Random Image</option>
+		    <xar:else />
+		    <option value="0">Random Image</option>
+		    </xar:if>
+		    <xar:if condition="$ibtype eq 1">
+		    <option value="1" selected="selected">Newest Image</option>
+		    <xar:else />
+		    <option value="1">Newest Image</option>
+		    </xar:if>
+		    <xar:if condition="$ibtype eq 2">
+		    <option value="2" selected="selected">Most Viewed Image</option>
+		    <xar:else />
+		    <option value="2">Most Viewed Image</option>
+		    </xar:if>
+		    <xar:if condition="$ibtype eq 3">
+		    <option value="3" selected="selected">Random Album</option>
+		    <xar:else />
+		    <option value="3">Random Album</option>
+		    </xar:if>
+		    <xar:if condition="$ibtype eq 4">
+		    <option value="4" selected="selected">Newest Album</option>
+		    <xar:else />
+		    <option value="4">Newest Album</option>
+		    </xar:if>
+		    <xar:if condition="$ibtype eq 5">
+		    <option value="5" selected="selected">Most Viewed Album</option>
+		    <xar:else />
+		    <option value="5">Most Viewed Album</option>
+		    </xar:if>
+                	    </select>
+             	   </span>	
+	   	   <span style="float: left; width: 20%; text-align: right;">
+                        <span class="help" title="#xarML('Select the properties that should be shown.')#"><label for="objectid#$blockid#"><xar:mlstring>Show</xar:mlstring></label>:</span>
+                	</span>
+        	        <span style="float: right; width: 78%; text-align: left;">
+    <ul>
+      <li>
+	<xar:if condition="$ibshowtitle eq 1">
+        <input id="title" name="ibshowtitle" checked="checked" type="checkbox">
+	<xar:else />
+        <input id="title" name="ibshowtitle" type="checkbox">
+	</xar:if>
+        <label for="title">
+          Title
+        </label>
+      </li>
+    
+      <li>
+	<xar:if condition="$ibshowdate eq 1">
+        <input id="title" name="ibshowdate" checked="checked" type="checkbox">
+	<xar:else />
+        <input id="title" name="ibshowdate" type="checkbox">
+	</xar:if>
+        <label for="date">
+
+          Date
+        </label>
+      </li>
+    
+      <li>
+	<xar:if condition="$ibshowviews eq 1">
+        <input id="title" name="ibshowviews" checked="checked" type="checkbox">
+	<xar:else />
+        <input id="title" name="ibshowviews" type="checkbox">
+	</xar:if>
+        <label for="views">
+          View Count
+        </label>
+      </li>
+    
+      <li>
+	<xar:if condition="$ibshowowner eq 1">
+        <input id="title" name="ibshowowner" checked="checked" type="checkbox">
+	<xar:else />
+        <input id="title" name="ibshowowner" type="checkbox">
+	</xar:if>
+        <label for="owner">
+          Owner
+        </label>
+      </li>
+
+      <li>
+	<xar:if condition="$ibheading eq 1">
+        <input id="title" name="ibheading" checked="checked" type="checkbox">
+	<xar:else />
+        <input id="title" name="ibheading" type="checkbox">
+	</xar:if>
+        <label for="heading">
+          Heading
+        </label>
+      </li>
+    </ul>
+	</span>		
+            </div>

@@ -1,0 +1,195 @@
+<?php
+/**
+ * File: $Id$
+ * 
+ * Gallery2 imageblock wrapper
+ * 
+ * @package Xaraya eXtensible Management System
+ * @copyright (C) 2003 by the Xaraya Development Team.
+ * @license GPL {@link http://www.gnu.org/licenses/gpl.html}
+ * @link http://www.xaraya.com
+ *
+ * @subpackage gallery2
+ * @author Andy Staudacher 
+ */
+ 
+// Load the xarGallery2Helper class
+include_once(dirname(__FILE__) .'/../xargallery2helper.php');
+
+/**
+ * initialise block
+ */
+function gallery2_imageblock_init()
+{
+  return true;
+} 
+
+/**
+ * get information on block
+ */
+function gallery2_imageblock_info()
+{ 
+  return array('text_type' => 'image',
+	       'module' => 'gallery2',
+	       'text_type_long' => xarML('Show an image from G2'),
+	       'allow_multiple' => true,
+	       'form_content' => false,
+	       'form_refresh' => false,
+	       'show_preview' => false);
+} 
+
+/**
+ * display block
+ */
+function gallery2_imageblock_display($blockinfo)
+{ 
+
+  if (!xarSecurityCheck('ReadGallery2', 1, 'Block', $blockinfo['title'])) {return;}
+
+
+  $request_uri_backup = $_SERVER['REQUEST_URI'];
+  $new_request_uri = preg_replace("|[^\/]*$|",'',$_SERVER['SCRIPT_NAME']);
+  // overide the current request uri so that G2 recognizes the embedUri and replaces it properly
+  $_SERVER['REQUEST_URI'] = $new_request_uri . xarModGetVar('gallery2','g2.basefile');
+
+  // first check if the module has been configured
+  if(!xarGallery2Helper::isConfigured()) {
+    $_SERVER['REQUEST_URI'] = $request_uri_backup;
+    return;
+  }
+  
+  // init G2 if not already done so
+  if (!xarGallery2Helper::init(false, true)) {
+    $_SERVER['REQUEST_URI'] = $request_uri_backup;
+    return;
+  }
+
+
+  // Get variables from content block.
+  // Content is a serialized array for legacy support, but will be
+  // an array (not serialized) once all blocks have been converted.
+  if (!is_array($blockinfo['content'])) {
+    $vars = @unserialize($blockinfo['content']);
+  } else {
+    $vars = $blockinfo['content'];
+  }
+  
+  // Defaults
+  if (empty($vars['ibtype'])) {
+    $vars['ibtype'] = 0;
+  } 
+  if (empty($vars['ibshowtitle'])) {
+    $vars['ibshowtitle'] = 1;
+  }
+  if (empty($vars['ibshowdate'])) {
+    $vars['ibshowdate'] = 0;
+  }
+  if (empty($vars['ibshowviews'])) {
+    $vars['ibshowviews'] = 0;
+  }
+  if (empty($vars['ibshowowner'])) {
+    $vars['ibshowowner'] = 0;
+  } 
+
+  // params for G2
+  $params = array();
+  /**
+   * available image blocks: 
+   * 'randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem'
+   */
+  // $params['heading'] = null; // 1 to get block header;
+  // $params['itemId'] = null; // not a specific itemId
+
+  switch($vars['ibtype']) {
+  case 0:
+    $params['blocks'] = 'randomImage';
+    break;
+  case 1:
+    $params['blocks'] = 'recentImage';
+    break;
+  case 2:
+    $params['blocks'] = 'viewedImage';
+    break;
+  case 3:
+    $params['blocks'] = 'randomAlbum';
+    break;
+  case 4:
+    $params['blocks'] = 'recentAlbum';
+    break;
+  case 5:
+    $params['blocks'] = 'viewedAlbum';
+    break;
+  default:
+    $params['blocks'] = 'randomImage';
+  }
+    
+  $params['show'] = array();
+  if ($vars['ibshowtitle']) {
+    $params['show'][] = 'title';
+  }
+  if ($vars['ibshowdate']) {
+    $params['show'][] = 'date';
+  }
+  if ($vars['ibshowviews']) {
+    $params['show'][] = 'views';
+  }
+  if ($vars['ibshowowner']) {
+    $params['show'][] = 'owner';
+  } 
+
+  if (count($params['show']) > 0) {
+    $params['show'] = implode('|', $params['show']);
+  } else {
+    $params['show'] = 'none';
+  }
+
+  // use the gallery API
+  global $gallery;
+  $moduleId = 'imageblock';
+
+  /* Load the module list */
+  list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+  if (!$ret->isSuccess()) {
+    $msg = xarML('G2 did not return a success status upon an imageblock request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
+    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+    $_SERVER['REQUEST_URI'] = $request_uri_backup;
+    return;
+  }
+
+  if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])) {
+    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+    if (!$ret->isSuccess()) {
+      $msg = xarML('G2 did not return a success status upon an imageblock request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
+      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+      $_SERVER['REQUEST_URI'] = $request_uri_backup;
+      return;
+    }
+  }
+
+  /* Load the G2 templating engine */
+  GalleryCoreApi::requireOnce(xarModGetVar('gallery2','g2.includepath') . 'modules/core/classes/GalleryTemplate.class');
+  $template = new GalleryTemplate(dirname(__FILE__));
+  $template->setVariable('l10Domain', 'module_' . $moduleId);
+
+  // generate the imageblock
+  list ($ret, $tpl) = $module->_loadImageBlocks($template, $params);
+  if (!$ret->isSuccess()) {
+      $msg = xarML('G2 did not return a success status upon an imageblock request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
+      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+      $_SERVER['REQUEST_URI'] = $request_uri_backup; 
+      return;
+  }
+
+  // render and get the imageblock html
+  list ($ret, $blockinfo['content']) = $template->fetch(xarModGetVar('gallery2','g2.includepath') . $tpl);
+  if (!$ret->isSuccess()) {
+    $msg = xarML('G2 did not return a success status upon an imageblock request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
+    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+    $_SERVER['REQUEST_URI'] = $request_uri_backup;
+    return;
+  }
+
+  return $blockinfo;
+} 
+
+?>
