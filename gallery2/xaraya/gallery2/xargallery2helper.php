@@ -146,6 +146,7 @@ class xarGallery2Helper
 
     // initiate G2 
     $ret = GalleryEmbed::init(array('embedUri' => xarModGetVar('gallery2','g2.basefile'),
+				    'embedPath' => xarServerGetBaseURI(),
 				    'relativeG2Path' => xarModGetVar('gallery2','g2.relativeurl'),
 				    'loginRedirect' => xarModGetVar('gallery2','g2.loginredirect'),
 				    'activeUserId' => $uid, 'activeLanguage' => $g2LangCode,
@@ -794,6 +795,7 @@ class xarGallery2Helper
     // the filesystem include path
     if (!isset($g2IncludePath) || empty($g2IncludePath)) {
       if (isset($g2RelativeUrl)) {
+	// in php CGI, SCRIPT_FILENAME isn't what we need. But sometimes PATH_TRANSLATED isn't defined either.
 	$g2IncludePath = realpath(dirname($_SERVER['PATH_TRANSLATED']) . '/' . $g2RelativeUrl) . '/';
       } else {
 	$g2IncludePath = xarModGetVar('gallery2','g2.includepath');

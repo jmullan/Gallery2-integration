@@ -122,3 +122,9 @@ The gallery2 module is not finished, yet:
     * Fix Login (cookie) problems when using G2 in standalone and embedded simultaneously.
 
 Extended information about this module can be found on the offical gallery homepage http://gallery.sf.net.
+
+
+Acknowledgements
+----------------
+Marc Lutolf <marcinmilan@xaraya.com> and all other devs of xaraya for their project and their help.
+The G2 dev team for their great application.

@@ -43,9 +43,10 @@ function gallery2_user_main()
     if (isset($xarLangCode) && !empty($xarLangCode)) {
       $g2LangCode = preg_replace('|(\..*)?$|', '', $xarLangCode);
     } 
-		     
+
     // initiate G2 
     $ret = GalleryEmbed::init(array('embedUri' => xarModGetVar('gallery2','g2.basefile'),
+				    'embedPath' => xarServerGetBaseURI(),
 				    'relativeG2Path' => xarModGetVar('gallery2','g2.relativeurl'),
 				    'loginRedirect' => xarModGetVar('gallery2','g2.loginredirect'),
 				    'activeUserId' => $uid, 'activeLanguage' => $g2LangCode));

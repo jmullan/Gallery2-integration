@@ -45,20 +45,13 @@ function gallery2_imageblock_display($blockinfo)
 { 
   if (!xarSecurityCheck('ReadGallery2', 0, 'Block', $blockinfo['title'])) {return;}
 
-  $request_uri_backup = $_SERVER['REQUEST_URI'];
-  $new_request_uri = preg_replace("|[^\/]*$|",'',$_SERVER['PHP_SELF']);
-  // overide the current request uri so that G2 recognizes the embedUri and replaces it properly
-  $_SERVER['REQUEST_URI'] = $new_request_uri . xarModGetVar('gallery2','g2.basefile');
-
   // first check if the module has been configured
   if(!xarGallery2Helper::isConfigured()) {
-    $_SERVER['REQUEST_URI'] = $request_uri_backup;
     return;
   }
   
   // init G2 if not already done so
   if (!xarGallery2Helper::init(false, true)) {
-    $_SERVER['REQUEST_URI'] = $request_uri_backup;
     return;
   }
 
@@ -144,11 +137,8 @@ function gallery2_imageblock_display($blockinfo)
   if (!$ret->isSuccess()) {
     $msg = xarML('G2 did not return a success status upon an imageblock request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
     xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-    $_SERVER['REQUEST_URI'] = $request_uri_backup;
     return;
   }
-
-  $_SERVER['REQUEST_URI'] = $request_uri_backup; 
 
   xarGallery2Helper::done(); // register shutdown function _done()
 

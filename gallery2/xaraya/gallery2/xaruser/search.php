@@ -43,15 +43,8 @@ function gallery2_user_search()
         $numitems = 10;
     }
     
-    // url hack to get g2 generate the right urls
-    $request_uri_backup = $_SERVER['REQUEST_URI'];
-    $new_request_uri = preg_replace("|[^\/]*$|",'',$_SERVER['PATH_TRANSLATED']);
-    // overide the current request uri so that G2 recognizes the embedUri and replaces it properly
-    $_SERVER['REQUEST_URI'] = $new_request_uri . xarModGetVar('gallery2','g2.basefile');
-
     // first check if the module has been configured
     if(!xarGallery2Helper::isConfigured()) {
-      $_SERVER['REQUEST_URI'] = $request_uri_backup;
       return;
     }
 
@@ -61,7 +54,6 @@ function gallery2_user_search()
 
     // init G2 if not already done so
     if (!xarGallery2Helper::init(false, true)) {
-      $_SERVER['REQUEST_URI'] = $request_uri_backup;
       return;
     }
 
@@ -110,7 +102,6 @@ function gallery2_user_search()
     if (!$ret->isSuccess()) {
       $msg = xarML('G2 did not return a success status upon a search request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      $_SERVER['REQUEST_URI'] = $request_uri_backup;
       return;
     }
     /*
