@@ -1257,6 +1257,47 @@ class xarGallery2Helper
     $configValueBackup = xarGallery2Helper::isConfigured();
     xarGallery2Helper::isConfigured(false);
 
+    // Flush the G2 filesystem cache
+    global $gallery;
+    $platform = $gallery->getPlatform();
+    
+    $dirs = array();
+    foreach (array('data.gallery.cache') as $param) {
+      $dir = $gallery->getConfig($param);
+      if (!empty($dir)) {
+	$dirs[] = $dir;
+      }
+    }
+
+    foreach ($dirs as $dir) {
+      
+      if (empty($dir)) {
+	$ret = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	$msg = xarML('Error during synchronization. Error during Flush G2 filesystem cache. Here is the rror from G2: <br /> [#(1)]', $ret->getAsHtml());
+	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+	return false;
+      }
+      
+      if ($platform->file_exists($dir)) {
+	$ret = $platform->recursiveRmdir($dir);
+	if (!$ret) {
+	  $ret = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	  $msg = xarML('Error during synchronization. Error during Flush G2 filesystem cache. Here is the rror from G2: <br /> [#(1)]', $ret->getAsHtml());
+	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+	  return false;
+	}
+      }
+      
+      $ret = $platform->mkdir($dir);
+      if (!$ret) {
+	$ret = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	$msg = xarML('Error during synchronization. Error during Flush G2 filesystem cache. Here is the rror from G2: <br /> [#(1)]', $ret->getAsHtml());
+	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+	return false;
+      }
+    }
+    
+
     /*
      * First Synchronize the special groups and the anonymous user
      * That means: update the groupName / userName / display Name in G2
