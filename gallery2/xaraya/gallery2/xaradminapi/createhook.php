@@ -58,7 +58,7 @@ function _gallery2_adminapi_createrolehook($args)
     return $args['extrainfo'];
   }
   
-  // we need itemid 
+  // we need the itemid 
   if (!isset($itemid)) {
     $msg = xarML('createrolehook call without itemid!');
     xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));

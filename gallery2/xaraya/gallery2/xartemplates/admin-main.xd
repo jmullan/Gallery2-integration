@@ -34,7 +34,7 @@
                 Before you can use G2 in your xaraya installation, you'll have to configure first G2, then xaraya: 
             </xar:mlstring>
             <ul>
-                <li><xar:mlstring>Install xaraya. The minimum version required is 0.9.11.</xar:mlstring></li>
+                <li><xar:mlstring>Install xaraya. The minimum version required is 0.9.12 (bk version of 2005/03/21 +).</xar:mlstring></li>
 				<li><xar:mlstring>Install G2 somewhere on your website. Get G2 from the offical Gallery website <a href="http://gallery.sf.net">http://gallery.sf.net</a>. It doesn't matter where you install G2 on your website, you probably want to install it on the top level, i.e. /path/to/documentRoot/gallery/ or as a subdirectory in your gallery2 module, i.e. /path/to/documentRoot/modules/gallery2/g2/ assuming xaraya was installed directly in the DocumentRoot folder. Go through the standard install wizard of G2 and finish all steps.</xar:mlstring></li>
 				<li><xar:mlstring>Install the gallery2 module in xaraya </xar:mlstring></li>
             </ul>
@@ -133,8 +133,7 @@
                 Because of the dependencies on the changes in the roles module, there are currently some bugs: 
             </xar:mlstring>
             <ul>
-               <li><xar:mlstring>roles->Purge doesn't call the item delete hooks, so we can't delete users/groups in G2
-               in this case. I raised a bug and it will be fixed soon.</xar:mlstring></li>
+               <li><xar:mlstring>Doesn't work with URL REWRITE G2 module activated.</xar:mlstring></li>
             </ul>
         </div>
         <br />

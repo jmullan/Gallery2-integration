@@ -70,18 +70,30 @@ function _gallery2_adminapi_deleterolehook($args)
     $itemid = $args['objectid'];
   }
   
-  if (!isset($itemtype)) {
-    $itemtype = 0;
-  }
- 
+  /**
+   * Delete Hooks are called either on delete or purge. Thus, this hook call 
+   * may be for a role that has already been deleted and now is purged, i.e.
+   * in G2, this role may already be deleted. 
+   * -> First check if this role still exists in G2 and only call the G2 delete
+   * in this case.
+   */
+
   // Start G2 transaction
   if(!xarGallery2Helper::init()) {
     return $args['extrainfo'];
   }
+  list($ret,$g2role) = xarGallery2Helper::g2loadEntityByExternalId($itemid, null, false);
+  if (!$ret) {
+    // role does not exist in G2, probably it was already deleted. return ok status.
+    return $args['extrainfo'];
+  } 
   
-  if ($itemtype == 1) { // it's a group
+  //
+  // role exists in G2, try to delete it.
+  
+  if ((isset($itemtype) && $itemtype == 1) || $g2role->getClassName() == 'GalleryGroup') { // it's a group
     $ret = GalleryEmbed::deleteGroup($itemid);
-  } elseif ($itemtype == 0) {
+  } elseif ((isset($itemtype) && $itemtype == 0) ||  $g2role->getClassName() == 'GalleryUser') {
     // remove the user from G2
     $ret = GalleryEmbed::deleteUser($itemid);
   }

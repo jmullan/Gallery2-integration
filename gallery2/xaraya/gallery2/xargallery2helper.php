@@ -537,14 +537,14 @@ class xarGallery2Helper
    * @return array (bool success, G2 entity)
    * @throws Systemexception if it failed
    */
-  function g2loadEntityByExternalId($externalId, $entityType=null)
+  function g2loadEntityByExternalId($externalId, $entityType=null, $raiseError=true)
   {
     // init if not already done so
     if (!xarGallery2Helper::init(true)) {
       return array(false, null);
     }
     if ($entityType == null || empty($entityType))  {
-      list($ret, $entityType) = xarGallery2Helper::g2getentitytypebyexternalid($externalId);
+      list($ret, $entityType) = xarGallery2Helper::g2getentitytypebyexternalid($externalId,$raiseError);
       if (!$ret) {
 	return array(false, null);
       }
@@ -552,9 +552,11 @@ class xarGallery2Helper
     
     list ($ret, $g2role) = GalleryCoreApi::loadEntityByExternalId($externalId, $entityType);
     if ($ret->isError()) {
-      $msg = xarML('Failed to load G2 user/group by extId [#(1)] and entityType [#(2)].'.
+      if ($raiseError) {
+	$msg = xarML('Failed to load G2 user/group by extId [#(1)] and entityType [#(2)].'.
 		   'Here is the error message from G2: <br /> [#(3)]', $externalId, $entityType, $ret->getAsHtml());
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+      }
       return array(false, null);
     }	
     return array(true, $g2role);
@@ -603,7 +605,7 @@ class xarGallery2Helper
    * @param integer the uid
    * @return array(bool success, string G2 entityType)
    */
-  function g2getentitytypebyexternalid($externalId)
+  function g2getentitytypebyexternalid($externalId, $raiseError=true)
   {	
     // init G2 transaction, load G2 API, if not already done so
     if (!xarGallery2Helper::init(true)) {
@@ -617,13 +619,17 @@ class xarGallery2Helper
     
     list ($ret, $results) = $gallery->search($query, array($externalId));
     if ($ret->isError()) {
-      $msg = xarML('Failed to fetch the entityType for extId [#(1)]. Here is the error message from G2: <br /> [#(2)]',$externalId, $ret->getAsHtml());
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+      if ($raiseError) {
+	$msg = xarML('Failed to fetch the entityType for extId [#(1)]. Here is the error message from G2: <br /> [#(2)]',$externalId, $ret->getAsHtml());
+	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+      }
       return array(false, null);
     }
     if (!($result = $results->nextResult())) {
-      $msg = xarML('Failed to fetch the entityType for extId [#(1)]. There was no entry in the table. Here is the error message from G2: <br /> [#(2)]',$externalId, $ret->getAsHtml());
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+      if ($raiseError) {
+	$msg = xarML('Failed to fetch the entityType for extId [#(1)]. There was no entry in the table. Here is the error message from G2: <br /> [#(2)]',$externalId, $ret->getAsHtml());
+	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+      }
       return array(false, null);
     }
     
