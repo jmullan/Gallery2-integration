@@ -33,11 +33,6 @@ function gallery2_admin_updateconfig()
 	
 	if (!xarVarFetch('tab', 'str:1:100', $data['tab'], 'setup', XARVAR_NOT_REQUIRED)) return;
 	
-	// FIXME: remove this line, when the xaraya event system is fixed
-	// Register my event handlers
-    xarModAPIFunc('modules','admin','regenerate'); // 'geteventhandlers' would be ok too
-	
-	
     switch ($data['tab']) {
     case 'setup':		
 		// Get parameters

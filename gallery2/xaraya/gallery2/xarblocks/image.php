@@ -46,7 +46,7 @@ function gallery2_imageblock_display($blockinfo)
   if (!xarSecurityCheck('ReadGallery2', 0, 'Block', $blockinfo['title'])) {return;}
 
   $request_uri_backup = $_SERVER['REQUEST_URI'];
-  $new_request_uri = preg_replace("|[^\/]*$|",'',$_SERVER['SCRIPT_NAME']);
+  $new_request_uri = preg_replace("|[^\/]*$|",'',$_SERVER['PHP_SELF']);
   // overide the current request uri so that G2 recognizes the embedUri and replaces it properly
   $_SERVER['REQUEST_URI'] = $new_request_uri . xarModGetVar('gallery2','g2.basefile');
 

@@ -45,7 +45,7 @@ function gallery2_user_search()
     
     // url hack to get g2 generate the right urls
     $request_uri_backup = $_SERVER['REQUEST_URI'];
-    $new_request_uri = preg_replace("|[^\/]*$|",'',$_SERVER['SCRIPT_NAME']);
+    $new_request_uri = preg_replace("|[^\/]*$|",'',$_SERVER['PATH_TRANSLATED']);
     // overide the current request uri so that G2 recognizes the embedUri and replaces it properly
     $_SERVER['REQUEST_URI'] = $new_request_uri . xarModGetVar('gallery2','g2.basefile');
 

@@ -120,9 +120,6 @@ function gallery2_init()
 		  array('callerModName' => 'base', 'hookModName' => 'gallery2'));
   }
 	
-  // Register my event handlers
-  xarModAPIFunc('modules','admin','regenerate'); // 'geteventhandlers' would be ok too
-  
   return true;
 }
 

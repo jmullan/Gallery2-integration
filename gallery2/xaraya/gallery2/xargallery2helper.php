@@ -798,7 +798,7 @@ class xarGallery2Helper
     // the filesystem include path
     if (!isset($g2IncludePath) || empty($g2IncludePath)) {
       if (isset($g2RelativeUrl)) {
-	$g2IncludePath = realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/' . $g2RelativeUrl) . '/';
+	$g2IncludePath = realpath(dirname($_SERVER['PATH_TRANSLATED']) . '/' . $g2RelativeUrl) . '/';
       } else {
 	$g2IncludePath = xarModGetVar('gallery2','g2.includepath');
       }
@@ -809,10 +809,10 @@ class xarGallery2Helper
     if (!isset($g2RelativeUrl)) {
       $g2RelativeUrl = xarModGetVar('gallery2','g2.relativeurl');
     }
-    
+   
     if ($setifcorrect) {
       // get the name of the xaraya entry point file (usually index.php)
-      $scriptName = preg_replace('|/([^/]+/)*|', '', $_SERVER['SCRIPT_NAME']);
+      $scriptName = preg_replace('|/([^/]+/)*|', '', $_SERVER['PATH_TRANSLATED']);
       
       // enable short url enabled?
       $shortUrlActive = xarConfigGetVar('Site.Core.EnableShortURLsSupport'); 
@@ -835,7 +835,7 @@ class xarGallery2Helper
       }
       return array(false, $msg);
     }
-    
+
     require_once($g2IncludePath . 'embed.php');
     $ret = GalleryEmbed::init( array('embedUri' => $g2basefile,
 				     'relativeG2Path' => $g2RelativeUrl,
