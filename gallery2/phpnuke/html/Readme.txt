@@ -12,7 +12,7 @@
 /* then DO NOT use these files.                                         */
 /* This is a beta realised , so if you try it, BACKUP first.            */
 /*                                                                      */
-/* Version: 0.2 (28th March 2005)                                       */
+/* Version: 0.3 (6th April 2005)                                       */
 /*                                                                      */
 /************************************************************************/
 
@@ -91,14 +91,15 @@ It will export all your phpnuke users and create them a G2 account if they have 
 The first phpnuke admin account will also be mapped to the G2 admin account.
 Since if you're logged as an admin in phpnuke, you will also been logged as the admin in G2 regardless of your phpnuke normal user login.
 No group mapping is done for now... It will come up for a next release.
-And yes, for now there is no hook allowing to add a new user dynamically...
-So you will need to perform this action each time a new user register your phpnuke website.
+The export user is split in multiple pages which allows a maximum export of 100 users by page: It prevents error during large database export.
+
+The dynamic addition of users now works:
+It means everytime a new users will register your phpnuke portal, at his first G2 visit, an account will be created for him.
+
 
 -7-
 As usual, activate this Module in the Modules Administration.
-
-
-You need to update your config, at least one time to activate this module.
+You need to Export users in the admin at least one time (step 6), to activate this module.
 
 -------------------
 Block Configuration

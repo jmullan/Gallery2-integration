@@ -86,7 +86,12 @@ function init() {
 
 	$g2currentlang = $Phpnuke2G2Lang[$currentlang];
 
-	$ret = GalleryEmbed :: init(array ('embedUri' => $g2embedparams[embedUri], 'relativeG2Path' => $g2embedparams[relativeG2Path], 'loginRedirect' => $g2embedparams[loginRedirect], 'activeUserId' => '', 'activeLanguage' => $g2currentlang, 'fullInit' => $fullInit));
+	$ret = GalleryEmbed :: init(array ('embedUri' => $g2embedparams[embedUri], 
+															'relativeG2Path' => $g2embedparams[relativeG2Path],
+															'loginRedirect' => $g2embedparams[loginRedirect],
+															'activeUserId' => '', 
+															'activeLanguage' => $g2currentlang, 
+															'fullInit' => $fullInit));
 
 	if (!$ret->isSuccess()) {
 		g2_message('G2 did not return a success status upon an init request. Here is the error message from G2: <br /> [#(1)]'.$ret->getAsHtml());
@@ -175,13 +180,15 @@ function init() {
 		return array (true, $mapsbyentityid, $mapsbyexternal);
 	}
 
-
-
 /*********************************************************/
 /* Init G2 API                                           */
 /* Exports phpnuke users to g2 and 			             */
 /* Initial user/group management synchronization.        */
+/* Output: False if error
+/*         user info text to display if success					*/
 /*********************************************************/
+
+define("NB_USER_TO_EXPORT_BY_PASS", 100);
 
 function g2_phpnukeTog2UserExport() 
 {
@@ -200,7 +207,7 @@ function g2_phpnukeTog2UserExport()
 		return false;
 	}
 	
-	// Map the ExternalmapId "admin" to the last admin account found
+	// Map the ExternalmapId "admin" to the last phpnuke admin account found
 	// TODO: Mapping for multiple admins
 
 	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
@@ -220,7 +227,6 @@ function g2_phpnukeTog2UserExport()
 	{
 	}
 	
-	// TODO: Update of the admin if exists
 	if (!isset ($mapsbyexternalid["admin"])) 
 	{
 		if (!g2addexternalMapEntry("admin", $adminId, 0)) 
@@ -230,84 +236,116 @@ function g2_phpnukeTog2UserExport()
 		
 		$outputtext .="Admin account create<br/><br/>";
 	}
-		
-	// Export all phpnuke users (except anonymous: id=1) to G2 defaut group if non existant
-	 
-	$query='SELECT user_id, name, username, user_password, user_email, user_lang,  user_regdate FROM '.$user_prefix."_users WHERE `user_id`>'1'";
-	$result=$db->sql_query($query);
-	$numrows = $db->sql_numrows($result);
 	
-	$outputtext .="Number of PhpNuke User to export in G2: ".$numrows."<br/><br/>";
+	// TODO: Update of the admin account if it already exists
+			
+	// Export all standard phpnuke users (except anonymous: id=1) to G2 defaut group
+	// --- dari addon (multiple pass)
+	$sql = "SELECT count(*) AS ucount FROM ".$user_prefix."_users";
+	$user_count = $db->sql_fetchrow($db->sql_query($sql));
+	$nextpage = 0;
 	
-	for($i = 0;$i<$numrows;$i++)
-	{
-		$sqluserdata		= $db->sql_fetchrow($result);
-		$nukeuser_id 		= $sqluserdata['user_id'];
-		$nukeuser_uname		= $sqluserdata['username'];
-		$nukeuser_name		= $sqluserdata['name'];
-		$nukeuser_cryptpass	= $sqluserdata['user_password'];
-		$nukeuser_email		= $sqluserdata['user_email'];
-		$nukeuser_lang		= $sqluserdata['user_lang'];
-		$g2nukeuser_lang 	= $Phpnuke2G2Lang[$nukeuser_lang];
-		$nukeuser_regdate	= $sqluserdata['user_regdate'];
+	$startuser = $_POST['startuser'];
+	
+  for($i = $startuser; $i <= $user_count['ucount']; $i++) 
+  {
+  	
+    if($i == $startuser+NB_USER_TO_EXPORT_BY_PASS) 
+    {
+        $nextpage = 1;
+        break;
+		}
 		
-		list( $regmonth, $regday, $regyear ) = split( " ", $nukeuser_regdate );
-		$regphpusertimestamp = mktime( 0, 0, 0, $regmonth, $regday, $regyear );
+		$outputtext .= "UserId($i) ";
 
-		// Get Arguments for the new user:
-		$args['fullname']  	=	$nukeuser_name;
-		$args['username'] 	= 	$nukeuser_uname;
-		$args['hashedpassword'] =	$nukeuser_cryptpass; 
-		$args['hashmethod'] = 	'md5';
-		$args['email'] 		=	$nukeuser_email;
-		$args['language']	=	$g2nukeuser_lang;
-		$args['creationtimestamp']	=	$regphpusertimestamp;
+		$query='SELECT user_id, name, username, user_password, user_email, user_lang, user_regdate FROM '.$user_prefix."_users WHERE user_id = $i LIMIT 1"; 
 		
-		// if the map exists, just update the user data
-		if (isset ($mapsbyexternalid[$nukeuser_id])) 
-		{
-			$ret = GalleryEmbed :: updateUser($nukeuser_id, $args);
-			if (!$ret->isSuccess())
+		$result=$db->sql_query($query);
+		
+		if($db->sql_numrows($result) != 0) 
+		{ 
+			$sqluserdata		= $db->sql_fetchrow($result);
+			$nukeuser_id 		= $sqluserdata['user_id'];
+			$nukeuser_uname		= $sqluserdata['username'];
+			$nukeuser_name		= $sqluserdata['name'];
+			$nukeuser_cryptpass	= $sqluserdata['user_password'];
+			$nukeuser_email		= $sqluserdata['user_email'];
+			$nukeuser_lang		= $sqluserdata['user_lang'];
+			$g2nukeuser_lang 	= $Phpnuke2G2Lang[$nukeuser_lang];
+			$nukeuser_regdate	= $sqluserdata['user_regdate'];
+			
+			list( $regmonth, $regday, $regyear ) = split( " ", $nukeuser_regdate );
+			$regphpusertimestamp = mktime( 0, 0, 0, $regmonth, $regday, $regyear );
+	
+			// Get Arguments for the new user:
+			$args['fullname']  	=	$nukeuser_name;
+			$args['username'] 	= 	$nukeuser_uname;
+			$args['hashedpassword'] =	$nukeuser_cryptpass; 
+			$args['hashmethod'] = 	'md5';
+			$args['email'] 		=	$nukeuser_email;
+			$args['language']	=	$g2nukeuser_lang;
+			$args['creationtimestamp']	=	$regphpusertimestamp;
+			
+			// if the map exists, just update the user data
+			if (isset ($mapsbyexternalid[$nukeuser_id])) 
 			{
-				g2_message('Failed to update G2 user with extId ['.$nukeuser_id.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
-				return false;
+				$ret = GalleryEmbed :: updateUser($nukeuser_id, $args);
+				if (!$ret->isSuccess())
+				{
+					g2_message('Failed to update G2 user with extId ['.$nukeuser_id.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
+					return false;
+				}
+				else
+				{
+					$outputtext .= $nukeuser_uname.' (has been updated)<br/>';
+				}
 			}
+			//  else we create the user
 			else
 			{
-				$outputtext .= $nukeuser_uname.' (has been updated)<br/>';
+				$ret = GalleryEmbed :: createUser($nukeuser_id, $args);
+				if (!$ret->isSuccess()) 
+				{
+					g2_message('Failed to create G2 user with extId ['.$nukeuser_id.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
+					return false;
+				}
+				
+				if (!g2addexternalMapEntry($nukeuser_uname, $nukeuser_id, 0)) 
+				{
+	     			return false;
+	   		}
+	   		else
+	   		{
+	   			$outputtext .= $nukeuser_uname.' (added to g2 users)<br/>';
+	   		} 			
 			}
-		}
-		//  else we create the user
-		else
-		{
-			$ret = GalleryEmbed :: createUser($nukeuser_id, $args);
-			if (!$ret->isSuccess()) 
-			{
-				g2_message('Failed to create G2 user with extId ['.$nukeuser_id.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
-				return false;
-			}
-			
-			if (!g2addexternalMapEntry($nukeuser_uname, $nukeuser_id, 0)) 
-			{
-     			return false;
-   			}
-   			else
-   			{
-   				$outputtext .= $nukeuser_uname.' (added to g2 users)<br/>';
-   			} 			
 		}
 	}
 	
-	g2_message($outputtext );
-	return false;	// force the display of g2_message 
+	$outputtext .= "<br/>".($i-$startuser)." users imported...<br/><br/>";
+	
+	// Eveything is ok till now, so ask for the next page if needed
+
+  if($nextpage == 1) 
+  {
+      $startUserNextPage = "<input type=\"hidden\" name=\"startuser\" value=\"$i\">";
+			$outputtext .="<form action=\"admin.php\" method=\"post\">"."<table border=\"0\">";
+			$outputtext .="<input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\">"."<tr><td><input type=\"submit\" value=\""._G2_NEXT_PAGE."\">$startUserNextPage</td></tr>"."</table></form>";
+  }
+  else
+  {
+  		$outputtext .= _USER_EXPORT_COMPLETED."<br/>";
+  }
+	
+	return $outputtext;
 
 }
 
 /*********************************************************/
-/* Main Function                                         */
+/* Save & Validate module config file                    */
 /*********************************************************/
 
-function SaveG2Config($var) {
+function SaveG2Config($var, $forceValidate=false) {
 	if (file_exists("modules/".MOD_NAME."/gallery2.cfg")) {
 		if (!is_writable("modules/".MOD_NAME."/gallery2.cfg")) {
 			g2_message("<b>"._G2_ERROR."</b>: gallery2.cfg "._NOTWRITABLE);
@@ -327,9 +365,18 @@ function SaveG2Config($var) {
 		$g2mainparams = array ();
 	}
 
-	$content = "<?\n".'$g2embedparams = '.var_export($g2embedparams, TRUE).";\n".'$g2mainparams = '.var_export($g2mainparams, TRUE).";\n".'$g2configurationdone = "true"';
-
-	$content .= "?>";
+	$content = "<?\n".'$g2embedparams = '.var_export($g2embedparams, TRUE).";\n".'$g2mainparams = '.var_export($g2mainparams, TRUE).";\n";
+	if ($forceValidate=='true')
+	{
+		$content .='$g2configurationdone = \'true\';';
+	}
+	else
+	{
+		if ($g2configurationdone=='true') $content .='$g2configurationdone = \'true\';';
+		else $content .='$g2configurationdone = \'false\';';
+		
+	}
+	$content .= " ?>";
 
 	$handle = fopen("modules/".MOD_NAME."/gallery2.cfg", "w");
 	fwrite($handle, $content);
@@ -338,7 +385,7 @@ function SaveG2Config($var) {
 }
 
 /******************************************************************/
-/* Display Main Admin Page                               					*/
+/* Check if config files contains valid parameters       					*/
 /* TODO: Check G2 had been really installed and not just copied		*/
 /******************************************************************/
 
@@ -397,12 +444,14 @@ function DisplayMainPage() {
 	echo "<tr><td>&nbsp;</td></tr>"."<input type=\"hidden\" name=\"op\" value=\"gallery2_update_main\">"."<tr><td><input type=\"submit\" value=\""._UPDATEMAINSETTINGSG2."\"></td></tr>"."</table></form>";
 	CloseTable();
 
-	// -------------- group settings
-
+	// -------------- user export settings
+	// --- Dari addon: split user export in a multiple pass ---
+	
+	$hidden_input = "<input type=\"hidden\" name=\"startuser\" value=\"2\">";
 	OpenTable();
 	echo "<center><font class=\"option\"><b>Export Users to Gallery2</b></font></center><br/>";
 	echo "<form action=\"admin.php\" method=\"post\">"."<table border=\"0\">";
-	echo "<input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\">"."<tr><td><input type=\"submit\" value=\""._G2USEREXPORT."\"></td></tr>"."</table></form>";
+	echo "<input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\">"."<tr><td><input type=\"submit\" value=\""._G2USEREXPORT."\">$hidden_input</td></tr>"."</table></form>";
 	CloseTable();
 
 	include ("footer.php");
@@ -458,17 +507,15 @@ function form_g2UserExportSettings() {
 
 	check_g2configerror($g2embedparams[embedphpfile]);
 	
-	if ($g2configurationdone != "true") {
-		$updateonlyconfigdone = array ();
-		SaveG2Config($updateonlyconfigdone);
-	}
-
-	if (!g2_phpnukeTog2UserExport()) {
+	$output = g2_phpnukeTog2UserExport();
+	if ($output==false)
+	{
 		g2_message(_USER_EXPORT_FAILED);
-		return;
 	}
+	
+	SaveG2Config(array(),'true');
 
-	g2_message(_USER_EXPORT_UPDATED);
+	g2_message($output);
 }
 
 /// ------------------------------------------------------------------------------------------

@@ -32,7 +32,9 @@ define("_G2_ERROR","Error");
 define("_NOTWRITABLE","is not writable");
 define("_CFG_UPDATED","Config file updated");
 define("_USER_EXPORT_UPDATED","Users are now Synchronized");
-define("_USER_EXPORT_FAILED","Error during Users Synch");
+define("_USER_EXPORT_FAILED","Users Export Failed...");
+define("_USER_EXPORT_COMPLETED","Users Export fully completed");
+define("_G2_NEXT_PAGE","Proceed to next page");
 define("_PHPEMBEDFILE_ERROR","You need to install and configure G2 first.Then this field must point to your Gallery2 root folder.");
 define("_SHOWSIDEBAR","Show Side Bar (Uncheck it if you use the G2 Sidebar block)");
 
