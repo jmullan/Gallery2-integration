@@ -59,14 +59,25 @@ get_lang($module_name);
 include("header.php");  
 
 global $db,$user_prefix;
-cookiedecode($user);
-$uname = $cookie[1];
-$uid='';  
-if (is_user($user)) 
+
+if (is_admin($admin)) 
 {
-    $row3 = $db->sql_fetchrow($db->sql_query("SELECT user_id FROM $user_prefix"._users." WHERE username='$uname'"));
-	$uid = intval($row3[user_id]);
-} 
+	// we log as an admin
+	$uid='admin';
+}
+else
+{
+	if (is_user($user))
+	{
+			// we log as a normal user
+			cookiedecode($user);
+			$uid='';  
+			if (is_user($user)) 
+			{
+				$uid = $cookie[0];
+			}
+	} 
+}
   
   if ($g2bodyHtml==null)
   {
@@ -115,9 +126,40 @@ if (is_user($user))
 		    {
 		      exit; // uploads module does this too
 		    }
+		    
+
+			// ------------------------This manage the redirect for users album ------------------------------
+
+			/*list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($uid, 'GalleryUser');
+			if ($ret->isError()) 
+			{
+			    echo $ret->getAsHtml();
+			}
+
+		    $event = GalleryCoreApi::newEvent('Gallery::Login');
+		    $event->setEntity($user);
+		    list ($ret, $redirect) = GalleryCoreApi::postEvent($event);
+		    if ($ret->isError()) 
+		    {
+				//return array($ret->wrap(__FILE__, __LINE__), null);
+				echo $ret->getAsHtml();
+		    }
+
+		    // Redirect if requested by event listener, otherwise return
+		    if (!empty($redirect)) 
+		    {
+				$results['redirect'] = array_shift($redirect);
+				//print_r($results['redirect']);
+				
+				$urlGenerator =& $gallery->getUrlGenerator();
+				$url = $urlGenerator->generateUrl($results['redirect']);
+				header('Location: ' . str_replace('&amp;', '&', $url));
+		    }*/
+		    
+		    
+		    //-------------------------------------------------------------
 		  
 			  // TODO: Error message temporary removed to prevent notification for unmapped users 
-			    
 			  /*if ($ret->isError()) 
 			  {
 			    echo $ret->getAsHtml();

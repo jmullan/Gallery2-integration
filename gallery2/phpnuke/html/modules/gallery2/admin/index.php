@@ -21,6 +21,7 @@ if (!eregi("admin.php", $_SERVER['PHP_SELF'])) {
 	die("Access Denied");
 }
 global $prefix, $db;
+global $g2config_error;
 
 // --------------------------------------------------------
 // Mapping between Phpnuke and Gallery2 language definition
@@ -38,8 +39,9 @@ function g2_message($mess) {
 	global $admin, $bgcolor2, $prefix, $db, $currentlang, $multilingual, $admin_file, $module_name;
 	include ("header.php");
 	OpenTable();
-	echo "<br><center><a href=\"admin.php?op=gallery2\">
-					<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3></center>";
+	echo	"<br><center><a href=\"admin.php?op=gallery2\">".
+				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3>".
+				"<br/><a href=\"admin.php?op=gallery2\">Return Home</center>";
 	CloseTable();
 	echo "<br/>";
 
@@ -197,8 +199,39 @@ function g2_phpnukeTog2UserExport()
 	{
 		return false;
 	}
+	
+	// Map the ExternalmapId "admin" to the last admin account found
+	// TODO: Mapping for multiple admins
 
-	// Export all phpnuke users (except anonymous) to G2 defaut group if non existant
+	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) 
+	{
+		g2_message('Enable to fetch the admin group. Here is the error message from G2: <br />'.$ret->getAsHtml());
+	    return false;
+	}
+	list ($ret, $adminList) = GalleryCoreApi::fetchUsersForGroup($adminGroupId, 5);
+	if ($ret->isError()) 
+	{
+		g2_message('Enable to fetch a member in the admin group. Here is the error message from G2: <br />'.$ret->getAsHtml());
+	    return false;
+	}
+	
+	foreach ($adminList as $adminId => $adminName) 
+	{
+	}
+	
+	// TODO: Update of the admin if exists
+	if (!isset ($mapsbyexternalid["admin"])) 
+	{
+		if (!g2addexternalMapEntry("admin", $adminId, 0)) 
+		{
+ 			return false;
+		}
+		
+		$outputtext .="Admin account create<br/><br/>";
+	}
+		
+	// Export all phpnuke users (except anonymous: id=1) to G2 defaut group if non existant
 	 
 	$query='SELECT user_id, name, username, user_password, user_email, user_lang,  user_regdate FROM '.$user_prefix."_users WHERE `user_id`>'1'";
 	$result=$db->sql_query($query);
@@ -210,9 +243,9 @@ function g2_phpnukeTog2UserExport()
 	{
 		$sqluserdata		= $db->sql_fetchrow($result);
 		$nukeuser_id 		= $sqluserdata['user_id'];
+		$nukeuser_uname		= $sqluserdata['username'];
 		$nukeuser_name		= $sqluserdata['name'];
 		$nukeuser_cryptpass	= $sqluserdata['user_password'];
-		$nukeuser_uname		= $sqluserdata['username'];
 		$nukeuser_email		= $sqluserdata['user_email'];
 		$nukeuser_lang		= $sqluserdata['user_lang'];
 		$g2nukeuser_lang 	= $Phpnuke2G2Lang[$nukeuser_lang];
@@ -220,24 +253,33 @@ function g2_phpnukeTog2UserExport()
 		
 		list( $regmonth, $regday, $regyear ) = split( " ", $nukeuser_regdate );
 		$regphpusertimestamp = mktime( 0, 0, 0, $regmonth, $regday, $regyear );
+
+		// Get Arguments for the new user:
+		$args['fullname']  	=	$nukeuser_name;
+		$args['username'] 	= 	$nukeuser_uname;
+		$args['hashedpassword'] =	$nukeuser_cryptpass; 
+		$args['hashmethod'] = 	'md5';
+		$args['email'] 		=	$nukeuser_email;
+		$args['language']	=	$g2nukeuser_lang;
+		$args['creationtimestamp']	=	$regphpusertimestamp;
 		
-		// TODO: if the map exists, just update the user data
+		// if the map exists, just update the user data
 		if (isset ($mapsbyexternalid[$nukeuser_id])) 
 		{
-			$outputtext .= $nukeuser_uname.' (this user already exists in g2)<br/>';
+			$ret = GalleryEmbed :: updateUser($nukeuser_id, $args);
+			if (!$ret->isSuccess())
+			{
+				g2_message('Failed to update G2 user with extId ['.$nukeuser_id.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
+				return false;
+			}
+			else
+			{
+				$outputtext .= $nukeuser_uname.' (has been updated)<br/>';
+			}
 		}
+		//  else we create the user
 		else
 		{
-			// Get Arguments for the new user:
-			$args['fullname']  	=	$nukeuser_name;
-			$args['name']		=	$nukeuser_uname;
-			$args['username'] 	= 	$nukeuser_uname;
-			$args['hashedpassword'] =	$nukeuser_cryptpass; 
-			$args['hashmethod'] = 	'md5';
-			$args['email'] 		=	$nukeuser_email;
-			$args['language']	=	$g2nukeuser_lang;
-			$args['creationtimestamp']	=	$regphpusertimestamp;
-
 			$ret = GalleryEmbed :: createUser($nukeuser_id, $args);
 			if (!$ret->isSuccess()) 
 			{
@@ -257,9 +299,8 @@ function g2_phpnukeTog2UserExport()
 	}
 	
 	g2_message($outputtext );
-	return false;
+	return false;	// force the display of g2_message 
 
-	return true;
 }
 
 /*********************************************************/
@@ -296,6 +337,22 @@ function SaveG2Config($var) {
 
 }
 
+/******************************************************************/
+/* Display Main Admin Page                               					*/
+/* TODO: Check G2 had been really installed and not just copied		*/
+/******************************************************************/
+
+function check_g2configerror($embedphpfile)
+{
+	include ("modules/gallery2/gallery2.cfg");
+
+	if (!file_exists($embedphpfile)) 
+	{
+		g2_message ("<b>"._G2_ERROR." : "._PHPEMBEDFILE."</b><br/>"._PHPEMBEDFILE_ERROR);
+	}
+	
+}
+
 /*********************************************************/
 /* Display Main Admin Page                               */
 /*********************************************************/
@@ -304,8 +361,9 @@ function DisplayMainPage() {
 	global $admin, $bgcolor2, $prefix, $db, $currentlang, $multilingual, $admin_file, $module_name;
 	include ("header.php");
 	OpenTable();
-	echo "<br><center><a href=\"admin.php?op=gallery2\">
-							<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3></center>";
+	echo	"<br><center><a href=\"admin.php?op=gallery2\">".
+				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3>".
+				"</center>";
 	CloseTable();
 	echo "<br/>";
 
@@ -324,10 +382,6 @@ function DisplayMainPage() {
 	OpenTable();
 	echo "<center><font class=\"option\"><b>Gallery2 Embeding Settings</b></font></center><br/>";
 	echo "<form action=\"admin.php\" method=\"post\">"."<table border=\"0\">"."<tr><td>"._PHPEMBEDFILE.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"embedphpfile\" size=\"60\" value=\"".$g2embedparams[embedphpfile]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._EMBEDURI.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"embedUri\" size=\"60\" value=\"".$g2embedparams[embedUri]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._RELATIVEG2PATH.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"relativeG2Path\" size=\"60\" value=\"".$g2embedparams[relativeG2Path]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._LOGINREDIRECT.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"loginRedirect\" size=\"60\" value=\"".$g2embedparams[loginRedirect]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._ACTIVEUSERID.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"activeUserId\" size=\"60\" value=\"".$g2embedparams[activeUserId]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>";
-
-	if ($path_found == false) {
-		echo "<tr><td colspan=\"2\"><align=center><br/><center><b>"._G2_ERROR." : "._PHPEMBEDFILE."</b><br/>"._PHPEMBEDFILE_ERROR."</center></td></tr>";
-	}
 	echo "<tr><td>&nbsp;</td></tr>"."<input type=\"hidden\" name=\"op\" value=\"gallery2_update_embed\">"."<tr><td><input type=\"submit\" value=\""._UPDATEEMBEDSETTINGSG2."\"></td></tr>"."</table></form>";
 	CloseTable();
 
@@ -368,12 +422,9 @@ function form_g2UpdateEmbedSettings() {
 	$g2embedparams[loginRedirect] = $_POST['loginRedirect'];
 	$g2embedparams[activeUserId] = $_POST['activeUserId'];
 
-	//$g2mainparams = array();
-	//$g2mainparams[showSidebar] = 'false';
-	//$vars = compact("g2embedparams","g2mainparams");
-
 	$vars = compact("g2embedparams");
 
+	check_g2configerror($g2embedparams[embedphpfile]);
 	SaveG2Config($vars);
 
 	g2_message(_CFG_UPDATED);
@@ -384,11 +435,15 @@ function form_g2UpdateEmbedSettings() {
 /*********************************************************/
 
 function form_g2UpdateMainSettings() {
-	$g2mainparams = array ();
+
+	include ("modules/gallery2/gallery2.cfg");
 
 	$g2mainparams[showSidebar] = $_POST['showsidebar'];
 
 	$vars = compact("g2mainparams");
+	
+	check_g2configerror($g2embedparams[embedphpfile]);
+	
 	SaveG2Config($vars);
 
 	g2_message(_CFG_UPDATED);
@@ -401,9 +456,11 @@ function form_g2UpdateMainSettings() {
 function form_g2UserExportSettings() {
 	include ("modules/gallery2/gallery2.cfg");
 
+	check_g2configerror($g2embedparams[embedphpfile]);
+	
 	if ($g2configurationdone != "true") {
-		g2_message(_G2_CONFIGURATION_NOT_DONE);
-		return;
+		$updateonlyconfigdone = array ();
+		SaveG2Config($updateonlyconfigdone);
 	}
 
 	if (!g2_phpnukeTog2UserExport()) {

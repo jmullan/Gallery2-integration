@@ -67,15 +67,24 @@ global $prefix, $multilingual, $currentlang, $db,$g2bodyHtml,$user_prefix,$user,
   }
 
 	require_once($g2embedparams[embedphpfile]."/"._G2_EMBED_PHP_FILE);
-
-	// get phpnuke user id	
-	cookiedecode($user);
-	$uname = $cookie[1];
-	$uid='';  
-	if (is_user($user)) 
+	
+	if (is_admin($admin)) 
 	{
-	    $row3 = $db->sql_fetchrow($db->sql_query("SELECT user_id FROM $user_prefix"._users." WHERE username='$uname'"));
-		$uid = intval($row3[user_id]);
+		// we log as an admin
+		$uid='admin';
+	}
+	else
+	{
+		if (is_user($user))
+		{
+				// we log as a normal user
+				cookiedecode($user);
+				$uid='';  
+				if (is_user($user)) 
+				{
+					$uid = $cookie[0];
+				}
+		} 
 	}
 	
 	// get phpnuke user lang
