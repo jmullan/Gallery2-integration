@@ -766,6 +766,9 @@ class xarGallery2Helper
   function verifyConfig($raiseexceptions = false, $setifcorrect = false, 
 			$g2RelativeUrl = null, $g2IncludePath = null )
   {
+/* obviously, the snapshot versions of xaraya don't follow the version dot
+ * subversion pattern, therefore this check is omitted
+
     // Verify the dependency on a compatible xaraya version (roles module changes, event system changes)
     $xarVersionString = xarConfigGetVar('System.Core.VersionNum');
     $xarVersion = split('\.', $xarVersionString);
@@ -779,6 +782,7 @@ class xarGallery2Helper
       }
       return array(false, $msg);
     }
+*/
     
     // Verify that we find a G2 installation
     // and that it is configured to be in embedded mode
