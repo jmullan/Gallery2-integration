@@ -1099,15 +1099,16 @@ class xarGallery2Helper
     if (!xarGallery2Helper::init(true)) {
       return false;
     }
+    $defaultgroupname = xarModGetVar('roles', 'defaultgroup');
     foreach(array(array('Everybody', 'id.everybodyGroup'), array('Administrators', 'id.adminGroup'),
-		  array(xarModGetVar('roles', 'defaultgroup'), 'id.allUserGroup'),
+		  array($defaultgroupname, 'id.allUserGroup'),
 		  array('anonymous', 'id.anonymousUser')) as $specialRole) {
       $pluginParameter = $specialRole[1];
       $xarName = $specialRole[0];
       
       // the xaraya defaultGroup can be any group, including everybody and adminstrators
       // per default, it's a third group, but you can configure it to be Everybody or Administrators
-      if (!xarGallery2Helper::xarIsDefaultGroupAThirdGroup())  {
+      if ($pluginParameter == 'id.allUserGroup' && !xarGallery2Helper::xarIsDefaultGroupAThirdGroup())  {
 	continue; // we already sync this group
 	// -> "All Users" group in G2 isn't any special group anymore			
       }
@@ -1129,21 +1130,19 @@ class xarGallery2Helper
 	$entityType = 'GalleryUser';
       } 
       
-      // The group with the groupName = defaultGroup could already exist in G2
-      // If this the case, fetch this G2 group, set 'id.allUserGroup' = g2group->getId()
-      if ($pluginParameter == 'id.allUserGroup') {
-	// Xaraya calls it's all users group "Users" by default, try both, Users and "All Users"
-	foreach (array("Users", "All Users") as $defaultgroupname) {
-	  list($ret, $g2role) = GalleryCoreApi::fetchGroupByGroupName($defaultgroupname);
-	  if ($ret->isError()) {
-	    if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) { 
-	      // a real error, not good
-	      $msg = xarML('Failed to fetch group by groupname [#(1)] from G2 in g2updateSpecialRoles!', $defaultgroupname);
-	      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	      return false;
-	    }
-	    // try the other 
-	  } else { break; }
+      // The group with the groupName = defaultGroup could already exist in G2. 
+      // Xaraya calls it's all users group "Users" by default. But you can choose other groups
+      // as the default group in xaraya. In this case, check if a group with such a name exists in G2
+      // and map it to it, else, create a new G2 group. and update the G2 all users config param.
+      if ($pluginParameter == 'id.allUserGroup' && $defaultgroupname != 'Users') {
+	list($ret, $g2role) = GalleryCoreApi::fetchGroupByGroupName($defaultgroupname);
+	if ($ret->isError()) {
+	  if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) { 
+	    // a real error, not good
+	    $msg = xarML('Failed to fetch group by groupname [#(1)] from G2 in g2updateSpecialRoles!', $defaultgroupname);
+	    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
+	    return false;
+	  }
 	}
 	if (!is_object($g2role)) { 
 	  // ok, a group with this name doesn't exist in G2, good, let's create it now
