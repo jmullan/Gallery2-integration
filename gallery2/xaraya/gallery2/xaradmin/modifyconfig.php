@@ -39,13 +39,15 @@ function gallery2_admin_modifyconfig()
 			// set the module as not configured
 			xarGallery2Helper::isConfigured(false);
 		} else {
-			$data['status'] = xarML('The current configuration seems to be ok!');
-			// set the module as configured
-			xarGallery2Helper::isConfigured(true);
+			if (xarGallery2Helper::isConfigured()) {
+			  $data['status'] = xarML('The current configuration seems to be ok!');
+			} else {
+			  $data['status'] = xarML('The current paths seem to be correct. Hit save to synchronize users/groups.');
+			}
 		}
 		break;
 	case 'importexport':
-		list($ret, $error) = xarGallery2Helper::verifyConfig(true);
+		list($ret, $error) = xarGallery2Helper::verifyConfig(false);
 		if (!$ret) {
 			return;
 		} 
