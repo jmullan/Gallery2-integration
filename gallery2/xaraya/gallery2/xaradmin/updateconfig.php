@@ -110,7 +110,8 @@ function gallery2_admin_updateconfig()
 		// Import / Export user and groups
 		if (!xarGallery2Helper::g2xarUserGroupImportExport()) {
 		  return;
-		} 
+		}
+		xarGallery2Helper::done();
 		break;
 	}
 	

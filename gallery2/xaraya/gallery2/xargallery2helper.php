@@ -180,7 +180,6 @@ class xarGallery2Helper
 
   function g2done()
   {
-    return;
     // only end transactions if there's something initiated
     if (!xarGallery2Helper::isInitiated()) {
       return;
@@ -845,7 +844,7 @@ class xarGallery2Helper
     global $gallery;
     
     if (!$gallery->getConfig('mode.embed.only')) {
-      $msg = xarML('G2 is not in embedded mode! Please go to G2 and activate the CMS module.');
+      $msg = xarML("G2 is not in embedded mode! Please set gallery->setConfig('mode.embed.only', true); in config.php of G2.");
       if ($raiseexceptions) {
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       }
@@ -1157,6 +1156,7 @@ class xarGallery2Helper
 	} 
       } // end if ($pluginParameter == 'id.allUserGroup')
       
+      $ret = null; $g2role = null;
       // create extId, entityId map entry if not already existent 
       list($ret, $g2role) = GalleryCoreApi::loadEntityByExternalId($roleData['uid'], $entityType);
       if ($ret->isError()) {
@@ -1338,7 +1338,7 @@ class xarGallery2Helper
       }
       $g2Users[strtolower($g2UserName)] = array('user' => $g2User, 'memberships' => $g2MemberShips);
     }
-    
+
     // Load a list of all G2 pending users
     list($ret, $g2pendingusers) = xarGallery2Helper::g2getPendingUsers();
     if (!$ret) {
@@ -1589,7 +1589,6 @@ class xarGallery2Helper
 	}
       }
     }
-    
     /*
      * 5. delete G2 pending users
      */
