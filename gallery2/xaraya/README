@@ -1,5 +1,5 @@
 Author: Andy Staudacher, aka valiant in irc/forums, <ast@gmx.ch>
-Last changed: 2005.01.16
+Last changed: 2005.03.02
 
 Gallery2 - Xaraya integration
 ----------------------------
@@ -13,6 +13,12 @@ There are three parts involved:
     * xaraya - your standard xaraya installation.
     * G2 - a standard G2 installation.
     * xaraya gallery2 module - the wrapper module in xaraya. Keep it up to date when updating G2 and xaraya.
+
+
+Note
+-----
+Only the combination mysql/Xaraya/G2 is supported. A xaraya version that
+support postgres and is compatible with G2 is on the way.
 
 
 How to use it?
