@@ -1369,8 +1369,8 @@ class xarGallery2Helper
 	}
 	continue;
       }
-      // else: add this group to xaraya:
-      $ret = xarmodapifunc('roles','admin','addgroup', array('name' => $g2Group->getgroupname()));
+      // else: add this group to xaraya: gname and name, because there's a change from 0.9.11 to 0.9.12
+      $ret = xarmodapifunc('roles','admin','addgroup', array('gname' => $g2Group->getgroupname(), 'name' => $g2Group->getgroupname(),));
       if (!isset($ret) || !$ret) {
 	$msg = xarML("Could not create a xar role for a G2 group [#(1)].", $g2Group->getgroupname());
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
