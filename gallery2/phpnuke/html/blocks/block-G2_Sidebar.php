@@ -56,7 +56,7 @@ $Phpnuke2G2Lang = array(
 // -------------------------------------------------------------------
 
 
-global $prefix, $multilingual, $currentlang, $db,$g2bodyHtml;
+global $prefix, $multilingual, $currentlang, $db,$g2bodyHtml,$user_prefix,$user,$cookie;
   
   include("modules/gallery2/gallery2.cfg");
   
@@ -66,15 +66,27 @@ global $prefix, $multilingual, $currentlang, $db,$g2bodyHtml;
   	return;
   }
 
-require_once($g2embedparams[embedphpfile]."/"._G2_EMBED_PHP_FILE);
+	require_once($g2embedparams[embedphpfile]."/"._G2_EMBED_PHP_FILE);
 
-	$g2currentlang = $Phpnuke2G2Lang[$currentlang];
+	// get phpnuke user id	
+	cookiedecode($user);
+	$uname = $cookie[1];
+	$uid='';  
+	if (is_user($user)) 
+	{
+	    $row3 = $db->sql_fetchrow($db->sql_query("SELECT user_id FROM $user_prefix"._users." WHERE username='$uname'"));
+		$uid = intval($row3[user_id]);
+	}
+	
+	// get phpnuke user lang
+	$g2currentlang = $Phpnuke2G2Lang[$currentlang]; 
+	
 
 	$ret = GalleryEmbed::init(array(
        'embedUri' => $g2embedparams[embedUri],
        'relativeG2Path' => $g2embedparams[relativeG2Path],
        'loginRedirect' => $g2embedparams[loginRedirect],
-       'activeUserId' => $g2embedparams[activeUserId],
+       'activeUserId' => "$uid",
        'activeLanguage' =>$g2currentlang));
        
 		  	if ($g2mainparams[showSidebar]!="true")
@@ -100,16 +112,13 @@ require_once($g2embedparams[embedphpfile]."/"._G2_EMBED_PHP_FILE);
       exit; // uploads module does this too
     }
   
-	  if ($ret->isError()) 
+  	// TODO: Error message temporary removed to prevent notification for unmapped users
+	  /*if ($ret->isError()) 
 	  {
 	    echo $ret->getAsHtml();
-	  }
+	  }*/
 	  
 		$g2bodyHtml = $g2moddata['bodyHtml']; 
-
-		$content .= '<table border="0" cellpadding="0" cellspacing="0">';
-		$content .= $g2moddata['sidebarHtml']; 
-		$content .= '</table>';
-		
+		$content .= $g2moddata['sidebarHtml'];
 
 ?>

@@ -57,6 +57,16 @@ require_once("mainfile.php");
 $module_name = basename(dirname(__FILE__));
 get_lang($module_name);
 include("header.php");  
+
+global $db,$user_prefix;
+cookiedecode($user);
+$uname = $cookie[1];
+$uid='';  
+if (is_user($user)) 
+{
+    $row3 = $db->sql_fetchrow($db->sql_query("SELECT user_id FROM $user_prefix"._users." WHERE username='$uname'"));
+	$uid = intval($row3[user_id]);
+} 
   
   if ($g2bodyHtml==null)
   {
@@ -82,7 +92,7 @@ include("header.php");
 		           'embedUri' => $g2embedparams[embedUri],
 		           'relativeG2Path' => $g2embedparams[relativeG2Path],
 		           'loginRedirect' => $g2embedparams[loginRedirect],
-		           'activeUserId' => $g2embedparams[activeUserId],
+		           'activeUserId' => "$uid",
 		           'activeLanguage' =>$g2currentlang));
 
 		  	if ($g2mainparams[showSidebar]!="true")
@@ -106,10 +116,12 @@ include("header.php");
 		      exit; // uploads module does this too
 		    }
 		  
-			  if ($ret->isError()) 
+			  // TODO: Error message temporary removed to prevent notification for unmapped users 
+			    
+			  /*if ($ret->isError()) 
 			  {
 			    echo $ret->getAsHtml();
-			  }
+			  }*/
 			  
 				$g2bodyHtml=$g2moddata['bodyHtml'];
 		}

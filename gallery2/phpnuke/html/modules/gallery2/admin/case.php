@@ -30,6 +30,11 @@ switch($op) {
     case "gallery2_update_main":
     include("modules/$module_name/admin/index.php");
     break;
+    
+    case "gallery2_user_export":
+    include("modules/$module_name/admin/index.php");
+    break;
+    
 
 }
 
