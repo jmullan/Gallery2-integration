@@ -583,8 +583,8 @@ class xarGallery2Helper
     if (is_int($entityType)) {
       $entityType = $entityType == 0 ? 'GalleryUser' : 'GalleryGroup';
     }
-    require_once(xarModGetVar('gallery2','g2.includepath') . '/modules/core/classes/ExternalIdMap.class');
-    $ret = ExternalIdMap::addMapEntry(array('externalId' => $externalId, 'entityType' => $entityType, 'entityId' => $entityId));
+    $ret = GalleryEmbed::addExternalIdMapEntry($externalId, $entityId, $entityType);
+
     if ($ret->isError()) {
       $msg = xarML('Failed to create a extmap entry for role uid [#(1)] and entityId [#(2)], entityType [#(3)]. Here is the error message from G2: <br />
 				[#(4)]',$externalId, $entityId, $entityType, $ret->getAsHtml());
@@ -642,37 +642,24 @@ class xarGallery2Helper
    * @access public
    * @param none
    * @return array(bool success, array(entityId => array(externalId => integer,
-   *                             entityType => string, entityId => integer)),
-   *                             array(externalId => array(externalId => integer,
    *                             entityType => string, entityId => integer)))
    * @throws Systemexception if it failed
    */
-  function g2getallexternalIdmappings()
+  function g2getallexternalIdmappings($key)
   {
     // init G2 transaction, load G2 API, if not already done so
     if (!xarGallery2Helper::init(true)) {
-      return array(false,null, null);
+      return array(false,null);
     }		
-    global $gallery;
     
-    $query = 'SELECT [ExternalIdMap::entityId], [ExternalIdMap::externalId], [ExternalIdMap::entityType]
-		FROM [ExternalIdMap]';
-    
-    list ($ret, $results) = $gallery->search($query, array());
+    list($ret, $map) = GalleryEmbed::getExternalIdMap($key);
     if ($ret->isError()) {
       $msg = xarML('Failed to fetch a list of all extId maps fromG2. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return array(false, null, null); 
-    }
-    $mapsbyentityid = array();
-    $mapsbyexternal = array();
-    while ($result = $results->nextResult()) {
-      $entry = array('externalId' => $result[1], 'entityId' => $result[0], 'entityType' => $result[2]);
-      $mapsbyentityid[$result[0]] = $entry;
-      $mapsbyexternal[$result[1]] = $entry;
+      return array(false, null); 
     }
     
-    return array(true, $mapsbyentityid, $mapsbyexternal);	
+    return array(true, $map);	
   }
   
   /**
@@ -1355,7 +1342,7 @@ class xarGallery2Helper
     }
     
     // Load all existing xaraya <-> G2 mappings
-    list($ret, $mapsbyentityid, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings();
+    list($ret, $mapsbyentityid) = xarGallery2Helper::g2getallexternalIdmappings('entityId');
     if (!$ret) {
       return false;
     }
@@ -1406,7 +1393,7 @@ class xarGallery2Helper
     }
     
     // update map caches:
-    list($ret, $mapsbyentityid, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings();
+    list($ret, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings('externalId');
     if (!$ret) {
       return false;
     }
@@ -1439,7 +1426,7 @@ class xarGallery2Helper
     }
     
     // update map caches:
-    list($ret, $mapsbyentityid, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings();
+    list($ret, $mapsbyentityid) = xarGallery2Helper::g2getallexternalIdmappings('entityId');
     if (!$ret) {
       return false;
     }
@@ -1549,7 +1536,7 @@ class xarGallery2Helper
     
     
     // update map caches:
-    list($ret, $mapsbyentityid, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings();
+    list($ret, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings('externalId');
     if (!$ret) {
       return false;
     }
