@@ -45,9 +45,9 @@ function gallery2_init()
   // short url support
   xarModSetVar('gallery2', 'SupportShortURLs', 1);
   // minimum G2 version required
-  xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.8.8');
+  xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.2');
   // minimum xaraya core version
-  xarmodSetVar('gallery2', 'xar.minCoreVersion', '0.9.11'); // change to 0.9.11
+  xarmodSetVar('gallery2', 'xar.minCoreVersion', '0.9.11'); 
 
 
   // whether to display the sidebar menu within the module html 

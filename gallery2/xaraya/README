@@ -36,6 +36,9 @@ The next steps can only be performed in this exact order:
    2. Configure this xaraya gallery2 module.
    3. You're done! Now you should see the Gallery2 menu option in the user menu of xaraya.
 
+CAUTION: 
+G2 short urls are broken in xaraya/G2 since G2 beta 1. DON'T ACTIVATE THE G2 URL REWRITE MODULE! Hopefully, this can be fixed soon.
+
 
 Included Blocks
 --------------
@@ -116,5 +119,7 @@ The gallery2 module is not finished, yet:
     * Add the search hook.
     * Incorporate the G2 menu links in the xaraya menu.
     * Fix CSS interferences between G2 and xaraya
+    * Allow G2 short urls in embedded mode.
+    * Fix Login (cookie) problems when using G2 in standalone and embedded simultaneously.
 
 Extended information about this module can be found on the offical gallery homepage http://gallery.sf.net.

@@ -49,6 +49,7 @@
 				<li><xar:mlstring>Configure this xaraya gallery2 module.</xar:mlstring></li>
 				<li><xar:mlstring>You're done! Now you should see the Gallery2 menu option in the user menu of xaraya.</xar:mlstring></li>
             </ol>
+            <xar:mlstring>G2 short urls are broken in xaraya/G2 since G2 beta 1. <b>DON'T ACTIVATE THE G2 URL REWRITE MODULE!</b> Hopefully, this can be fixed soon.</xar:mlstring>
         </div>
         <br />
         <div class="xar-mod-title xar-norm-outline" style="margin-top: 1em; margin-left: 1em; margin-right: 1em; width: auto; border-style: none none dotted none;">
@@ -147,7 +148,11 @@
             </xar:mlstring>
             <ul>
                 <li><xar:mlstring>Add the search hook.</xar:mlstring></li>
-				<li><xar:mlstring>Incorporate the G2 menu links in the xaraya menu.</xar:mlstring></li>
+		<li><xar:mlstring>Incorporate the G2 menu links in the xaraya menu.</xar:mlstring></li>
+		<li><xar:mlstring>Fix CSS interferences between G2 and xaraya</xar:mlstring></li>
+		<li><xar:mlstring>Allow G2 short urls in embedded mode.</xar:mlstring></li>
+		<li><xar:mlstring>Fix Login (cookie) problems when using G2 in standalone and embedded simultaneously.</xar:mlstring></li>
+
             </ul>
         </div>
         <br />

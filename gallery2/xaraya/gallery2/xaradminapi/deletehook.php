@@ -73,49 +73,25 @@ function _gallery2_adminapi_deleterolehook($args)
   if (!isset($itemtype)) {
     $itemtype = 0;
   }
-  
-  $role = xarModAPIFunc('roles','user','get', array('uid' => $itemid, 'type' => $itemtype));
-  if (!isset($role['type']) || $role['uid'] != $itemid ) {
-    $role = xarModAPIFunc('roles','user','get', array('uid' => $itemid, 'type' => 1));
-  }
-  
+ 
   // Start G2 transaction
   if(!xarGallery2Helper::init()) {
     return $args['extrainfo'];
   }
   
-  // first check if it was a purge or delete by looking at soft information
-  // an empty xar_name and email indicate a purged role, else deleted
-  if (empty($role['name']) && empty($role['email'])) {
-    $mode = 'purge';
-  } else {
-    $mode = 'delete';
+  if ($itemtype == 1) { // it's a group
+    $ret = GalleryEmbed::deleteGroup($itemid);
+  } elseif ($itemtype == 0) {
+    // remove the user from G2
+    $ret = GalleryEmbed::deleteUser($itemid);
   }
-  
-  if ($mode == 'purge') {
-    if ($itemtype == 1) { // it's a group
-      $ret = GalleryEmbed::deleteGroup($itemid);
-    } elseif ($itemtype == 0) {
-      // remove the user from G2
-      $ret = GalleryEmbed::deleteUser($itemid);
-    }
-    if (!$ret->isSuccess()) {
-      $msg = xarML('Failed to delete (purge) G2 user/group with extId [#(1)]! Here is the error message from G2: <br /> [#(2)',
-		   $itemid, $ret->getAsHtml());
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return $args['extrainfo'];
-    }
-  } elseif ($mode == 'delete' && $itemtype == 0) { 
-    // change the G2 password to a random password, so that the
-    // user can't log in G2 standalone
-    // this leaves the possibility to recall the user in xaraya 
-    $ret = xarGallery2Helper::g2updateUser($role['uid'],
-					   array('cryptpass' => 'G' . rand(100000,999999) . '2'));
-    $msg = xarML('Failed to change G2 password to a random password during xaraya delete role process of role with extId [#(1)]!', $itemid);
+  if (!$ret->isSuccess()) {
+    $msg = xarML('Failed to delete G2 user/group with extId [#(1)]! Here is the error message from G2: <br /> [#(2)',
+		 $itemid, $ret->getAsHtml());
     xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
     return $args['extrainfo'];
   }
-  
+   
   // complete G2 transaction
   xarGallery2Helper::done();
   

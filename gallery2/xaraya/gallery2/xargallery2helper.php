@@ -843,12 +843,12 @@ class xarGallery2Helper
     // ok, G2 is installed, the path is correct, now check if G2 is in embedded mode
     global $gallery;
     
-    if (!$gallery->getConfig('mode.embed.only')) {
+    if (!xarGallery2Helper::isConfigured() && !$gallery->getConfig('mode.embed.only')) {
       $msg = xarML("G2 is not in embedded mode! Please set gallery->setConfig('mode.embed.only', true); in config.php of G2.");
       if ($raiseexceptions) {
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       }
-      array(false, $msg);
+      return array(false, $msg);
     }
 
     /* Get the current G2 core version */
@@ -858,7 +858,7 @@ class xarGallery2Helper
       if ($raiseexceptions) {
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       }
-      array(false, $msg);
+      return array(false, $msg);
     }
 
     $g2Version = split('\.', $g2VersionString);
@@ -886,7 +886,12 @@ class xarGallery2Helper
       xarModSetVar('gallery2','g2.loginredirect',$g2loginredirect);
       // the G2 basefile
       xarModSetVar('gallery2','g2.basefile',$g2basefile);
-      
+
+ /*
+  G2 short url support changed from PathInfo (compatible) to mod_rewrite.
+  For now, G2 short urls can not be supported in G2 embedded. We have to
+  Figure out a way to bring back short urls to embedded G2.
+     
       // set short urls in G2 on/off
       if (isset($shortUrlActive) && (is_bool($shortUrlActive) || is_int($shortUrlActive))) {
 	$pluginParameter = 'misc.useShortUrls';
@@ -901,7 +906,7 @@ class xarGallery2Helper
 	  return array(false, $msg);
 	}
       }
-      
+*/      
       // Enable gallery2 hooks for roles
       if (xarModIsAvailable('roles')) {
 	xarModAPIFunc('modules','admin','enablehooks',
