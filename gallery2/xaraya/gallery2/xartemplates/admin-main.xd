@@ -97,9 +97,9 @@
 				If there are conflicts, that is, if there exist xaraya roles and G2 users / groups with the
 				same unique username before the initial synchronization, we update the G2 user data with the data we get from xaraya.
 				<br /><b>NOTE: If you want some specific users / groups mapped, make sure they have the same unique username in xaraya and G2 before you configure this module!</b>
+				<br /><b>NOTE: All users have to member of the Users group in G2, but admins must not be members of the Users group in xaraya. We take care of this, so don't wonder if you see this "inconsistency" when you take a look at the databases.</b>
 				<br />We also drop pending users from G2. If they haven't yet registered with xaraya, the eventually will notice the change and sign up. :)
-			        <br />All subsequent synchronizations (login, logout, create, update, delete role) are based
-				on a xaraya uid to G2 entityId mapping.
+			        <br />All subsequent synchronizations (login, logout, create, update, delete role) are based on a xaraya uid to G2 entityId mapping.
 			</xar:mlstring>
         </div>
 		<div style="margin-left: 1em; margin-right: 1em; text-align:left;">
@@ -134,7 +134,6 @@
             <ul>
                <li><xar:mlstring>roles->Purge doesn't call the item delete hooks, so we can't delete users/groups in G2
                in this case. I raised a bug and it will be fixed soon.</xar:mlstring></li>
-		<li><xar:mlstring>imageblock returns an error if you choose a album imageblock and there's no album at all.</xar:mlstring></li>
             </ul>
         </div>
         <br />
