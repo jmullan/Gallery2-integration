@@ -1,0 +1,114 @@
+Author: Andy Staudacher, aka valiant in irc/forums, <ast@gmx.ch>
+Last changed: 2005.01.16
+
+Gallery2 - Xaraya integration
+----------------------------
+
+What is it?
+----------
+
+The Gallery2 module is a wrapper for the open source gallery software G2. The main target of this module is to keep the code of xaraya and G2 separate while integrating the user interface and functionality as far as possible. If there's a new version of xaraya or G2, just upgrade the software as if it was a standalone product. Sometimes the API of G2 or xaraya may change, then we will have to rewrite the galllery2 module and you'll have to update your version of the gallery2 module.
+There are three parts involved:
+
+    * xaraya - your standard xaraya installation.
+    * G2 - a standard G2 installation.
+    * xaraya gallery2 module - the wrapper module in xaraya. Keep it up to date when updating G2 and xaraya.
+
+
+How to use it?
+-------------
+
+Before you can use G2 in your xaraya installation, you'll have to configure first G2, then xaraya:
+
+    * Install xaraya. The minimum version required is 0.9.11.
+    * Install G2 somewhere on your website. Get G2 from the offical Gallery website http://gallery.sf.net. It doesn't matter where you install G2 on your website, you probably want to install it on the top level, i.e. /path/to/documentRoot/gallery/ or as a subdirectory in your gallery2 module, i.e. /path/to/documentRoot/modules/gallery2/g2/ assuming xaraya was installed directly in the DocumentRoot folder. Go through the standard install wizard of G2 and finish all steps.
+    * Install this gallery2 module in xaraya in a directory called modules/gallery2
+
+The next steps can only be performed in this exact order:
+
+   1. In the config.php of G2, set $gallery->setConfig('mode.embed.only', true); This will disable G2 standalone mode. When you're finished with the configuration process of this xaraya module, you can optionally re-enable G2 standalone mode by setting $gallery->setConfig('mode.embed.only', false);
+   2. Configure this xaraya gallery2 module.
+   3. You're done! Now you should see the Gallery2 menu option in the user menu of xaraya.
+
+
+Included Blocks
+--------------
+
+The gallery2 Module provides two blocks.
+1. sidebar: the Gallery2 Sidebar block is a try to give you more area (width) for content (thumbnails, image detail view). You can disable the sidebar menu in the config and instantiate the sidebar block and move the sidebar menu where you want to.
+2. Image block: You can instantiate as many image blocks as you want and configure each block instance separately. i.e. create a randomImage image block and a most recent image block, show the title and the date, or just the owner of the item.
+
+Included Hooks
+-------------
+
+The gallery2 module provides create, update, delete API hooks and a search GUI hook. The API hooks are only provided for the roles module as they are used for the user/group management synchronization with G2. All hooks should be activated, always. And thus, they are activated automatically during gallery2 module installation. If these hooks are not active, to activate them, go to Admin panel -> Modules -> Configure Hooks and click on the gallery2 link. Select the roles module to enable the user/group synchronization functionality .
+
+How does it work?
+----------------
+
+Session management:
+------------------
+Both, xaraya and G2, still have their own session management and cookies. The only difference is that G2 checks if there is already a xaraya session before it creates a session for the same user.
+
+User-/Group management:
+----------------------
+Both applications still have their own user-/group management. But G2 is not allowed to initiate a change. Everytime you create, update or delete a role (user/group) in xaraya, the gallery2 module instantaneously creates, updates or deletes the user/group in G2. Same for group memberships.
+If you delete a user in xaraya, the G2 user receives a random password. That leaves the possibility to recall this role in xaraya. If you purge the role, it gets deleted in G2 too.
+Initial user-/group synchronization: The initial user and group synchronization, that is the import of G2 users/groups into xaraya and the export/update of xaraya roles to G2, is based on the unique role name / G2 userName / groupName. There are 3 special groups and 1 special user that are mapped internally:
+
+    * xaraya: 'Everybody' is mapped to G2: 'Everybody' (default name)
+    * xaraya: 'Administrators' is mapped to G2: 'Site Admins' (default name)
+    * xaraya: 'Users' is mapped to G2: '?' (default name)
+    * xaraya: 'anonymous' is mapped to G2: 'guest' (default name)
+    * All other users/groups, including the admins, are mapped based on their unique username.
+
+The import / export of G2 users/groups and xaraya roles happens right after you hit "Update Config" in the Modify Config view, but only if the config parameters you supplied are valid.
+If there are conflicts, that is, if there exist xaraya roles and G2 users / groups with the same unique username before the initial synchronization, we update the G2 user data with the data we get from xaraya.
+NOTE: If you want some specific users / groups mapped, make sure they have the same unique username in xaraya and G2 before you configure this module!
+NOTE: All users have to member of the Users group in G2, but admins must not be members of the Users group in xaraya. We take care of this, so don't wonder if you see this "inconsistency" when you take a look at the databases.
+We also drop pending users from G2. If they haven't yet registered with xaraya, the eventually will notice the change and sign up. :)
+All subsequent synchronizations (login, logout, create, update, delete role) are based on a xaraya uid to G2 entityId mapping.
+
+Permissions/Privileges:
+----------------------
+You manage G2 permissions in G2 and not with the roles / privileges modules of xaraya. But all xaraya groups exist in G2 too. So just assign permissions to the default user group / admin group / everybody group in G2 and all registered users / administrators / everybody will have these permissions.
+
+Visual integration:
+-------------------
+No HTML frames are used. G2 generates the resulting HTML without the ...section and the and tags and returns it to our wrapper module. Then we put everything into an almost empty xaraya template. G2 returns the javascript, css and the page title too and we include everything in the created xaraya page.
+If you want to customize the look, you'll have to customize the G2 templates, themes and stylesheets as we keep both templating engines separate. G2 uses smarty as its templating engine, so perhaps you already know everything to create your very own look and feel of G2.
+
+Menu links:
+-----------
+We will dynamically send all available menu links from G2 to xaraya, the goal is to have only the one and only xaraya menu.
+
+Search hook:
+------------
+We will code a search hook therewith you can search for G2 items, comments, ... from xaraya.
+
+URLs, direct and indirect requests:
+----------------------------------
+We configure G2 to run all requests through xaraya. The xaraya core sees that the request is intended for the gallery2 module and the gallery2 module passes the request to G2 itself.
+The only exception are the download links/requests. G2 features an image firewall. Unlike ordinary gallery scripts, there's no way you can download any images from G2 than through the application. The developers of G2 spent a lot of effort in trying to reduce the time needed to process download requests. If all these download requests would run through the xaraya core before G2 received them, it'd be bloody slow. That's why all download links/requests go directly to G2, bypassing xaraya.
+
+Language Settings:
+------------------
+ xaraya and G2 manage language settings the same way. There's a site wide language default, a user language setting and a language setting per session. A base module updateconfig hook synchronizes the site default language with G2 and on each request we hand over the current language setting of the active xaraya user to G2. If G2 has the language lang_COUNTRY installed, it sets the language accordingly, if not, it tries the fallback lang_ANYOTHERCOUNTRY, if that fails, it uses the old language setting.
+
+Known Bugs
+----------
+
+Because of the dependencies on the changes in the roles module, there are currently some bugs:
+
+    * roles->Purge doesn't call the item delete hooks, so we can't delete users/groups in G2 in this case. I raised a bug and it will be fixed soon.
+
+
+TODO List
+
+The gallery2 module is not finished, yet:
+
+    * Add the search hook.
+    * Incorporate the G2 menu links in the xaraya menu.
+    * Fix CSS interferences between G2 and xaraya
+
+Extended information about this module can be found on the offical gallery homepage http://gallery.sf.net.
