@@ -43,33 +43,6 @@ Just upload each folder to those matching pour PhpNuke CMS installation.
 In most case (depending of your installation), just copy the html folder to the root of your phpnuke installation.
 
 
-if you're not using PhpNuke7.6:
--------------------------------
-
-Open an edit the header.php file:
-
-Just before le line: echo "\n\n\n</head>\n\n"; 
-Add this:
-		// ------ gallery 2 header addition ------
-		echo '<style type="text/css" media="all">@import url(http://localhost/gallery2/templates/layout.css);</style>';
-		echo '<style type="text/css" media="all">@import url(http://localhost/gallery2/themes/matrix/theme.css);</style>';
-
-
-if you're using PhpNuke7.6:
----------------------------
-
-Open or create includes/custom_files/custom_head.php
-And add this:
-		
-		<style type="text/css" media="all">@import url(http://localhost/gallery2/templates/layout.css);</style>
-		<style type="text/css" media="all">@import url(http://localhost/gallery2/themes/matrix/theme.css);</style>
-
-
-
-The layout and css addition is static for now, and do not allow customisation.
-This is just for testing purpose, it should evolve soon !
-
-
 --------------------
 Module Configuration
 --------------------
