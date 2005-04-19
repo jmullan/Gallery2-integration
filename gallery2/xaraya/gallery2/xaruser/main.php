@@ -91,7 +91,14 @@ function gallery2_user_main()
     /* Add G2 javascript to template */
     if (!empty($javascript)) {
       foreach ($javascript as $script) {
-	xarTplAddJavaScript('head', 'code', $script);
+	  if(preg_match("|<script(?:\s[^>]*)?\ssrc=[\"\'](.+)[\"\'](?:\s[^>]*)?>.*</script>|Usi",
+			 $script , $regs)) {
+	      xarTplAddJavaScript('head', 'src', $regs[1]);
+	  } else {
+	      preg_match("|<script(?:\s[^>]*)?>(.+)</script>|Usi",
+			 $script, $regs);
+	      xarTplAddJavaScript('head', 'code', $regs[1]);
+	  }
       }
     }
 
@@ -102,7 +109,8 @@ function gallery2_user_main()
     // xarTplAddStyleLink('gallery2', $styleName, $themeFolder='');
     // dirty hack:
     if (!empty($css)) {
-      foreach ($css as $style) {
+      
+      foreach (array_reverse($css) as $style) {
 	$GLOBALS['xarTpl_additionalStyles'] =  $style .'
 	'. $GLOBALS['xarTpl_additionalStyles'];
       }

@@ -1,3 +1,9 @@
+Version 0.6.2 - 2005/04/20
+----------------------------------
+- Reflect the GalleryEmbed::parseHead change for javascript
+- Reverse the order of the css stylesheets (it was wrong before).
+- Announcement: postgresql G2/xaraya will be supported in xaraya 0.9.14
+
 Version 0.6.1 - 2005/03/21
 ----------------------------------
 - Purge/Recall/Delete role in xaraya are now synchronized to G2 thanks to a

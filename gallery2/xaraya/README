@@ -18,7 +18,7 @@ There are three parts involved:
 Note
 -----
 Only the combination mysql/Xaraya/G2 is supported. A xaraya version that
-support postgres and is compatible with G2 is on the way.
+support postgres and is compatible with G2 is on the way (xaraya 0.9.14).
 
 
 How to use it?
