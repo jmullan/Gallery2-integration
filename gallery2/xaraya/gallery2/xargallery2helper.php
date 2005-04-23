@@ -1514,11 +1514,12 @@ class xarGallery2Helper
 				     'realname' => $g2User->getfullName(), 'email' => $userEmail,
 				     'cryptpass' => $g2User->gethashedPassword(), 'date' => $g2User->getcreationTimestamp(),
 				     'state' => ROLES_STATE_ACTIVE, 'valcode' => xarModAPIFunc('roles', 'user', 'makepass')));
-	  if (!isset($uid) || !is_int($uid) || $uid <= 1) {
+	  if (!isset($uid) || !is_int(intval($uid)) || intval($uid) <= 1) {
 	    $msg = xarML("Could not create a xar role for a G2 user '$g2UserName'.");
 	    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
 	    return false;
 	  }
+	  $uid = intval($uid);
 	} else {
 	  // get the $uid of the existing xar role
 	  $uid = $xarUsers[strtolower($g2UserName)]['uid'];
