@@ -167,6 +167,9 @@ class xarGallery2Helper
    * complete the G2 transaction
    * Wrapper function to ease the done call
    * and the error handling
+   * Previously, done() did register a shutdown function g2done(), which did
+   * the actual GalleryEmbed::done(). But these led to nested transactions with
+   * nexted COMMIT; statements (xaraya/G2) and it didn't work (postgres).
    *
    * @author Andy Staudacher
    * @access public
@@ -176,24 +179,22 @@ class xarGallery2Helper
    */
   function done()
   { 
-    register_shutdown_function(array('xarGallery2Helper', 'g2done'));
-  }
+    // don't do it indirectly via a shutdownfunction. but keep the code for now
+    // register_shutdown_function(array('xarGallery2Helper', 'g2done'));
 
-  function g2done()
-  {
     // only end transactions if there's something initiated
     if (!xarGallery2Helper::isInitiated()) {
-      return;
+      return true;
     }
     $ret = GalleryEmbed::done();
     if (!$ret->isSuccess()) {
       $msg = xarML('Could not complete the G2 transaction. Here is the error message from G2: <br /> [#(1)]', 
 		   $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return;
+      return false;
     }
     xarGallery2Helper::isInitiated(false);
-    return;
+    return true;
   }
   
   /**
@@ -1191,14 +1192,14 @@ class xarGallery2Helper
       // update user/group data: switch user / group
       if ($pluginParameter != 'id.anonymousUser') { // group
 	if (!xarGallery2Helper::g2updateGroup($roleData['uid'], $roleData)) {
-	  $msg = xarML('Failed to update special G2 group by extId [#(1)]. Here is the error message from G2: <br /> [#(2)]', $roleData['uid'],$ret->getAsHtml());
+	  $msg = xarML('Failed to update special G2 group by extId [#(1)].', $roleData['uid']);
 	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
 	  return false;
 	}
       } else { // user (anonymous user)
 	$msg = "muh";
 	if (!xarGallery2Helper::g2updateUser($roleData['uid'], $roleData)) {
-	  $msg = xarML('Failed to update special G2 user by extId [#(1)]. Here is the error message from G2: <br /> [#(2)]',$roleData['uid'], $ret->getAsHtml());
+	  $msg = xarML('Failed to update special G2 user by extId [#(1)].',$roleData['uid']);
 	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
 	  return false;
 	}
@@ -1446,7 +1447,7 @@ class xarGallery2Helper
 	return false;
       }
       // add the map entry to the G2 externalId, entityId table
-      if (!xarGallery2Helper::g2addexternalMapEntry($newRole['uid'], $g2Group->getgroupname(), 1)) {
+      if (!xarGallery2Helper::g2addexternalMapEntry($newRole['uid'], $g2Group->getId(), 1)) {
 	return false;
       }
     }

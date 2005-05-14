@@ -14,7 +14,7 @@
  */
 $modversion['name']           = 'Gallery2';
 $modversion['id']             = '35';
-$modversion['version']        = '0.6.2';
+$modversion['version']        = '0.6.3';
 $modversion['description']    = 'G2 integration module';
 $modversion['credits']        = '';
 $modversion['help']           = 'http://gallery.sourceforge.net';

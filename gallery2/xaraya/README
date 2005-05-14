@@ -17,8 +17,7 @@ There are three parts involved:
 
 Note
 -----
-Only the combination mysql/Xaraya/G2 is supported. A xaraya version that
-support postgres and is compatible with G2 is on the way (xaraya 0.9.14).
+For G2 0.9.16+ and xaraya 1.0 rc2+, any database combinations of (G2,xaraya) in {(mysql,mysql), (mysql,postgres), (postgres,postgres), (postgres,mysql)} is supported. 
 
 
 How to use it?
