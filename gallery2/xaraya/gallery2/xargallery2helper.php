@@ -59,19 +59,19 @@ class xarGallery2Helper
   function isConfigured($value = null)
   {
     static $configured;
-		if (isset($value) && (is_bool($value) || is_int($value))) {
-		  xarModSetVar('gallery2','configured', (int)$value);
-		  $configured = $value;
-		}
-		if (!isset($configured)) {
-		  $configured = xarModGetVar('gallery2','configured');
-		  if (!isset($configured) || !$configured) {
-		    $configured = false;
-		  } else {
-		    $configured = true;
-		  }
-		}
-		return $configured;
+    if (isset($value) && (is_bool($value) || is_int($value))) {
+	xarModSetVar('gallery2','configured', (int)$value);
+	$configured = $value;
+    }
+    if (!isset($configured)) {
+	$configured = xarModGetVar('gallery2','configured');
+	if (!isset($configured) || !$configured) {
+	    $configured = false;
+	} else {
+	    $configured = true;
+	}
+    }
+    return $configured;
   }
   
   /**
@@ -124,24 +124,28 @@ class xarGallery2Helper
     $g2LangCode = null; $uid = null;
     // only do the whole uid / language stuff if told so
     if ($initAsUser) {
-      $xarLangCode = xarMLSGetCurrentLocale();
-      $uid = xarUserGetVar('uid');
-      if ($uid == _XAR_ID_UNREGISTERED) {
-	$xarDefaultLangCode = xarConfigGetVar('Site.MLS.DefaultLocale'); 
-	if ($xarDefaultLangCode == $xarLangCode) {
-	  $xarLangCode = null;
+	// if anonymous user, set g2 activeUser to null
+	// if language code = default, set it to null for g2
+	// the language can only be different from default, if the user 
+	// uses a different language for this session only
+	$xarLangCode = xarMLSGetCurrentLocale();
+	$uid = xarUserGetVar('uid');
+	if ($uid == _XAR_ID_UNREGISTERED) {
+	    $xarDefaultLangCode = xarConfigGetVar('Site.MLS.DefaultLocale'); 
+	    if ($xarDefaultLangCode == $xarLangCode) {
+		$xarLangCode = null;
+	    }
+	    $uid = '';
+	} else { // non anonymous, registered user
+	    $xarDefaultLangCode = xarUserGetVar('locale');
+	    if ($xarDefaultLangCode == $xarLangCode) {
+		$xarLangCode == null;
+	    }
 	}
-	$uid = '';
-      } else { // non anonymous, registered user
-	$xarDefaultLangCode = xarUserGetVar('locale');
-	if ($xarDefaultLangCode == $xarLangCode) {
-	  $xarLangCode == null;
-	}
-      }
-      // translate language code to G2 langCode format 
-      if (isset($xarLangCode) && !empty($xarLangCode)) {
-	$g2LangCode = preg_replace('|(\..*)?$|', '', $xarLangCode);
-      } 
+	// translate language code to G2 langCode format 
+	if (isset($xarLangCode) && !empty($xarLangCode)) {
+	    $g2LangCode = preg_replace('|(\..*)?$|', '', $xarLangCode);
+	} 
     }
 
     // initiate G2 
@@ -193,7 +197,6 @@ class xarGallery2Helper
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       return false;
     }
-    xarGallery2Helper::isInitiated(false);
     return true;
   }
   
@@ -837,6 +840,7 @@ class xarGallery2Helper
 
     require_once($g2IncludePath . 'embed.php');
     $ret = GalleryEmbed::init( array('embedUri' => $g2basefile,
+				     'embedPath' => xarServerGetBaseURI(),
 				     'relativeG2Path' => $g2RelativeUrl,
 				     'loginRedirect' => $g2loginredirect));
     if (!$ret->isSuccess()) {

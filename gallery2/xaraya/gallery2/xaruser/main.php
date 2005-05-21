@@ -1,7 +1,7 @@
 <?php
 
-
-// don't load the xarGallery2Helper class, too much code to parse (performance)
+// Load the xarGallery2Helper class
+include_once(dirname(__FILE__) .'/../xargallery2helper.php');
 
 /**
  * The standard gallery2 page
@@ -15,44 +15,16 @@ function gallery2_user_main()
     if (!xarSecurityCheck('ReadGallery2')) return;
     $data = array();
 
-    if (!xarModGetVar('gallery2','configured')) {
-      $data['g2modhtml'] = xarML('The module has not yet been configured.');
-      return $data;
+    // first check if the module has been configured
+    if(!xarGallery2Helper::isConfigured()) {
+	$data['g2modhtml'] = xarML('The module has not yet been configured.');
+	return $data;
     }
-    require_once(xarModGetVar('gallery2','g2.includepath') . 'embed.php');
-    
-    // if anonymous user, set g2 activeUser to null
-    // if language code = default, set it to null for g2
-    // the language can only be different from default, if the user 
-    // uses a different language for this session only
-    $xarLangCode = xarMLSGetCurrentLocale();
-    $uid = xarUserGetVar('uid'); $g2LangCode = null;
-    if ($uid == _XAR_ID_UNREGISTERED) {
-      $xarDefaultLangCode = xarConfigGetVar('Site.MLS.DefaultLocale'); 
-      if ($xarDefaultLangCode == $xarLangCode) {
-	$xarLangCode = null;
-      }
-      $uid = '';
-    } else { // non anonymous, registered user
-      $xarDefaultLangCode = xarUserGetVar('locale');
-      if ($xarDefaultLangCode == $xarLangCode) {
-	$xarLangCode == null;
-      }
-    }
-    // translate language code to G2 langCode format 
-    if (isset($xarLangCode) && !empty($xarLangCode)) {
-      $g2LangCode = preg_replace('|(\..*)?$|', '', $xarLangCode);
-    } 
-
-    // initiate G2 
-    $ret = GalleryEmbed::init(array('embedUri' => xarModGetVar('gallery2','g2.basefile'),
-				    'embedPath' => xarServerGetBaseURI(),
-				    'relativeG2Path' => xarModGetVar('gallery2','g2.relativeurl'),
-				    'loginRedirect' => xarModGetVar('gallery2','g2.loginredirect'),
-				    'activeUserId' => $uid, 'activeLanguage' => $g2LangCode));
-    if (!$ret->isSuccess()) {
-      $data['g2modhtml'] = $ret->getAsHtml();
-      return $data;
+  
+    // init G2
+    if (!xarGallery2Helper::init(false, true)) {   
+	$data['g2modhtml'] = 'G2 returned an error on the init call.';
+	return $data;
     }
 
     // user interface: disable sidebar in G2 and get it as separate HTML to put it into a xaraya block

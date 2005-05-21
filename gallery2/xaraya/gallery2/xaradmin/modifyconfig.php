@@ -45,12 +45,14 @@ function gallery2_admin_modifyconfig()
 			  $data['status'] = xarML('The current paths seem to be correct. Hit save to synchronize users/groups.');
 			}
 		}
+		xarGallery2Helper::done();
 		break;
 	case 'importexport':
 		list($ret, $error) = xarGallery2Helper::verifyConfig(false);
 		if (!$ret) {
 			return;
-		} 
+		}
+		xarGallery2Helper::done();
 		break;
 	}
 	
