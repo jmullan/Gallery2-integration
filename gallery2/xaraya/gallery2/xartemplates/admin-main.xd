@@ -47,9 +47,9 @@
 				configuration process of this xaraya module, you can optionally re-enable G2 standalone mode by setting
 				$gallery->setConfig('mode.embed.only', false);</xar:mlstring></li>
 				<li><xar:mlstring>Configure this xaraya gallery2 module.</xar:mlstring></li>
-				<li><xar:mlstring>You're done! Now you should see the Gallery2 menu option in the user menu of xaraya.</xar:mlstring></li>
+				<li><xar:mlstring>G2 embedded in xaraya works at this point.</xar:mlstring></li>
+				<li><xar:mlstring>If you use the G2 rewrite module (for short urls), you'll have to configure it in the embedded G2 too. Go to G2 site admin -> url rewrite, configure it in the setup tab. Then hit save in the Rules tab. Finally, you have to uncomment and configure the $systemConfiguration['BaseURI'] line in xaraya/var/config.system.php.</xar:mlstring></li>
             </ol>
-            <xar:mlstring>G2 short urls are broken in xaraya/G2 since G2 beta 1. <b>DON'T ACTIVATE THE G2 URL REWRITE MODULE!</b> Hopefully, this can be fixed soon.</xar:mlstring>
         </div>
         <br />
         <div class="xar-mod-title xar-norm-outline" style="margin-top: 1em; margin-left: 1em; margin-right: 1em; width: auto; border-style: none none dotted none;">
@@ -99,7 +99,6 @@
 				same unique username before the initial synchronization, we update the G2 user data with the data we get from xaraya.
 				<br /><b>NOTE: If you want some specific users / groups mapped, make sure they have the same unique username in xaraya and G2 before you configure this module!</b>
 				<br /><b>NOTE: All users have to member of the Users group in G2, but admins must not be members of the Users group in xaraya. We take care of this, so don't wonder if you see this "inconsistency" when you take a look at the databases.</b>
-				<br />We also drop pending users from G2. If they haven't yet registered with xaraya, the eventually will notice the change and sign up. :)
 			        <br />All subsequent synchronizations (login, logout, create, update, delete role) are based on a xaraya uid to G2 entityId mapping.
 			</xar:mlstring>
         </div>
@@ -129,12 +128,7 @@
 		</div>
 		<br />
         <div style="margin-left: 1em; margin-right: 1em; text-align:left;">
-            <xar:mlstring>
-                Because of the dependencies on the changes in the roles module, there are currently some bugs: 
-            </xar:mlstring>
-            <ul>
-               <li><xar:mlstring>Doesn't work with URL REWRITE G2 module activated.</xar:mlstring></li>
-            </ul>
+            <xar:mlstring>none</xar:mlstring>
         </div>
         <br />
         <div class="xar-mod-title xar-norm-outline" style="margin-top: 1em; margin-left: 1em; margin-right: 1em; width: auto; border-style: none none dotted none;">
@@ -149,9 +143,7 @@
                 <li><xar:mlstring>Add the search hook.</xar:mlstring></li>
 		<li><xar:mlstring>Incorporate the G2 menu links in the xaraya menu.</xar:mlstring></li>
 		<li><xar:mlstring>Fix CSS interferences between G2 and xaraya</xar:mlstring></li>
-		<li><xar:mlstring>Allow G2 short urls in embedded mode.</xar:mlstring></li>
-		<li><xar:mlstring>Fix Login (cookie) problems when using G2 in standalone and embedded simultaneously.</xar:mlstring></li>
-
+		<li><xar:mlstring>Drop pending users during (initial) user synchronization.</xar:mlstring></li>
             </ul>
         </div>
         <br />

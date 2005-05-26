@@ -45,9 +45,9 @@ function gallery2_init()
   // short url support
   xarModSetVar('gallery2', 'SupportShortURLs', 1);
   // minimum G2 version required
-  xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.16');
+  xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.20');
   // minimum xaraya core version
-  xarmodSetVar('gallery2', 'xar.minCoreVersion', '0.9.11'); 
+  xarmodSetVar('gallery2', 'xar.minCoreVersion', '1.0.0'); 
 
 
   // whether to display the sidebar menu within the module html 
@@ -139,6 +139,9 @@ function gallery2_upgrade($oldversion)
       // Register search hook
       // do something in here
       break;
+    default:
+	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.20');
+	break;
     }
     return true;
 }

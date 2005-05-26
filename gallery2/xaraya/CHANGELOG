@@ -1,3 +1,9 @@
+Version 0.6.4 - 2005/05/26
+----------------------------------
+- disabled pending user deletion in user synchronization code (doesn't work in 
+  multisite G2 installs)
+- tested G2 multisite+rewrite+embed+java-tools, it works all at once!
+
 2005/05/21
 ----------------------------------
 - Small internal change, (init/done calls)

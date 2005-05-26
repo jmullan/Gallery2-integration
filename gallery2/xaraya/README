@@ -34,9 +34,7 @@ The next steps can only be performed in this exact order:
    1. In the config.php of G2, set $gallery->setConfig('mode.embed.only', true); This will disable G2 standalone mode. When you're finished with the configuration process of this xaraya module, you can optionally re-enable G2 standalone mode by setting $gallery->setConfig('mode.embed.only', false);
    2. Configure this xaraya gallery2 module.
    3. You're done! Now you should see the Gallery2 menu option in the user menu of xaraya.
-
-CAUTION: 
-G2 short urls are broken in xaraya/G2 since G2 beta 1. DON'T ACTIVATE THE G2 URL REWRITE MODULE! Hopefully, this can be fixed soon.
+   4. If you use the G2 rewrite module, you have to configure it embedded in G2 too. Go to G2 site admin -> url rewrite in the setup tab. Then hit save in the Rules tab. Finally, you have to uncomment and configure the $systemConfiguration['BaseURI'] line in xaraya/var/config.system.php.
 
 
 Included Blocks
@@ -106,9 +104,7 @@ Language Settings:
 Known Bugs
 ----------
 
-Because of the dependencies on the changes in the roles module, there are currently some bugs:
-
-    * Doesn't work with URL REWRITE module activated in G2.
+none
 
 TODO List
 
@@ -117,8 +113,6 @@ The gallery2 module is not finished, yet:
     * Add the search hook.
     * Incorporate the G2 menu links in the xaraya menu.
     * Fix CSS interferences between G2 and xaraya
-    * Allow G2 short urls in embedded mode.
-    * Fix Login (cookie) problems when using G2 in standalone and embedded simultaneously.
 
 Extended information about this module can be found on the offical gallery homepage http://gallery.sf.net.
 

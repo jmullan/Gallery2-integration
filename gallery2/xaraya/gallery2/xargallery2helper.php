@@ -1400,10 +1400,14 @@ class xarGallery2Helper
     }
 
     // Load a list of all G2 pending users
+    /*
+     * deactivate pending user stuff. it doesn't work in multisite + embedded g2.
+
     list($ret, $g2pendingusers) = xarGallery2Helper::g2getPendingUsers();
     if (!$ret) {
       return false;
     }
+    */
     
     // Load all existing xaraya <-> G2 mappings
     list($ret, $mapsbyentityid) = xarGallery2Helper::g2getallexternalIdmappings('entityId');
@@ -1653,9 +1657,14 @@ class xarGallery2Helper
     /*
      * 5. delete G2 pending users
      */
+    /*
+     * doesn't work in multisite + embedded g2. therefore remove it from the xaraya integration
+     * we should add it again in the centralized g2 user synchronization
+
     if (!xarGallery2Helper::g2deletePendingUsers()) {
       return false;
     }
+    */
     
     // The import/export was successful
     // Enable gallery2 hooks for roles again
