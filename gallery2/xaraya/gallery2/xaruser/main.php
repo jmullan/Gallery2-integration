@@ -22,7 +22,7 @@ function gallery2_user_main()
     }
   
     // init G2
-    if (!xarGallery2Helper::init(false, true)) {   
+    if (!xarGallery2Helper::init(false, true, false)) {   
 	$data['g2modhtml'] = 'G2 returned an error on the init call.';
 	return $data;
     }
