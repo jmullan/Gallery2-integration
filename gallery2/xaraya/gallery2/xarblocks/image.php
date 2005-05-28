@@ -51,7 +51,7 @@ function gallery2_imageblock_display($blockinfo)
   }
   
   // init G2 if not already done so
-  if (!xarGallery2Helper::init(false, true)) {
+  if (!xarGallery2Helper::init(false, true, false)) {
     return;
   }
 
