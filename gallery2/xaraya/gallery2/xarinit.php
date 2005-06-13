@@ -45,7 +45,7 @@ function gallery2_init()
   // short url support
   xarModSetVar('gallery2', 'SupportShortURLs', 1);
   // minimum G2 version required
-  xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.20');
+  xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
   // minimum xaraya core version
   xarmodSetVar('gallery2', 'xar.minCoreVersion', '1.0.0'); 
 

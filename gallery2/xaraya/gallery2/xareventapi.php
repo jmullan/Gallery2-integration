@@ -21,7 +21,7 @@ include_once(dirname(__FILE__) .'/xargallery2helper.php');
  * 
  * We choose another Session synchronization with xaraya
  * instead of event synchronization, we give the
- * usernamer to G2 on each request. 
+ * username to G2 on each request. 
  * For that reaaon this function is outcommented
  *
  * @author Alan Harder <alan.harder@sun.com> / Andy Staudacher
@@ -59,7 +59,7 @@ function gallery2_eventapi_OnUserLogout($value) {
 		return true;
     }
     require_once(xarModGetVar('gallery2','g2.includepath') . 'embed.php');
-	$ret = GalleryEmbed::logout();
+    $ret = GalleryEmbed::logout(array('embedPath' => xarServerGetBaseURI()));
     return true;
 }
 

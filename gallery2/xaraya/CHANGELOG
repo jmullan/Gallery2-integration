@@ -1,3 +1,7 @@
+Version 0.6.5 - 2005/06/13
+----------------------------------
+- Changed the logout function to comply with the newest changes in G2
+
 Version 0.6.4 - 2005/05/26
 ----------------------------------
 - disabled pending user deletion in user synchronization code (doesn't work in 
