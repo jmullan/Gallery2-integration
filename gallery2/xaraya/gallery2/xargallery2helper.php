@@ -1518,9 +1518,12 @@ class xarGallery2Helper
 	  // if the G2 user has no email, generate a dummy email
 	  $userEmail = $g2User->getemail();
 	  $userEmail =  empty($userEmail) ? 'dummyEmail@G2Integration.xyz' : $userEmail;
+	  /* xaraya doesn't accept empty full names */
+	  $userFullName = $g2User->getfullName();
+	  $userFullName = empty($userFullName) ? $g2UserName : $userFullName;
 	  $uid = xarmodapifunc('roles','admin','create',
 			       array('uname' => $g2UserName,
-				     'realname' => $g2User->getfullName(), 'email' => $userEmail,
+				     'realname' => $userFullName, 'email' => $userEmail,
 				     'cryptpass' => $g2User->gethashedPassword(), 'date' => $g2User->getcreationTimestamp(),
 				     'state' => ROLES_STATE_ACTIVE, 'valcode' => xarModAPIFunc('roles', 'user', 'makepass')));
 	  if (!isset($uid) || !is_int(intval($uid)) || intval($uid) <= 1) {
