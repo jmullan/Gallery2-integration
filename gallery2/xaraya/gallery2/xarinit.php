@@ -141,6 +141,7 @@ function gallery2_upgrade($oldversion)
       break;
     default:
 	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
+	xarModSetVar('gallery2', 'SupportShortURLs', 0);
 	break;
     }
     return true;
