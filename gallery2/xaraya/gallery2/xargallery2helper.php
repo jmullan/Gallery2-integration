@@ -823,7 +823,12 @@ class xarGallery2Helper
       } else {			
 	$g2basefile = $scriptName .'?module=gallery2';
       }
-      $g2loginredirect = $scriptName .'?module=roles&func=register';
+      $xarayaPath = xarServerGetBaseURI();
+      $length = strlen($xarayaPath);
+      if ($length == 0 || $xarayaPath{$length-1} != '/') {
+	  $xarayaPath .= '/';
+      }
+      $g2loginredirect = $xarayaPath . $scriptName .'?module=roles&func=register';
     } else {
       $g2loginredirect = xarModGetVar('gallery2','g2.loginredirect');
       $g2basefile = xarModGetVar('gallery2','g2.basefile');

@@ -1,3 +1,8 @@
+Version 0.6.7 - 2005/06/23
+----------------------------------
+Fix: Make loginRedirect an absolute URL. Before, the loginredirect pointed
+to standalone G2.
+
 Version 0.6.6 - 2005/06/23
 ----------------------------------
 Fix: Disabled the short url support of the xaraya module as it obviously did not work 

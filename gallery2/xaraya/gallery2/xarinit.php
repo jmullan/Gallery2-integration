@@ -136,12 +136,24 @@ function gallery2_upgrade($oldversion)
 {
     switch($oldversion) {
     case '0.1':
-      // Register search hook
-      // do something in here
-      break;
-    default:
+    case '0.6.1':
+    case '0.6.2':	
+    case '0.6.3':
+    case '0.6.4':
+    case '0.6.5':
+    case '0.6.6':
+	/* update the login redirect path to be absolute */
+	$xarayaPath = xarServerGetBaseURI();
+	$length = strlen($xarayaPath);
+	if ($length == 0 || $xarayaPath{$length-1} != '/') {
+	    $xarayaPath .= '/';
+	}
+	xarModSetVar('gallery2','g2.loginredirect', $xarayaPath . xarModGetVar('gallery2','g2.loginredirect'));
+	
 	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
-	xarModSetVar('gallery2', 'SupportShortURLs', 0);
+	
+	break;
+    default:
 	break;
     }
     return true;
