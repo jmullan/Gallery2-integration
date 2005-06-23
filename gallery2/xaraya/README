@@ -96,6 +96,7 @@ URLs, direct and indirect requests:
 ----------------------------------
 We configure G2 to run all requests through xaraya. The xaraya core sees that the request is intended for the gallery2 module and the gallery2 module passes the request to G2 itself.
 The only exception are the download links/requests. G2 features an image firewall. Unlike ordinary gallery scripts, there's no way you can download any images from G2 than through the application. The developers of G2 spent a lot of effort in trying to reduce the time needed to process download requests. If all these download requests would run through the xaraya core before G2 received them, it'd be bloody slow. That's why all download links/requests go directly to G2, bypassing xaraya.
+For now, xaraya short urls are not supported by this module. But you can activate the G2 Url rewrite module which generates also very nice URLs.
 
 Language Settings:
 ------------------

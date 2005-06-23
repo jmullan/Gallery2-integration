@@ -42,8 +42,8 @@ function gallery2_init()
   xarModSetVar('gallery2','g2.basefile','');
   // if true everything is configured and ready for production
   xarModSetVar('gallery2','configured',0);
-  // short url support
-  xarModSetVar('gallery2', 'SupportShortURLs', 1);
+  // short url support (disabled for now)
+  xarModSetVar('gallery2', 'SupportShortURLs', 0);
   // minimum G2 version required
   xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
   // minimum xaraya core version
@@ -140,7 +140,7 @@ function gallery2_upgrade($oldversion)
       // do something in here
       break;
     default:
-	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.20');
+	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
 	break;
     }
     return true;

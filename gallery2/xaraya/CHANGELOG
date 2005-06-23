@@ -1,3 +1,10 @@
+Version 0.6.6 - 2005/06/23
+----------------------------------
+Fix: Disabled the short url support of the xaraya module as it obviously did not work 
+     since we changed from path_info to mod_rewrite in G2. 
+     You can still use short G2 urls (G2 module Url Rewrite) when embedded in xaraya!
+     True xaraya short url support may be back in one of the next releases.
+
 Version 0.6.5 - 2005/06/13
 ----------------------------------
 - Changed the logout function to comply with the newest changes in G2
