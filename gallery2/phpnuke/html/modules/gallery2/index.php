@@ -270,6 +270,11 @@ else
 				                $links = str_replace('"', '\"', $links);
 				                $header .= 'echo "' . $links. '\n";' . "\n";
 				            }
+						foreach($javascript as $script) {
+							$scriptline = $script;
+							$scriptline = str_replace('"','\"',$scriptline);
+							$header .= 'echo "' . $scriptline. '\n";'."\n";
+						}
 				        }
 				    }
 				}
