@@ -1,3 +1,7 @@
+Version 0.6.8 - 2005/06/27
+----------------------------------
+Fix: Added xarGallery2Helper::xarServerGetBaseURI()
+
 Version 0.6.7 - 2005/06/23
 ----------------------------------
 Fix: Make loginRedirect an absolute URL. Before, the loginredirect pointed

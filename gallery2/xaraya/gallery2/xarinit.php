@@ -134,6 +134,9 @@ function gallery2_init()
  */
 function gallery2_upgrade($oldversion)
 {
+    // Load the xarGallery2Helper class
+    include_once(dirname(__FILE__) .'/xargallery2helper.php');
+    
     switch($oldversion) {
     case '0.1':
     case '0.6.1':
@@ -143,7 +146,22 @@ function gallery2_upgrade($oldversion)
     case '0.6.5':
     case '0.6.6':
 	/* update the login redirect path to be absolute */
-	$xarayaPath = xarServerGetBaseURI();
+	$xarayaPath = xarGallery2Helper::xarServerGetBaseURI();
+	$length = strlen($xarayaPath);
+	if ($length == 0 || $xarayaPath{$length-1} != '/') {
+	    $xarayaPath .= '/';
+	}
+	xarModSetVar('gallery2','g2.loginredirect', $xarayaPath . xarModGetVar('gallery2','g2.loginredirect'));
+	
+	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
+	
+	break;
+    case '0.6.7':
+	/*
+	 * update the login redirect path to be absolute, again, since xarServerGetBaseURI() in
+	 * 0.6.7 could have been empty, i.e. not absolute
+	 */
+	$xarayaPath = xarGallery2Helper::xarServerGetBaseURI();
 	$length = strlen($xarayaPath);
 	if ($length == 0 || $xarayaPath{$length-1} != '/') {
 	    $xarayaPath .= '/';

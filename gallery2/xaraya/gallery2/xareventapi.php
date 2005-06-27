@@ -59,7 +59,7 @@ function gallery2_eventapi_OnUserLogout($value) {
 		return true;
     }
     require_once(xarModGetVar('gallery2','g2.includepath') . 'embed.php');
-    $ret = GalleryEmbed::logout(array('embedPath' => xarServerGetBaseURI()));
+    $ret = GalleryEmbed::logout(array('embedPath' => xarGallery2Helper::xarServerGetBaseURI()));
     return true;
 }
 

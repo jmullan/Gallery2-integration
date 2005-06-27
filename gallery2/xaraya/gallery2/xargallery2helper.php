@@ -150,7 +150,7 @@ class xarGallery2Helper
 
     // initiate G2 
     $ret = GalleryEmbed::init(array('embedUri' => xarModGetVar('gallery2','g2.basefile'),
-				    'embedPath' => xarServerGetBaseURI(),
+				    'embedPath' => xarGallery2Helper::xarServerGetBaseURI(),
 				    'relativeG2Path' => xarModGetVar('gallery2','g2.relativeurl'),
 				    'loginRedirect' => xarModGetVar('gallery2','g2.loginredirect'),
 				    'activeUserId' => $uid, 'activeLanguage' => $g2LangCode,
@@ -823,7 +823,7 @@ class xarGallery2Helper
       } else {			
 	$g2basefile = $scriptName .'?module=gallery2';
       }
-      $xarayaPath = xarServerGetBaseURI();
+      $xarayaPath = xarGallery2Helper::xarServerGetBaseURI();
       $length = strlen($xarayaPath);
       if ($length == 0 || $xarayaPath{$length-1} != '/') {
 	  $xarayaPath .= '/';
@@ -845,7 +845,7 @@ class xarGallery2Helper
 
     require_once($g2IncludePath . 'embed.php');
     $ret = GalleryEmbed::init( array('embedUri' => $g2basefile,
-				     'embedPath' => xarServerGetBaseURI(),
+				     'embedPath' => xarGallery2Helper::xarServerGetBaseURI(),
 				     'relativeG2Path' => $g2RelativeUrl,
 				     'loginRedirect' => $g2loginredirect));
     if (!$ret->isSuccess()) {
@@ -1711,7 +1711,25 @@ class xarGallery2Helper
 	  }
       }
     return false;
-  }	
+  }
+
+  /**
+   * xarServerGetBaseURI() wrapper for G2 embedPath compatibility
+   *
+   * xarServerGetBaseURI() can be empty, in this case set it to /
+   *
+   * @author Andy Staudacher
+   * @access public
+   * @return string fixed xarServerGetBaseURI()
+   */
+  function xarServerGetBaseURI()
+  {
+    $path = xarServerGetBaseURI();  
+    if (empty($path)) {
+	$path = '/';
+    }
+    return $path;
+  }
 }
 
 ?>
