@@ -776,26 +776,28 @@ class xarGallery2Helper
   function verifyConfig($raiseexceptions = false, $setifcorrect = false, 
 			$g2RelativeUrl = null, $g2IncludePath = null )
   {
-/* obviously, the snapshot versions of xaraya don't follow the version dot
- * subversion pattern, therefore this check is omitted
+      /*
+       * Verify the dependency on a compatible xaraya version (roles module changes, event system
+       * changes)
+       * Don't use xarConfigGetVar('System.Core.VersionNumber'); as it doesn't follow the version
+       * dot subversion format pattern in snapshot versions.
+       */
 
-    // Verify the dependency on a compatible xaraya version (roles module changes, event system changes)
-    $xarVersionString = xarConfigGetVar('System.Core.VersionNum');
-    $xarVersion = split('\.', $xarVersionString);
-    $minXarVersionString = xarmodGetVar('gallery2', 'xar.minCoreVersion');
-    $minXarVersion = split('\.', $minXarVersionString);
-    if ($xarVersion[1] < $minXarVersion[1] || $xarVersion[2] < $minXarVersion[2]) { // min version nr is 0.9.11
+      $xarVersionString =  xarConfigGetVar('System.Core.VersionNumber');
+      /* e.g. 1.0.0-rc2, split of anything after the 1.0.0 */
+      $xarVersionArray = split('-', $xarVersionString);
+      $xarVersion = $xarVersionArray[0];
+      $minXarVersion = xarModGetVar('gallery2', 'xar.minCoreVersion');
+      if (version_compare($minXarVersion, $xarVersion) > 0) {
       $msg = xarML('Your xaraya version is not compatible with this module. Your version is [#(1)], the minimum
-            version number required is #[2]. Please upgrade your xaraya installation.', $xarVersionString, $minXarVersionString);
+            version number required is [#(2)]. Please upgrade your xaraya installation.', $xarVersion, $minXarVersion);
       if ($raiseexceptions) {
 	xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
       }
       return array(false, $msg);
     }
-*/
     
     // Verify that we find a G2 installation
-    // and that it is configured to be in embedded mode
     // the filesystem include path
     if (!isset($g2IncludePath) || empty($g2IncludePath)) {
       if (isset($g2RelativeUrl)) {
@@ -816,9 +818,11 @@ class xarGallery2Helper
       // get the name of the xaraya entry point file (usually index.php)
       $scriptName = preg_replace('|/([^/]+/)*|', '', $_SERVER['PATH_TRANSLATED']);
       
-      // enable short url enabled?
-      $shortUrlActive = xarConfigGetVar('Site.Core.EnableShortURLsSupport'); 
-      if (isset($shortUrlActive) && $shortUrlActive) {
+      //  short urls enabled in xaraya?
+      $shortUrlActive = xarConfigGetVar('Site.Core.EnableShortURLsSupport');
+      /* Do we support short urls? */
+      $thisModuleShortUrls =  xarModGetVar('gallery2','SupportShortURLs');
+      if (isset($shortUrlActive) && $shortUrlActive && isset($thisModuleShortUrls) && $thisModuleShortUrls) {
 	$g2basefile = $scriptName .'/gallery2';
       } else {			
 	$g2basefile = $scriptName .'?module=gallery2';
@@ -860,17 +864,9 @@ class xarGallery2Helper
 
     // ok, G2 is installed, the path is correct, now check if G2 is in embedded mode
     global $gallery;
-    
-    if (!xarGallery2Helper::isConfigured() && !$gallery->getConfig('mode.embed.only')) {
-      $msg = xarML("G2 is not in embedded mode! Please set gallery->setConfig('mode.embed.only', true); in config.php of G2.");
-      if ($raiseexceptions) {
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      }
-      return array(false, $msg);
-    }
 
     /* Get the current G2 core version */
-    list ($ret, $g2VersionString) = GalleryCoreApi::getPluginParameter('module', 'core', '_version');
+    list ($ret, $g2Version) = GalleryCoreApi::getPluginParameter('module', 'core', '_version');
     if ($ret->isError()) {
       $msg = xarML('G2 returned an error: [#(1)]', $ret->getAsHtml());
       if ($raiseexceptions) {
@@ -879,15 +875,10 @@ class xarGallery2Helper
       return array(false, $msg);
     }
 
-    $g2Version = split('\.', $g2VersionString);
-    $g2VersionNum = 100*$g2Version[0] + 10*$g2Version[1] + $g2Version[2];
-    $minG2VersionString = xarmodGetvar('gallery2', 'g2.minCoreVersion');
-    $minG2Version = split('\.', $minG2VersionString );
-    $minG2VersionNum = 100*$minG2Version[0] + 10*$minG2Version[1] + $minG2Version[2];
-    // FIXME: before packaging and releasing the module
-    if ($minG2VersionNum > $g2VersionNum) {
+    $minG2Version = xarModGetVar('gallery2', 'g2.minCoreVersion');
+    if (version_compare($minG2Version, $g2Version) > 0) {
       $msg = xarML('Your G2 version is not compatible with this module. Your version is [#(1)], the minimum
-            version number required is #(2). Please upgrade your G2 installation.', $g2VersionString, $minG2VersionString);
+            version number required is #(2). Please upgrade your G2 installation.', $g2Version, $minG2Version);
       if ($raiseexceptions) {
 	xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
       }

@@ -1,3 +1,9 @@
+Version 0.6.9 - 2005/06/28
+----------------------------------
+Removed requirement to be in embedded mode during module configuration
+Doing a xaraya version dependency check again
+Improved the upgrade code
+
 Version 0.6.8 - 2005/06/27
 ----------------------------------
 Fix: Added xarGallery2Helper::xarServerGetBaseURI()

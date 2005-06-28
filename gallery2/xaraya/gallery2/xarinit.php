@@ -44,12 +44,12 @@ function gallery2_init()
   xarModSetVar('gallery2','configured',0);
   // short url support (disabled for now)
   xarModSetVar('gallery2', 'SupportShortURLs', 0);
-  // minimum G2 version required
-  xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
-  // minimum xaraya core version
-  xarmodSetVar('gallery2', 'xar.minCoreVersion', '1.0.0'); 
 
-
+  /* min g2 version */
+  xarModSetVar('gallery2', 'g2.minCoreVersion', '0.9.25');
+  /* min xar version */
+  xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0.0');
+  
   // whether to display the sidebar menu within the module html 
   // (else, instantiate a sidebar block)
   xarModSetVar('gallery2', 'g2.sidebarInside', 1);
@@ -136,7 +136,8 @@ function gallery2_upgrade($oldversion)
 {
     // Load the xarGallery2Helper class
     include_once(dirname(__FILE__) .'/xargallery2helper.php');
-    
+
+    /* Upgrade! */
     switch($oldversion) {
     case '0.1':
     case '0.6.1':
@@ -152,10 +153,6 @@ function gallery2_upgrade($oldversion)
 	    $xarayaPath .= '/';
 	}
 	xarModSetVar('gallery2','g2.loginredirect', $xarayaPath . xarModGetVar('gallery2','g2.loginredirect'));
-	
-	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
-	
-	break;
     case '0.6.7':
 	/*
 	 * update the login redirect path to be absolute, again, since xarServerGetBaseURI() in
@@ -167,13 +164,52 @@ function gallery2_upgrade($oldversion)
 	    $xarayaPath .= '/';
 	}
 	xarModSetVar('gallery2','g2.loginredirect', $xarayaPath . xarModGetVar('gallery2','g2.loginredirect'));
-	
-	xarmodSetVar('gallery2', 'g2.minCoreVersion', '0.9.24');
+    case '0.6.8':
+	 /* min g2 version */
+	xarModSetVar('gallery2', 'g2.minCoreVersion', '0.9.25');
+	/* min xar version */
+	xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0.0');
 	
 	break;
+	
     default:
 	break;
     }
+
+    /* Compare the xaraya version */
+    $xarVersionString =  xarConfigGetVar('System.Core.VersionNumber');
+    /* e.g. 1.0.0-rc2, split of anything after the 1.0.0 */
+    $xarVersionArray = split('-', $xarVersionString);
+    $xarVersion = $xarVersionArray[0];
+    $minXarVersion = xarModGetVar('gallery2','xar.minCoreVersion');
+    if (version_compare($minXarVersion, $xarVersion) > 0) {
+	xarModSetVar('gallery2','configured',0);
+    }
+    /* Compare the G2 version */
+    list ($ret, $msg) = xarGallery2Helper::verifyConfig();
+    $status = false;
+    if($ret) {
+	if (xarGallery2Helper::init(false, true, false)) {
+	    /* Get the current G2 core version */
+	    list ($ret, $g2Version) = GalleryCoreApi::getPluginParameter('module', 'core', '_version');
+	    if ($ret->isSuccess()) {
+		$minG2Version = xarModGetVar('gallery2','g2.minCoreVersion');
+		if (version_compare($minG2Version, $g2Version) <= 0) {
+		    $status = true;
+		}
+	    }
+	}
+    }
+	
+    if (!$status) {
+	/*
+	 * Complete the upgrade process but mark the module as not configured such that the
+	 * admin has to run the configuration again and then he sees that the versions do not
+	 * match
+	 */
+	xarModSetVar('gallery2','configured',0);
+    }
+    
     return true;
 }
 /**
