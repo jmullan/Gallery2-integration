@@ -144,7 +144,7 @@ class xarGallery2Helper
 	}
 	// translate language code to G2 langCode format 
 	if (isset($xarLangCode) && !empty($xarLangCode)) {
-	    $g2LangCode = preg_replace('|(\..*)?$|', '', $xarLangCode);
+	    $g2LangCode = xarGallery2Helper::xartranslateLanguageCode($xarLangCode);
 	} 
     }
 

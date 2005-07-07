@@ -32,6 +32,13 @@ function gallery2_user_main()
       GalleryCapabilities::set('showSidebar', false);
     }
 
+    // Deactivate xaraya's output buffers to get the embedded progress bars and immediate views to work 
+    $outputBuffers = array();
+    while (($ob = ob_get_contents()) !== false) {
+	@ob_end_clean();
+	$outputBuffers[] = $ob;
+    }
+    
     // handle the G2 request
     $g2moddata = GalleryEmbed::handleRequest();
   
@@ -44,7 +51,13 @@ function gallery2_user_main()
     if ($g2moddata['isDone']) {
       exit; /* uploads module does this too */
     }
-   
+
+    /* Get xaraya's output buffers back in place (no immediate output) */
+    foreach ($outputBuffers as $ob) {
+	ob_start();
+	echo $ob;
+    }
+    
     // put the body html from G2 into the xaraya template 
     $data['g2modhtml'] = isset($g2moddata['bodyHtml']) ? $g2moddata['bodyHtml'] : '';
 

@@ -1,3 +1,11 @@
+2005/07/07
+----------------------------------
+Trying a hack to get the progress bars get to work
+(e.g. site admin -> maintenance -> Build thumbs / resizes)
+Before handling the request, xaraya's output buffers are stored and ended,
+after the G2 request handling, the ob are restored (unless the G2 request
+said it isDone, i.e. already outputted some data).
+
 Version 0.6.9 - 2005/06/28
 ----------------------------------
 Removed requirement to be in embedded mode during module configuration
