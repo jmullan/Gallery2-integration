@@ -27,9 +27,24 @@ global $g2config_error;
 // Mapping between Phpnuke and Gallery2 language definition
 // --------------------------------------------------------
 
-	$Phpnuke2G2Lang = array ('danish' => 'da', 'dutch' => 'nl', 'german' => 'de', 'greek' => 'el', 'english' => 'en', 'american' => 'en', 'spanish' => 'es', 'finnish' => 'fi', 'french' => 'fr', 'irish' => 'ga', // not available
-		'italian' => 'it', 'japanese' => 'ja', // not available
-	'norwegian' => 'no', 'polish' => 'pl', 'portuguese' => 'pt', 'swedish' => 'sv', 'chinese' => 'zh',);
+	$Phpnuke2G2Lang = array (
+		'danish'		=> 'da', 
+		'dutch'			=> 'nl', 
+		'german'		=> 'de', 
+		'greek'			=> 'el', 
+		'english'		=> 'en', 
+		'american'		=> 'en', 
+		'spanish'		=> 'es', 
+		'finnish'		=> 'fi', 
+		'french'		=> 'fr', 
+		'irish'			=> 'ga', // not available
+		'italian'		=> 'it', 
+		'japanese'		=> 'ja', // not available
+		'norwegian'		=> 'no', 
+		'polish'		=> 'pl', 
+		'portuguese'	=> 'pt', 
+		'swedish'		=> 'sv', 
+		'chinese'		=> 'zh',);
 
 /*********************************************************/
 /* Standalone Message Function                           */
@@ -39,9 +54,9 @@ function g2_message($mess) {
 	global $admin, $bgcolor2, $prefix, $db, $currentlang, $multilingual, $admin_file, $module_name;
 	include ("header.php");
 	OpenTable();
-	echo	"<br><center><a href=\"admin.php?op=gallery2\">".
-				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3>".
-				"<br/><a href=\"admin.php?op=gallery2\">Return Home</center>";
+	echo "<br><center><a href=\"admin.php?op=gallery2\">"
+		."<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3>"
+		."<br/><a href=\"admin.php?op=gallery2\">Return Home</center>";
 	CloseTable();
 	echo "<br/>";
 
@@ -87,11 +102,11 @@ function init() {
 	$g2currentlang = $Phpnuke2G2Lang[$currentlang];
 
 	$ret = GalleryEmbed :: init(array ('embedUri' => $g2embedparams[embedUri], 
-															'relativeG2Path' => $g2embedparams[relativeG2Path],
-															'loginRedirect' => $g2embedparams[loginRedirect],
-															'activeUserId' => '', 
-															'activeLanguage' => $g2currentlang, 
-															'fullInit' => $fullInit));
+									'relativeG2Path' => $g2embedparams[relativeG2Path],
+									'loginRedirect' => $g2embedparams[loginRedirect],
+									'activeUserId' => '', 
+									'activeLanguage' => $g2currentlang, 
+									'fullInit' => $fullInit));
 
 	if (!$ret->isSuccess()) {
 		g2_message('G2 did not return a success status upon an init request. Here is the error message from G2: <br /> [#(1)]'.$ret->getAsHtml());
@@ -102,93 +117,93 @@ function init() {
 
 }
 
-	/**
-	 * g2addexternalMapEntry: add an externalId map entry
-	 *
-	 * Add an entry in the G externalId, entityId map table
-	 *
-	 * @author Andy Staudacher
-	 * @access public
-	 * @param integer the uid
-	 * @param integer the entityId from G2
-	 * @param integer/string the roles type, 1 for groups, 0 for users, or the entityType string
-	 * @return bool true or false
-	 */
-	function g2addexternalMapEntry($externalId, $entityId, $entityType) 
-	{
-		include ("modules/gallery2/gallery2.cfg");
-		
-		// init G2 transaction, load G2 API, if not already done so
-		if (!init()) {
-			return false;
-		}
-		if (is_int($entityType)) {
-			$entityType = $entityType == 0 ? 'GalleryUser' : 'GalleryGroup';
-		}
-		
-		require_once ($g2embedparams[embedphpfile]."/".'modules/core/classes/ExternalIdMap.class');
-		
-		$ret = ExternalIdMap :: addMapEntry(array ('externalId' => $externalId, 'entityType' => $entityType, 'entityId' => $entityId));
-		if ($ret->isError()) {
-			g2_message('Failed to create a extmap entry for role uid ['.$externalId.'] and entityId ['.$entityId.'], entityType ['.$entityType.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
-			return false;
-		}
-		return true;
+/**
+ * g2addexternalMapEntry: add an externalId map entry
+ *
+ * Add an entry in the G externalId, entityId map table
+ *
+ * @author Andy Staudacher
+ * @access public
+ * @param integer the uid
+ * @param integer the entityId from G2
+ * @param integer/string the roles type, 1 for groups, 0 for users, or the entityType string
+ * @return bool true or false
+ */
+function g2addexternalMapEntry($externalId, $entityId, $entityType) 
+{
+	include ("modules/gallery2/gallery2.cfg");
+	
+	// init G2 transaction, load G2 API, if not already done so
+	if (!init()) {
+		return false;
+	}
+	if (is_int($entityType)) {
+		$entityType = $entityType == 0 ? 'GalleryUser' : 'GalleryGroup';
+	}
+	
+	require_once ($g2embedparams[embedphpfile]."/".'modules/core/classes/ExternalIdMap.class');
+	
+	$ret = ExternalIdMap :: addMapEntry(array ('externalId' => $externalId, 'entityType' => $entityType, 'entityId' => $entityId));
+	if ($ret->isError()) {
+		g2_message('Failed to create a extmap entry for role uid ['.$externalId.'] and entityId ['.$entityId.'], entityType ['.$entityType.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
+		return false;
+	}
+	return true;
+}
+
+
+
+/**
+ * g2getallexternalIdmappings: get all extId, entityId mappings
+ *
+ * get all extId, entityId mappings from G2
+ * useful, i.e. for import/export synchronization update
+ * used only by the import/export method
+ *
+ * @author Andy Staudacher
+ * @access public
+ * @param none
+ * @return array(bool success, array(entityId => array(externalId => integer,
+ *                             entityType => string, entityId => integer)),
+ *                             array(externalId => array(externalId => integer,
+ *                             entityType => string, entityId => integer)))
+ * @throws Systemexception if it failed
+ */
+function g2getallexternalIdmappings() {
+	// init G2 transaction, load G2 API, if not already done so
+	if (!init()) {
+		return array (false, null, null);
+	}
+	global $gallery;
+
+	$query = 'SELECT [ExternalIdMap::entityId], [ExternalIdMap::externalId], [ExternalIdMap::entityType]
+			FROM [ExternalIdMap]';
+
+	list ($ret, $results) = $gallery->search($query, array ());
+	if ($ret->isError()) {
+		g2_message('Failed to fetch a list of all extId maps fromG2. Here is the error message from G2: <br /> [#(1)]'.$ret->getAsHtml());
+		return array (false, null, null);
+	}
+	$mapsbyentityid = array ();
+	$mapsbyexternal = array ();
+	while ($result = $results->nextResult()) {
+		$entry = array ('externalId' => $result[1], 'entityId' => $result[0], 'entityType' => $result[2]);
+		$mapsbyentityid[$result[0]] = $entry;
+		$mapsbyexternal[$result[1]] = $entry;
 	}
 
-
-
-	/**
-	 * g2getallexternalIdmappings: get all extId, entityId mappings
-	 *
-	 * get all extId, entityId mappings from G2
-	 * useful, i.e. for import/export synchronization update
-	 * used only by the import/export method
-	 *
-	 * @author Andy Staudacher
-	 * @access public
-	 * @param none
-	 * @return array(bool success, array(entityId => array(externalId => integer,
-	 *                             entityType => string, entityId => integer)),
-	 *                             array(externalId => array(externalId => integer,
-	 *                             entityType => string, entityId => integer)))
-	 * @throws Systemexception if it failed
-	 */
-	function g2getallexternalIdmappings() {
-		// init G2 transaction, load G2 API, if not already done so
-		if (!init()) {
-			return array (false, null, null);
-		}
-		global $gallery;
-
-		$query = 'SELECT [ExternalIdMap::entityId], [ExternalIdMap::externalId], [ExternalIdMap::entityType]
-				FROM [ExternalIdMap]';
-
-		list ($ret, $results) = $gallery->search($query, array ());
-		if ($ret->isError()) {
-			g2_message('Failed to fetch a list of all extId maps fromG2. Here is the error message from G2: <br /> [#(1)]'.$ret->getAsHtml());
-			return array (false, null, null);
-		}
-		$mapsbyentityid = array ();
-		$mapsbyexternal = array ();
-		while ($result = $results->nextResult()) {
-			$entry = array ('externalId' => $result[1], 'entityId' => $result[0], 'entityType' => $result[2]);
-			$mapsbyentityid[$result[0]] = $entry;
-			$mapsbyexternal[$result[1]] = $entry;
-		}
-
-		return array (true, $mapsbyentityid, $mapsbyexternal);
-	}
+	return array (true, $mapsbyentityid, $mapsbyexternal);
+}
 
 /*********************************************************/
 /* Init G2 API                                           */
 /* Exports phpnuke users to g2 and 			             */
 /* Initial user/group management synchronization.        */
-/* Output: False if error
-/*         user info text to display if success					*/
+/* Output: False if error								 */
+/*         user info text to display if success			 */
 /*********************************************************/
 
-define("NB_USER_TO_EXPORT_BY_PASS", 100);
+define("NB_USER_TO_EXPORT_BY_PASS", 2000);
 
 function g2_phpnukeTog2UserExport() 
 {
@@ -234,26 +249,26 @@ function g2_phpnukeTog2UserExport()
  			return false;
 		}
 		
-		$outputtext .="Admin account create<br/><br/>";
+		$outputtext .= "Admin account created<br/><br/>";
 	}
 	
 	// TODO: Update of the admin account if it already exists
 			
 	// Export all standard phpnuke users (except anonymous: id=1) to G2 defaut group
-	// --- dari addon (multiple pass)
+	// --- dari (http://www.nukedgallery.net) addon (multiple pass)
 	$sql = "SELECT count(*) AS ucount FROM ".$user_prefix."_users";
 	$user_count = $db->sql_fetchrow($db->sql_query($sql));
 	$nextpage = 0;
 	
 	$startuser = $_POST['startuser'];
 	
-  for($i = $startuser; $i <= $user_count['ucount']; $i++) 
-  {
+	for($i = $startuser; $i <= $user_count['ucount']; $i++) 
+	{
   	
-    if($i == $startuser+NB_USER_TO_EXPORT_BY_PASS) 
-    {
-        $nextpage = 1;
-        break;
+		if($i == $startuser+NB_USER_TO_EXPORT_BY_PASS) 
+	    {
+		    $nextpage = 1;
+			break;
 		}
 		
 		$outputtext .= "UserId($i) ";
@@ -325,17 +340,16 @@ function g2_phpnukeTog2UserExport()
 	$outputtext .= "<br/>".($i-$startuser)." users imported...<br/><br/>";
 	
 	// Eveything is ok till now, so ask for the next page if needed
-
-  if($nextpage == 1) 
-  {
-      $startUserNextPage = "<input type=\"hidden\" name=\"startuser\" value=\"$i\">";
-			$outputtext .="<form action=\"admin.php\" method=\"post\">"."<table border=\"0\">";
-			$outputtext .="<input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\">"."<tr><td><input type=\"submit\" value=\""._G2_NEXT_PAGE."\">$startUserNextPage</td></tr>"."</table></form>";
-  }
-  else
-  {
+	if($nextpage == 1) 
+	{
+		$startUserNextPage = "<input type=\"hidden\" name=\"startuser\" value=\"$i\">";
+		$outputtext .="<form action=\"admin.php\" method=\"post\"><table border=\"0\">";
+		$outputtext .="<input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\"><tr><td><input type=\"submit\" value=\""._G2_NEXT_PAGE."\">$startUserNextPage</td></tr></table></form>";
+	}
+	else
+	{
   		$outputtext .= _USER_EXPORT_COMPLETED."<br/>";
-  }
+	}
 	
 	return $outputtext;
 
@@ -408,9 +422,9 @@ function DisplayMainPage() {
 	global $admin, $bgcolor2, $prefix, $db, $currentlang, $multilingual, $admin_file, $module_name;
 	include ("header.php");
 	OpenTable();
-	echo	"<br><center><a href=\"admin.php?op=gallery2\">".
-				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3>".
-				"</center>";
+	echo	"<br><center><a href=\"admin.php?op=gallery2\">"
+			."<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3>"
+			."</center>";
 	CloseTable();
 	echo "<br/>";
 
@@ -427,31 +441,42 @@ function DisplayMainPage() {
 	// --------------  embed settings
 
 	OpenTable();
-	echo "<center><font class=\"option\"><b>Gallery2 Embeding Settings</b></font></center><br/>";
-	echo "<form action=\"admin.php\" method=\"post\">"."<table border=\"0\">"."<tr><td>"._PHPEMBEDFILE.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"embedphpfile\" size=\"60\" value=\"".$g2embedparams[embedphpfile]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._EMBEDURI.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"embedUri\" size=\"60\" value=\"".$g2embedparams[embedUri]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._RELATIVEG2PATH.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"relativeG2Path\" size=\"60\" value=\"".$g2embedparams[relativeG2Path]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._LOGINREDIRECT.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"loginRedirect\" size=\"60\" value=\"".$g2embedparams[loginRedirect]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>"."<tr><td>"._ACTIVEUSERID.":</td>"."<td colspan=\"3\"><input type=\"text\" name=\"activeUserId\" size=\"60\" value=\"".$g2embedparams[activeUserId]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>";
-	echo "<tr><td>&nbsp;</td></tr>"."<input type=\"hidden\" name=\"op\" value=\"gallery2_update_embed\">"."<tr><td><input type=\"submit\" value=\""._UPDATEEMBEDSETTINGSG2."\"></td></tr>"."</table></form>";
+
+	echo "<center><font class=\"option\"><b>Gallery2 Embeding Settings</b></font></center><br/>"
+		."<form action=\"admin.php\" method=\"post\">"
+		."<table border=\"0\"><tr><td>"._PHPEMBEDFILE.":</td>"
+		."<td colspan=\"3\"><input type=\"text\" name=\"embedphpfile\" size=\"60\" value=\"".$g2embedparams[embedphpfile]."\" maxlength=\"90\">"
+		."<font class=\"tiny\"></font></td></tr><tr><td>"._EMBEDURI.":</td><td colspan=\"3\">"
+		."<input type=\"text\" name=\"embedUri\" size=\"60\" value=\"".$g2embedparams[embedUri]."\" maxlength=\"90\">"
+		."<font class=\"tiny\"></font></td></tr><tr><td>"._RELATIVEG2PATH.":</td><td colspan=\"3\">"
+		."<input type=\"text\" name=\"relativeG2Path\" size=\"60\" value=\"".$g2embedparams[relativeG2Path]."\" maxlength=\"90\"> "
+		."<font class=\"tiny\"></font></td></tr><tr><td>"._LOGINREDIRECT.":</td><td colspan=\"3\">"
+		."<input type=\"text\" name=\"loginRedirect\" size=\"60\" value=\"".$g2embedparams[loginRedirect]."\" maxlength=\"90\"> "
+		."<font class=\"tiny\"></font></td></tr><tr><td>"._ACTIVEUSERID.":</td><td colspan=\"3\">"
+		."<input type=\"text\" name=\"activeUserId\" size=\"60\" value=\"".$g2embedparams[activeUserId]."\" maxlength=\"90\"> <font class=\"tiny\"></font></td></tr>";
+	echo "<tr><td>&nbsp;</td></tr><input type=\"hidden\" name=\"op\" value=\"gallery2_update_embed\"><tr><td><input type=\"submit\" value=\""._UPDATEEMBEDSETTINGSG2."\"></td></tr></table></form>";
 	CloseTable();
 
 	// --------------  main settings
 
 	OpenTable();
 	echo "<center><font class=\"option\"><b>Gallery2 Main Settings</b></font></center><br/>";
-	echo "<form action=\"admin.php\" method=\"post\">"."<table border=\"0\">"."<td><input type=\"checkbox\" name=\"showsidebar\" value=\"true\"";
+	echo "<form action=\"admin.php\" method=\"post\"><table border=\"0\"><td><input type=\"checkbox\" name=\"showsidebar\" value=\"true\"";
 	if ($g2mainparams[showSidebar] == "true") {
 		echo "checked=\"true\"";
 	}
 	echo ">"._SHOWSIDEBAR."</td>";
-	echo "<tr><td>&nbsp;</td></tr>"."<input type=\"hidden\" name=\"op\" value=\"gallery2_update_main\">"."<tr><td><input type=\"submit\" value=\""._UPDATEMAINSETTINGSG2."\"></td></tr>"."</table></form>";
+	echo "<tr><td>&nbsp;</td></tr><input type=\"hidden\" name=\"op\" value=\"gallery2_update_main\"><tr><td><input type=\"submit\" value=\""._UPDATEMAINSETTINGSG2."\"></td></tr></table></form>";
 	CloseTable();
 
 	// -------------- user export settings
-	// --- Dari addon: split user export in a multiple pass ---
+	// --- Dari (http://www.nukedgallery.net) addon: split user export in a multiple pass ---
 	
 	$hidden_input = "<input type=\"hidden\" name=\"startuser\" value=\"2\">";
 	OpenTable();
 	echo "<center><font class=\"option\"><b>Export Users to Gallery2</b></font></center><br/>";
-	echo "<form action=\"admin.php\" method=\"post\">"."<table border=\"0\">";
-	echo "<input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\">"."<tr><td><input type=\"submit\" value=\""._G2USEREXPORT."\">$hidden_input</td></tr>"."</table></form>";
+	echo "<form action=\"admin.php\" method=\"post\"><table border=\"0\">";
+	echo "<input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\"><tr><td><input type=\"submit\" value=\""._G2USEREXPORT."\">$hidden_input</td></tr></table></form>";
 	CloseTable();
 
 	include ("footer.php");

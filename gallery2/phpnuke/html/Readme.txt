@@ -5,42 +5,44 @@
 /* Copyright (c) 2004 by Francisco Burzi                                */
 /* http://phpnuke.org                                                   */
 /*                                                                      */
-/* Gallery2 Integration module for PhpNuke 7.5 and 7.6  								*/
+/* Gallery2 Integration module for PhpNuke		  		*/
 /*                                                                      */
-/* This is a beta of Gallery2 Integration module for PhpNuke 7.5 & 7.6  */
+/* This is a beta of Gallery2 Integration module for PhpNuke.		*/
 /* If you don't have the Gallery2 installed into your system,           */
 /* then DO NOT use these files.                                         */
 /* This is a beta realised , so if you try it, BACKUP first.            */
 /*                                                                      */
-/* Version: 0.3 (6th April 2005)                                       */
+/* Version: 0.5 (13 July 2005)						*/
 /*                                                                      */
 /************************************************************************/
 
+-----------
 Description
 -----------
 
 This package is a beta release, DO NOT USE IT IN PRODUCTION CONTEXT !
 
-This module allow you to embed Gallery2 into PHPNUKE 7.5 or 7.6, it is still in heavy development and only proposed minor features:
+This module will allow you to embed Gallery2 into PHPNuke. It is still in heavy development and only proposed minor features:
 
- - A basic Administration panels which allow you to configure this module.
- - A Gallery2 entry in the main phpnuke menu to browse your gallery2 into phpnuke.
+ - A basic Administration panel which allow you to configure this module.
+ - A Gallery2 entry in the main PHPNuke menu.
  - A block containing the G2 Sidebar.
- - The ability to mapped all your phpnuke users to G2.
+ - The ability to map all your PHPNuke users to G2.
 
 
 ------------
 Installation
 ------------
 
-The zip archive contains 2 folders: 
+The zip archive contains 4 folders: 
 
-		modules/  it contains the gallery2 module itself 
-		images/   it only contains an icon which will be displayed by main Admin panel.
-		blocks/		it contains the G2 menu block
+		admin/		Contains admin links for versions of PHPNuke < 7.5
+		modules/	Contains the gallery2 module itself 
+		images/		Contains an icon which will be displayed by main Admin panel.
+		blocks/		Contains the G2 menu block
 		
-Just upload each folder to those matching pour PhpNuke CMS installation.
-In most case (depending of your installation), just copy the html folder to the root of your phpnuke installation.
+Just upload each folder to those matching pour PHPNuke installation.
+In most case (depending of your installation), just copy the html folder to the root of your PHPNuke installation.
 
 
 --------------------
@@ -48,25 +50,38 @@ Module Configuration
 --------------------
 
 -1-
-In any case, this module will not install Gallery2 for you.
-So, you must first have a fully installed Gallery2 copy on your website.
+This module will NOT install Gallery2 for you.
+You must first have a fully installed Gallery2 copy on your website.
 
 -2- 
 Make sure the modules/gallery2/gallery2.cfg on your server is writable.
-If this is not the case: just chmod it to 666 .
+If this is not the case, chmod it to 666 .
 
 -3-
-In your PhpNuke portal: 
-Logged yourseft as an Administrator, and go to the Administration panel.
+In your PHPNuke portal: 
+Log in as an Administrator, and go to the Administration panel.
 Choose Gallery2 in the Modules Administration
 
 -4-
 
-Gallery2 Embeding Settings:
+Gallery2 Embedding Settings:
 ---------------------------
 
-Filled correctly the 5 fields required to embed Gallery2:
-Setting good parameters is not so easy: You will certainly needs more than one test to success!
+The following fields must be properly set for the embedding to function.
+  1. "Full path to your Gallery2 directory" - This is the complete path to your Gallery2
+     installation. For example: /home/myuser/public_html/nuke/modules/gallery2/
+
+  2. "URL to your embedded Gallery" - This is the URL that would take you to your embedded
+     Gallery2 installation. For example: http://www.mysite.com/nuke/modules.php?name=gallery2
+
+  3. "Relative path to your Gallery2 directory" - This is the path to your Gallery2 directory
+     relative to your root web directory.  For example: /nuke/modules/gallery2/
+
+  4. "URL for user login" - This is the URL which users would visit to log into your PHPNuke site, 
+     normally via the Your_Account module.  For example: nuke/modules.php?name=Your_Account
+
+  5. "Active User ID" - You can safely leave this set to '0'.
+
 At the moment only the first field is tested against wrong path, more will come soon.
 
 Click on Update embed settings:
@@ -78,23 +93,23 @@ You don't need to edit this file by hand as the admin page will do it for you.
 The Gallery2 Main Settings:
 ---------------------------
 
-For now, it only allow you to control the sidebar:
+As of this writing, it only allows you to control the sidebar:
 The show sidebar checkbox allows you to remove the leftsidebar from the main Gallery2 display.
-Instead you can display it inside a standard phpnuke block. (install the G2_Sidebar block to get it)
+If you leave this unchecked, you can display it inside a standard PHPNuke block. (install the G2_Sidebar block to get it)
 
 -6-
 
 Export Users to Gallery2:
 -------------------------
 
-It will export all your phpnuke users and create them a G2 account if they have not.
-The first phpnuke admin account will also be mapped to the G2 admin account.
-Since if you're logged as an admin in phpnuke, you will also been logged as the admin in G2 regardless of your phpnuke normal user login.
-No group mapping is done for now... It will come up for a next release.
-The export user is split in multiple pages which allows a maximum export of 100 users by page: It prevents error during large database export.
+This will export all your PHPNuke users and create them a G2 account if they do not have one.
+The first PHPNuke admin account will also be mapped to the G2 admin account.
+Therefore, if you're logged as an admin in PHPNuke, you will also been logged as the admin in G2 regardless of your PHPNuke normal user login.
+No group mapping is done for now....It will come in a future release.
+The export user is split in multiple pages which allows a maximum export of 100 users per page, preventing errors during large database export.
 
 The dynamic addition of users now works:
-It means everytime a new users will register your phpnuke portal, at his first G2 visit, an account will be created for him.
+Everytime a new user registers on your PHPNuke portal, on their first G2 visit, an account will be created for him.
 
 
 -7-
@@ -112,4 +127,5 @@ Please, be aware the Block is still not working very well, so don't install it o
 ----------------------------------------------------
 http://gallery.sourceforge.net
 http://www.phpnuke-web.com drumicube@phpnuke-web.com
+http://www.nukedgallery.net dari@nukedgallery.net
 ----------------------------------------------------
