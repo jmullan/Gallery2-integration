@@ -33,7 +33,10 @@ function gallery2_sidebarblock_display($blockinfo)
 
   global $g2sidebarHtml;
   if (!empty($g2sidebarHtml)) {
-    $blockinfo['content'] = $g2sidebarHtml;
+      $html = '<div id="gsSidebar" class="gcBorder1">
+' . join('', $g2sidebarHtml) . '
+</div>';;
+      $blockinfo['content'] = $html;
   } else {
     return null;
   }

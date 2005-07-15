@@ -29,7 +29,7 @@ function gallery2_user_main()
 
     // user interface: disable sidebar in G2 and get it as separate HTML to put it into a xaraya block
     if (xarModGetVar('gallery2', 'g2.sidebarInside') == 0) {
-      GalleryCapabilities::set('showSidebar', false);
+	GalleryCapabilities::set('showSidebarBlocks', false);
     }
 
     // Deactivate xaraya's output buffers to get the embedded progress bars and immediate views to work 
@@ -103,24 +103,9 @@ function gallery2_user_main()
 
     // set the g2 sideBar (menu) html global, so that we can retrieve it,
     // when xaraya calls all the blocks for their html
-    if (isset($g2moddata['sidebarHtml']) && !empty($g2moddata['sidebarHtml'])) {
+    if (isset($g2moddata['sidebarBlocksHtml']) && !empty($g2moddata['sidebarBlocksHtml'])) {
       global $g2sidebarHtml;
-      $g2sidebarHtml = $g2moddata['sidebarHtml'];
-      // edit css
-      $GLOBALS['xarTpl_additionalStyles'] .= <<<EOCSS
-<style type="text/css" media="all">
-#gsSidebar {
-  float:none !important;
-  width:100% !important;
-} 
-
-#gsAlbumContents, #gsAdminContents, #gsOtherContents {
- float:left !important;
- width:100% !important;
-} 
-</style>
-EOCSS;
-
+      $g2sidebarHtml = $g2moddata['sidebarBlocksHtml'];
     }
     
     return $data;
