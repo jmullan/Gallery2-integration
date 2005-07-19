@@ -17,7 +17,13 @@
 /* http://www.nukefixes.com -- http://www.nukeresources.com             */
 /************************************************************************/
 
-if (!eregi("admin.php", $_SERVER['PHP_SELF'])) {
+global $admin_file;
+
+if(!isset($admin_file)) {
+	$admin_file = "admin";
+}
+
+if (!eregi("".$admin_file.".php", $_SERVER['PHP_SELF'])) {
 	die("Access Denied");
 }
 global $prefix, $db;

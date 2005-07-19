@@ -11,7 +11,14 @@
 /* it under the terms of the GNU General Public License as published by */
 /* the Free Software Foundation; either version 2 of the License.       */
 /************************************************************************/
-if (!eregi("admin.php", $_SERVER['PHP_SELF'])) { die ("Access Denied"); }
+
+global $admin_file;
+
+if(!isset($admin_file)) {
+	$admin_file = "admin";
+}
+
+if (!eregi("".$admin_file.".php", $_SERVER['PHP_SELF'])) { die ("Access Denied"); }
 if ($radminsuper==1) 
 {
     adminmenu("admin.php?op=gallery2", "Gallery2", "gallery2.gif");

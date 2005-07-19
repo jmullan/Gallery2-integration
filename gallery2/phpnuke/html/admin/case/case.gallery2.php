@@ -12,7 +12,13 @@
 /* the Free Software Foundation; either version 2 of the License.       */
 /************************************************************************/
 
-if (!eregi("admin.php", $_SERVER['PHP_SELF'])) { die ("Access Denied"); }
+global $admin_file;
+
+if(!isset($admin_file)) {
+	$admin_file = "admin";
+}
+
+if (!eregi("".$admin_file.".php", $_SERVER['PHP_SELF'])) { die ("Access Denied"); }
 $module_name = "gallery2";
 include_once("modules/$module_name/admin/language/lang-".$currentlang.".php");
 
