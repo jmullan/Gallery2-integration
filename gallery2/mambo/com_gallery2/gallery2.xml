@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<mosinstall type="component" version="4.5">
+    <name>Gallery2</name>
+    <creationDate>18-76-2005</creationDate>
+    <author>Michiel Bijland</author>
+    <copyright>This component is released under the Gallery license (GNU General Public License)</copyright>
+    <authorEmail></authorEmail>
+    <authorUrl>mamboforge.net/projects/gallery2/</authorUrl>
+    <version>2.0.6</version>
+    <description>Gallery G2 Component For MOS 4.5.3</description>
+    <files>
+        <filename>gallery2.php</filename>
+        <filename>userfuncs.php</filename>
+		<filename>version.php</filename>
+        <filename>footer.php</filename>
+    </files>
+    <install>
+    </install>
+    <installfile>
+        <filename>install.gallery2.php</filename>
+    </installfile>
+    <uninstall>
+    </uninstall>
+    <administration>
+        <menu>Gallery2</menu>
+		<submenu>
+		<menu act="conf">Config</menu>
+		<menu act="user">User Management</menu>
+		<menu act="album">Album Management</menu>
+		<menu act="tools">Tools</menu>
+		<menu act="help">about</menu>
+		</submenu>
+        <files>
+            <filename>admin.gallery2.php</filename>
+            <filename>admin.gallery2.html.php</filename>
+            <filename>toolbar.gallery2.php</filename>
+			<filename>language/dutch.php</filename>
+			<filename>language/english.php</filename>
+        </files>
+        <images>
+            <filename>images/logo-228x67.png</filename>
+			<filename>images/foto.png</filename>
+			<filename>images/tools.png</filename>
+			<filename>images/reload.png</filename>
+			<filename>images/reload_f2.png</filename>
+        </images>
+    </administration>
+</mosinstall>
