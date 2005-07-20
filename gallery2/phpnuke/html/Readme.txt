@@ -72,7 +72,7 @@ The following fields must be properly set for the embedding to function.
      installation. For example: /home/myuser/public_html/nuke/modules/gallery2/
 
   2. "URL to your embedded Gallery" - This is the URL that would take you to your embedded
-     Gallery2 installation. For example: http://www.mysite.com/nuke/modules.php?name=gallery2
+     Gallery2 installation. For example: modules.php?name=gallery2
 
   3. "Relative path to your Gallery2 directory" - This is the path to your Gallery2 directory
      relative to your root web directory.  For example: /nuke/modules/gallery2/

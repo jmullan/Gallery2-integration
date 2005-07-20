@@ -117,12 +117,11 @@ $Phpnuke2G2Lang = array(
 );
 
 
-global $currentlang,$g2bodyHtml;
+global $currentlang, $g2bodyHtml, $db,$user_prefix;
+
 require_once("mainfile.php");
 $module_name = basename(dirname(__FILE__));
 get_lang($module_name);
-
-global $db,$user_prefix;
 
 if (is_admin($admin)) 
 {

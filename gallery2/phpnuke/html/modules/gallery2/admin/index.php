@@ -26,8 +26,7 @@ if(!isset($admin_file)) {
 if (!eregi("".$admin_file.".php", $_SERVER['PHP_SELF'])) {
 	die("Access Denied");
 }
-global $prefix, $db;
-global $g2config_error;
+global $prefix, $db, $g2config_error;
 
 // --------------------------------------------------------
 // Mapping between Phpnuke and Gallery2 language definition
@@ -385,7 +384,7 @@ function SaveG2Config($var, $forceValidate=false) {
 		$g2mainparams = array ();
 	}
 
-	$content = "<?\n".'$g2embedparams = '.var_export($g2embedparams, TRUE).";\n".'$g2mainparams = '.var_export($g2mainparams, TRUE).";\n";
+	$content = "<?php\n".'$g2embedparams = '.var_export($g2embedparams, TRUE).";\n".'$g2mainparams = '.var_export($g2mainparams, TRUE).";\n";
 	if ($forceValidate=='true')
 	{
 		$content .='$g2configurationdone = \'true\';';
@@ -396,7 +395,7 @@ function SaveG2Config($var, $forceValidate=false) {
 		else $content .='$g2configurationdone = \'false\';';
 		
 	}
-	$content .= " ?>";
+	$content .= " \n?>";
 
 	$handle = fopen("modules/".MOD_NAME."/gallery2.cfg", "w");
 	fwrite($handle, $content);
@@ -448,7 +447,18 @@ function DisplayMainPage() {
 
 	OpenTable();
 
-	echo "<center><font class=\"option\"><b>Gallery2 Embeding Settings</b></font></center><br/>"
+    if($g2configurationdone == 'false') {
+        $t_embedphpfile = trim($_SERVER['SCRIPT_FILENAME']);
+        $a_embedphpfile = explode("/",$t_embedphpfile);
+        $dummy = array_pop($a_embedphpfile);
+        $g2embedparams['embedphpfile'] = implode("/",$a_embedphpfile)."/modules/".$module_name."/";
+        $g2embedparams['embedUri'] = "modules.php?name=".$module_name;
+        $g2embedparams['relativeG2Path'] = "modules/".$module_name."/";
+        $g2embedparams['loginRedirect'] = 'modules.php?name=Your_Account';
+        $g2embedparams['activeUserId'] = 0;
+    }
+
+	echo "<center><font class=\"option\"><b>Gallery2 Embeding Settings</b></font></center><br/><center><font color=\"red\"><b>We have done our best to fill these values in for you.  However, you should double check them for correctness.</b></font></center><br/>"
 		."<form action=\"admin.php\" method=\"post\">"
 		."<table border=\"0\"><tr><td>"._PHPEMBEDFILE.":</td>"
 		."<td colspan=\"3\"><input type=\"text\" name=\"embedphpfile\" size=\"60\" value=\"".$g2embedparams[embedphpfile]."\" maxlength=\"90\">"
@@ -505,7 +515,7 @@ function form_g2UpdateEmbedSettings() {
 	$vars = compact("g2embedparams");
 
 	check_g2configerror($g2embedparams[embedphpfile]);
-	SaveG2Config($vars);
+	SaveG2Config($vars,'true');
 
 	g2_message(_CFG_UPDATED);
 }
