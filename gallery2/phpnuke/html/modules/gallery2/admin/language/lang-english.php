@@ -25,7 +25,7 @@ define("_EMBEDURI","URL to your embedded Gallery");
 define("_RELATIVEG2PATH","The relative path to your Gallery2 directory");
 define("_LOGINREDIRECT","URL for user login");
 define("_ACTIVEUSERID","Active User ID");
-define("_UPDATEEMBEDSETTINGSG2","Update embedded settings");
+define("_UPDATEEMBEDSETTINGSG2","Verify Gallery2 installation and\nupdate integration settings");
 define("_UPDATEMAINSETTINGSG2","Update Main settings");
 define("_G2USEREXPORT","Export PhpNuke Users to Gallery 2");
 define("_G2_ERROR","Error");
@@ -36,11 +36,10 @@ define("_USER_EXPORT_FAILED","Users Export Failed...");
 define("_USER_EXPORT_COMPLETED","Users Export fully completed");
 define("_G2_NEXT_PAGE","Proceed to next page");
 define("_PHPEMBEDFILE_ERROR","You need to install and configure G2 first. Then this field must point to your Gallery2 root folder.");
-define("_SHOWSIDEBAR","Show Side Bar (Uncheck if you use the G2 Sidebar block)<br><b>Note: As of 13 July 2005, this option does not work.</b>");
+define("_SHOWSIDEBAR","Show Side Bar (Uncheck if you use the G2 Sidebar block)");
 
 define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
-
 
 
 ?>
