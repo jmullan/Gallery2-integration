@@ -12,7 +12,7 @@
 /* then DO NOT use these files.                                         */
 /* This is a beta realised , so if you try it, BACKUP first.            */
 /*                                                                      */
-/* Version: 0.5 (13 July 2005)						*/
+/* Version: 0.6 (25 July 2005)						*/
 /*                                                                      */
 /************************************************************************/
 
