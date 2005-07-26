@@ -1,17 +1,5 @@
 <?php
 
-/************************************************************************/
-/* PHP-NUKE: Web Portal System                                          */
-/* ===========================                                          */
-/*                                                                      */
-/* Copyright (c) 2002 by Francisco Burzi                                */
-/* http://phpnuke.org                                                   */
-/*                                                                      */
-/* This program is free software. You can redistribute it and/or modify */
-/* it under the terms of the GNU General Public License as published by */
-/* the Free Software Foundation; either version 2 of the License.       */
-/************************************************************************/
-
 if (!eregi("modules.php", $_SERVER['PHP_SELF'])) {
     die ("You can't access this file directly...");
 }
@@ -60,7 +48,7 @@ if ($g2bodyHtml==null) {
 				
 	$g2currentlang = $phpnuke2G2Lang[$currentlang];
 				
-	$ret = GalleryEmbed::init(array('embedUri' => $g2embedparams[embedUri],'relativeG2Path' => $g2embedparams[relativeG2Path],'loginRedirect' => $g2embedparams[loginRedirect],'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
+	$ret = GalleryEmbed::init(array('embedPath' => $g2embedparams['embedPath'], 'embedUri' => $g2embedparams['embedUri'],'relativeG2Path' => $g2embedparams['relativeG2Path'],'loginRedirect' => $g2embedparams['loginRedirect'],'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
 
 	if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -98,7 +86,7 @@ if ($g2bodyHtml==null) {
 				}
 						   		
 				// Full G2 reinit with the new created user
-				$ret = GalleryEmbed :: init(array ('embedUri' => $g2embedparams[embedUri], 'relativeG2Path' => $g2embedparams[relativeG2Path],'loginRedirect' => $g2embedparams[loginRedirect],'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
+				$ret = GalleryEmbed :: init(array ('embedPath' => $g2embedparams['embedPath'], 'embedUri' => $g2embedparams['embedUri'], 'relativeG2Path' => $g2embedparams['relativeG2Path'],'loginRedirect' => $g2embedparams['loginRedirect'],'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
 			} 
 			else {
 				echo 'G2 did not return a success status. Here is the error message from G2: <br />'.$ret->getAsHtml();

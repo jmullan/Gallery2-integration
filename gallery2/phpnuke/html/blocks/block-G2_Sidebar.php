@@ -1,133 +1,62 @@
 <?php
 
-/************************************************************************/
-/* PHP-NUKE: Web Portal System                                          */
-/* ===========================                                          */
-/*                                                                      */
-/* Copyright (c) 2002 by Francisco Burzi                                */
-/* http://phpnuke.org                                                   */
-/*                                                                      */
-/* This program is free software. You can redistribute it and/or modify */
-/* it under the terms of the GNU General Public License as published by */
-/* the Free Software Foundation; either version 2 of the License.       */
-/************************************************************************/
-/*         Additional security & Abstraction layer conversion           */
-/*                           2003 chatserv                              */
-/*      http://www.nukefixes.com -- http://www.nukeresources.com        */
-/************************************************************************/
-
 if (eregi("block-G2_Sidebar.php", $_SERVER['SCRIPT_NAME'])) {
     Header("Location: index.php");
     die();
 }
 
-
-// ----------------- Lang difinition (temporary) ---------------------
+global $admin, $user, $cookie;
 
 define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
 
+include("modules/gallery2/gallery2.cfg");
 
-// --------------------------------------------------------
-// Mapping between Phpnuke and Gallery2 language definition
-// --------------------------------------------------------
+if ($g2configurationdone != "true") {
+	$content = _G2_CONFIGURATION_NOT_DONE; 
+	return;
+}
 
-$Phpnuke2G2Lang = array(
-'danish' 		=> 'da',
-'dutch' 		=> 'nl',
-'german' 		=> 'de',
-'greek' 			=> 'el',
-'english' 		=> 'en',
-'american' 		=> 'en',
-'spanish' 		=> 'es',
-'finnish' 		=> 'fi',
-'french' 		=> 'fr',
-'irish' 		=> 'ga',			// not available
-'italian' 		=> 'it',
-'japanese'			=> 'ja',	// not available
-'norwegian' 	=> 'no',
-'polish' 		=> 'pl',
-'portuguese'	=> 'pt',
-'swedish' 	=> 'sv',
-'chinese' 			=> 'zh',
-);
+require_once($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
 
+if (is_admin($admin)) {
+	$uid='admin';
+}
+else {
+	if (is_user($user)) {
+		cookiedecode($user);
+		$uid='';  
+		if (is_user($user)) {
+			$uid = $cookie[0];
+		}
+	} 
+}
 
-// -------------------------------------------------------------------
+$ret = GalleryEmbed::init(array(
+	'embedPath' => $g2embedparams['embedPath'],
+	'embedUri' => $g2embedparams['embedUri'],
+	'relativeG2Path' => $g2embedparams['relativeG2Path'],
+	'loginRedirect' => $g2embedparams['loginRedirect'],
+	'activeUserId' => "$uid",
+	'fullInit' => true));
 
+if ($g2mainparams['showSidebar']=="true") {
+	$content = "The Gallery2 sidebar is enabled.<br>You should disable it before using this block.";
+	return true;
+}
+   
+$g2moddata = GalleryEmbed::handleRequest();
+list($ret,$html, $head) = GalleryEmbed::getImageBlock(array('blocks'=>'randomImage', 'show'=>'title'));
 
-global $prefix, $multilingual, $currentlang, $db,$g2bodyHtml,$user_prefix,$user,$cookie;
-  
-  include("modules/gallery2/gallery2.cfg");
-  
-  if ($g2configurationdone != "true")
-  {
-  	$content .= _G2_CONFIGURATION_NOT_DONE; 
-  	return;
-  }
+if (!isset($g2moddata['isDone'])) {
+  echo 'isDone is not defined, something very bad must have happened.';
+  exit;
+}
 
-	require_once($g2embedparams[embedphpfile]."/"._G2_EMBED_PHP_FILE);
-	
-	if (is_admin($admin)) 
-	{
-		// we log as an admin
-		$uid='admin';
-	}
-	else
-	{
-		if (is_user($user))
-		{
-				// we log as a normal user
-				cookiedecode($user);
-				$uid='';  
-				if (is_user($user)) 
-				{
-					$uid = $cookie[0];
-				}
-		} 
-	}
-	
-	// get phpnuke user lang
-	$g2currentlang = $Phpnuke2G2Lang[$currentlang]; 
-	
+if ($g2moddata['isDone']) {
+  exit; 
+}
 
-	$ret = GalleryEmbed::init(array(
-       'embedUri' => $g2embedparams[embedUri],
-       'relativeG2Path' => $g2embedparams[relativeG2Path],
-       'loginRedirect' => $g2embedparams[loginRedirect],
-       'activeUserId' => "$uid",
-       'activeLanguage' =>$g2currentlang));
-       
-		  	if ($g2mainparams[showSidebar]!="true")
-		  	{
-		    	GalleryCapabilities::set('showSidebar', false);
-		  	}
-
-       
-    // handle the G2 request
-    $g2moddata = GalleryEmbed::handleRequest();
-    
-  
-    // show error message if isDone is not defined
-    if (!isset($g2moddata['isDone'])) 
-    {
-      echo 'isDone is not defined, something very bad must have happened.';
-      exit;
-    }
-    
-    // die if it was a binary data (image) request
-    if ($g2moddata['isDone']) 
-    {
-      exit; // uploads module does this too
-    }
-  
-  	// TODO: Error message temporary removed to prevent notification for unmapped users
-	  /*if ($ret->isError()) 
-	  {
-	    echo $ret->getAsHtml();
-	  }*/
-	  
-		$g2bodyHtml = $g2moddata['bodyHtml']; 
-		$content .= $g2moddata['sidebarHtml'];
+$content = "<center>".$html."</center>";
 
 ?>
