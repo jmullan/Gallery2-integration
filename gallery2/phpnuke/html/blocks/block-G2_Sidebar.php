@@ -1,5 +1,31 @@
 <?php
 
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * Gallery 2 sidebar block for PHPNuke.
+ * @version $Revision$ $Date$
+ * @author Dariush Molavi <dari@nukedgallery.net>
+ */
+
 if (eregi("block-G2_Sidebar.php", $_SERVER['SCRIPT_NAME'])) {
     Header("Location: index.php");
     die();
@@ -44,19 +70,25 @@ if ($g2mainparams['showSidebar']=="true") {
 	$content = "The Gallery2 sidebar is enabled.<br>You should disable it before using this block.";
 	return true;
 }
-   
-$g2moddata = GalleryEmbed::handleRequest();
-list($ret,$html, $head) = GalleryEmbed::getImageBlock(array('blocks'=>'randomImage', 'show'=>'title'));
 
-if (!isset($g2moddata['isDone'])) {
-  echo 'isDone is not defined, something very bad must have happened.';
-  exit;
+GalleryCapabilities::set('showSidebarBlocks', false);
+$g2moddata = GalleryEmbed::handleRequest(array('extractSidebarBlocks' => true));
+
+if(!isset($g2moddata['sidebarBlocksHtml'])) {
+	$content = "You need to enable sidebar blocks in your Gallery 2 configuration.";
 }
-
-if ($g2moddata['isDone']) {
-  exit; 
+else { 
+	$num_blocks = count($g2moddata['sidebarBlocksHtml']) - 1;
+	$content = "<center>";
+	for($i = 0; $i <= $num_blocks; $i++) {
+		if($i != $num_blocks) {
+			$content .= $g2moddata['sidebarBlocksHtml'][$i]."<hr size=\"1\" noshade>";
+		}
+		else {
+			$content .= $g2moddata['sidebarBlocksHtml'][$i];
+		}
+	}
+	$content .= "</center>";
 }
-
-$content = "<center>".$html."</center>";
 
 ?>

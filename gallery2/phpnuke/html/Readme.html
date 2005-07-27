@@ -338,6 +338,25 @@
 		<p>modules.php?name=gallery2</p>
 		</div>
 		</li>
+		<li><b>URL path from document root to embedURI</b> - This one can be tricky.  
+		The way to figure this entry out is to go to your website's home page and look 
+		at the URL.  If there is anything after the domain name, enter it here.  For 
+		example:
+		<div class="instructions">
+		<h3>Example 1</h3>
+		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/</b></p>
+		<p>Then you would enter <b>/</b> in this box</p>
+		</div>
+		<div class="instructions">
+		<h3>Example 2</h3>
+		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/nuke/</b></p>
+		<p>Then you would enter <b>/nuke/</b> in this box</p>
+		</div>
+		<div class="instructions">
+		<h3>Example 3</h3>
+		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/~my_username/</b></p>
+		<p>Then you would enter <b>/~my_username/</b> in this box</p>
+		</div></li>
 		<li><b>Relative path to your Gallery 2 directory</b> - This is the path 
 		to your Gallery2 directory relative to your root web directory.  For 
 		example: <br />
@@ -357,6 +376,12 @@
 		</li>
 		<li><b>Active User ID</b> - You can safely leave this set to "0".
 		</li>
+		<li><b>Cookie Path</b> - This you can safely leave set at it's default 
+		value.  But when Gallery is reachable at http://www.example.com/application/modules/gallery2/ 
+		and your website homepage is at http://www.example.com/application/, then 
+		you have to compare the path /application/modules/gallery2/ with /application/. 
+		The cookie path is the part of the paths that is equal, in this case it 
+		is '/application/'.</li>
 		</ol>
 		When you are finished, click the "Update integration settings" button.  
 		This will save your configuration to the gallery2.cfg file and will 
