@@ -125,35 +125,18 @@ if ($g2bodyHtml==null) {
 		  
 	// handle the G2 request
 
-<<<<<<< index.php
-	// handle the G2 request
-
 	if ($g2mainparams['showSidebar']) {
 		GalleryCapabilities::set('showSidebarBlocks', true);
-	$g2moddata = GalleryEmbed::handleRequest();
+		$g2moddata = GalleryEmbed::handleRequest();
 		if (isset($g2moddata['sidebarBlocksHtml']) && !empty($g2moddata['sidebarBlocksHtml'])) {
 			$g2bodyHtml = '<div id="gsSidebar" class = "gcBorder1">' . join('', $g2moddata['sidebarBlocksHtml']) . '</div>';
 		}
 	}
-    else {
+    	else {
 		GalleryCapabilities::set('showSidebarBlocks', false);
-		$g2moddata = GalleryEmbed::handleRequest(array('extractSidebarBlocks' => true));
-    }
+		$g2moddata = GalleryEmbed::handleRequest();
+    	}
 		    
-=======
-	if ($g2mainparams['showSidebar']) {
-		GalleryCapabilities::set('showSidebarBlocks', true);
-		$g2moddata = GalleryEmbed::handleRequest(array('extractSidebarBlocks' => true));
-		if (isset($g2moddata['sidebarBlocksHtml']) && !empty($g2moddata['sidebarBlocksHtml'])) {
-			$g2bodyHtml = '<div id="gsSidebar" class = "gcBorder1">' . join('', $g2moddata['sidebarBlocksHtml']) . '</div>';
-		}
-	}
-    else {
-		GalleryCapabilities::set('showSidebarBlocks', false);
-		$g2moddata = GalleryEmbed::handleRequest(array('extractSidebarBlocks' => true));
-    }
-
->>>>>>> 1.9
 	// G2 Header hacking (contribution from dmolavi)
 	// get the page title, javascript and css links from the <head> html from G2
 	$title = ''; $javascript = array();    $css = array();
