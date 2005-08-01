@@ -72,7 +72,7 @@ if ($g2mainparams['showSidebar']=="true") {
 }
 
 GalleryCapabilities::set('showSidebarBlocks', false);
-$g2moddata = GalleryEmbed::handleRequest(array('extractSidebarBlocks' => true));
+$g2moddata = GalleryEmbed::handleRequest();
 
 if(!isset($g2moddata['sidebarBlocksHtml'])) {
 	$content = "You need to enable sidebar blocks in your Gallery 2 configuration.";
