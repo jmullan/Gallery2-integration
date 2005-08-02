@@ -1,0 +1,97 @@
+2005-08-02	dmolavi	 <dari@nukedgallery.net>
+	*	Added ChangeLog to repository.
+
+2005-08-01  dmolavi  <dari@nukedgallery.net>
+
+	* 	Another minor update to sidebar block code.
+
+2005-08-01  dmolavi  <dari@nukedgallery.net>
+
+	* 	Fixed borked CVS commit in index.php and minor update to sidebar
+		code.
+
+2005-07-27  dmolavi  <dari@nukedgallery.net>
+
+	* 	Stupid me, forgot to add image block to repository
+
+2005-07-27  dmolavi  <dari@nukedgallery.net>
+
+	* 	UPDATE:
+	    - Update Readme.html with new admin options
+		- Add proper versioning info to top of each file
+		- Language file updates NEW:
+		- Image block now works :)
+		- Sidebar block now works :)
+
+2005-07-27  dmolavi  <dari@nukedgallery.net>
+
+	* 	NEW:
+		- New readme file in HTML format.
+
+2005-07-27  dmolavi  <dari@nukedgallery.net>
+
+	* 	FIX:
+		- Got the sidebar working for a random image.
+		- Added embedPath to GalleryEmbed::init() calls
+		- Minor updates in admin.php file
+
+2005-07-25  dmolavi  <dari@nukedgallery.net>
+
+	* 	doh..forgot the README update
+
+2005-07-25  dmolavi  <dari@nukedgallery.net>
+
+	* 	UPDATE:
+		- Added cookie path to admin setup
+		- Added check to verify Gallery2 is installed, not just copied to a
+		  directory.
+		- Updated language files.
+		- Updated sidebar capabilities.
+
+2005-07-20  dmolavi  <dari@nukedgallery.net>
+
+	* 	FIX: Updated incorrect embedUri usage NEW: admin setup page now
+		tries to guess and pre-fill as many of the fields as possible.
+
+2005-07-20  dmolavi  <dari@nukedgallery.net>
+
+	* 	FIX: For new phpNuke compatibility, used $admin_file check in place
+		of admin.php.
+
+2005-07-13  dmolavi  <dari@nukedgallery.net>
+
+	* 	Changes:
+		- Clarified README.txt file
+		- Added new admin folder in html/ to allow for users of older
+		  versions of PHPNuke to integrate without any problems.
+
+2005-06-24  dmolavi  <dari@nukedgallery.net>
+
+	* 	FIX: Slideshow didn't work when embedded. Updated to include
+		javascript in header.
+
+2005-05-21  andy_st
+
+	* 	Removed obsolete / duplicate readme
+
+2005-04-06  andy_st
+
+	* 	drumicube updates his integration code. now, it creates users on the
+		fly, i.e. user accounts (creation) are synchronized. update/delete
+		user is still not synchronized.
+
+2005-03-29  andy_st
+
+	* 	drumicube included dmolavi  <dari@nukedgallery.net>s css links hack.
+
+2005-03-29  andy_st
+
+	* 	update in the name of drumicube.
+
+2005-02-13  andy_st
+
+	* 	update of the phpnuke module for gallery2 integration
+
+2005-01-23  andy_st
+
+	* 	Added the G2 phpnuke integration in the name of drumicube.
