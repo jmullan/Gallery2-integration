@@ -66,7 +66,7 @@ $ret = GalleryEmbed::init(array(
 	'activeUserId' => "$uid",
 	'fullInit' => true));
 
-if ($g2mainparams['showSidebar']=="true") {
+if ($g2mainparams['showSidebar']) {
 	$content = "The Gallery2 sidebar is enabled.<br>You should disable it before using this block.";
 	return true;
 }
@@ -74,12 +74,19 @@ if ($g2mainparams['showSidebar']=="true") {
 GalleryCapabilities::set('showSidebarBlocks', false);
 $g2moddata = GalleryEmbed::handleRequest();
 
+if (isset($g2moddata['headHtml'])) {
+	list($title, $css, $javascript) = GalleryEmbed::parseHead($g2moddata['headHtml']);
+}
+
 if(!isset($g2moddata['sidebarBlocksHtml'])) {
 	$content = "You need to enable sidebar blocks in your Gallery 2 configuration.";
 }
 else { 
 	$num_blocks = count($g2moddata['sidebarBlocksHtml']) - 1;
-	$content = "<center>";
+	foreach($css as $stylesheet) {
+		$content .= $stylesheet;
+	}
+	$content .= "<div id=\"gsSidebar\">";
 	for($i = 0; $i <= $num_blocks; $i++) {
 		if($i != $num_blocks) {
 			$content .= $g2moddata['sidebarBlocksHtml'][$i]."<hr size=\"1\" noshade>";
@@ -88,7 +95,7 @@ else {
 			$content .= $g2moddata['sidebarBlocksHtml'][$i];
 		}
 	}
-	$content .= "</center>";
+	$content .= "</div>";
 }
 
 ?>
