@@ -1,10 +1,14 @@
+2005-08-14  dmolavi  <dari@nukedgallery.net>
+	UPDATE:
+	  * Updated README file for RC-1.  Better late than never...
+
 2005-08-10  dmolavi  <dari@nukedgallery.net>
 	FIX:
 	  * Sidebar did not include G2 CSS. This fix takes care of that,
 	    but invalidates the HTML that is generated, since the CSS
 	    link tag is included within the body of the page.  Doesn't 
 	    matter anyway, since PHPNuke's HTML is light years from valid 
-	    anyway.
+	    to begin with.
 
 2005-08-04  dmolavi  <dari@nukedgallery.net>
 	NEW:
