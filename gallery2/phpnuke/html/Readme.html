@@ -142,7 +142,9 @@
 		ul.toc-level-2 li {
 		margin: auto;
 		}
-
+		font.code {
+		font:12px Courier,'Courier New',sans-serif;
+		}
 		</style>
 	</head>
 	<body>
@@ -300,32 +302,32 @@
 		<div class="instructions">
 			<h3>In html/modules/gallery2/admin/language/lang-xxxxx.php</h3>
 			<p>
-			You will need to update the following line:
-			define("MOD_NAME","gallery2");
+			You will need to update the following line:<br />
+			<font class="code">define("MOD_NAME","gallery2");</font><br />
 			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
 			</p>
 		</div>
 		<div class="instructions">
 			<h3>In html/admin/case/case.gallery2.php and html/modules/gallery2/admin/case.gallery2.php</h3>
 			<p>
-			You will need to update the following line:
-			$module_name = "gallery2";
+			You will need to update the following line:<br />
+			<font class="code">$module_name = "gallery2";</font><br />
 			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
 			</p>
 		</div>
 		<div class="instructions">
 			<h3>In html/blocks/block-G2_ImageBlock.php and html/blocks/block-G2_Sidebar.php</h3>
 			<p>
-			You will need to update the following line:
-			include("modules/gallery2/gallery2.cfg");
+			You will need to update the following line:<br />
+			<font class="code">include("modules/gallery2/gallery2.cfg");</font><br />
 			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
 			</p>
 		</div>
 		<div class="instructions">
 			<h3>In html/modules/gallery2/index.php</h3>
 			<p>
-			You will need to update the following line:
-			define("MOD_NAME","gallery2");
+			You will need to update the following line:<br />
+			<font class="code">define("MOD_NAME","gallery2");</font><br />
 			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
 			</p>
 		</div>
@@ -365,7 +367,7 @@
 		create a new php file in your Gallery 2 directory and place the following 
 		code inside of it:
 		<div class="instructions">
-		<p>&lt;?php echo dirname(__FILE__); ?&gt;</p>
+		<p><font class="code">&lt;?php echo dirname(__FILE__); ?&gt;</font></p>
 		</div>
 		Save the file and view it through your web browser.  The text on your screen 
 		is what should be entered in this text box.
