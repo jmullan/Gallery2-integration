@@ -1,0 +1,501 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=us-ascii" http-equiv="Content-Type">
+		</meta>
+		<title>
+		README: Gallery 2 Release Candidate 2 phpBB2 Integration Package
+		</title>
+		<style type="text/css">
+
+		html {
+		font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+		font-size: 62.5%;
+		}
+		body {
+		font-size: 1.2em;
+		margin: 16px 16px 0px 16px;
+		background: white;
+		}
+		a {
+		text-decoration: none;
+		}
+		p {
+		line-height: 1.5em;
+		}
+		h2 {
+		/*font-family: Georgia, Palatino, "Times New Roman", serif;*/
+		font-family: "Gill Sans", Verdana, Arial, sans-serif;
+		font-size: 1.5em;
+		color: #333;
+		border-bottom: 1px solid #ddd;
+		margin: 0;
+		padding: 1.0em 0 0.15em 0;
+		}
+		tt {
+		font-family: monospace, serif;
+		font-size: 1.2em;
+		line-height: 1.2em;
+		}
+		ul, ol {
+		margin: 1.2em 0 1.2em 1.75em;
+		padding: 0;
+		}
+		li {
+		padding: 0.2em 0;
+		line-height: 1.5em;
+		}
+		ol ul {
+		margin-top: 0.4em;
+		margin-bottom: 0.4em;
+		}
+		a:link {
+		font-weight: 700;
+		color: #5D728E;
+		background-color: transparent;
+		}
+		a:visited {
+		font-weight: 700;
+		color: #5D728E;
+		background-color: transparent;
+		}
+		a:hover {
+		font-weight: 700;
+		color: #B30400;
+		text-decoration: underline;
+		}
+		div.instructions {
+		background: #ddd;
+		border: 1px solid #777;
+		width: 480px;
+		margin: 8px;
+		padding: 0px;
+		}
+		div.instructions h3 {
+		background: #ccc;
+		border-bottom: 1px solid #777;
+		font-size: 1.1em;
+		margin: 0px 0px 4px 0px;
+		padding: 4px;
+		}
+		div.instructions p {
+		margin: 0px 0px 0px 4px;
+		}
+		.important {
+		background: #FACA61;
+		border: 2px;
+		width: 480px;
+		margin: 0.6em 0 0.6em 0;
+		padding: 0.6em;
+		color: #C00;
+		text-align: center;
+		}
+		.important .email {
+		font-size: 1.3em;
+		color: black;
+		font-weight: 700;
+		margin: 0.6em 0 0 0;
+		}
+		.important h3 {
+		color: #eee;
+		background: #f00;
+		font-size: 1.3em;
+		margin: -0.2em -0.2em 0.2em -0.2em;
+		padding: 0.2em 0.2em;
+		}
+		.fineprint {
+		font-size: .8em;
+		color: #ccc;
+		}
+		.toggle {
+		padding-left: .333em;
+		padding-right: 0.3em;
+		border: solid #a6caf0 1px;
+		background: #eee;
+		}
+		div.toc {
+		float: right;
+		border: 1px solid #F15D22;
+		background: #e9eff3;
+		padding: 2px 4px 2px 4px;
+		margin: 15px auto auto 15px;
+		}
+		div.toc h2 {
+		font-size: 1.1em;
+		margin-top: -8px;
+		}
+		p.toc-link {
+		margin: 0px;
+		}
+		ul.toc-level-1 {
+		margin: 0px 16px 0px 16px;
+		list-style-type: none;
+		}
+		ul.toc-level-1 li {
+		margin: auto;
+		font-weight: bold;
+		}
+		ul.toc-level-2 {
+		margin: auto 0px auto 15px;
+		list-style-type: none;
+		}
+		ul.toc-level-2 li {
+		margin: auto;
+		}
+		font.code {
+		font:12px Courier,'Courier New',sans-serif;
+		white-space:pre;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="toc">
+		<h2>
+		<a name="toc">Contents</a>
+		</h2>
+		<ul class="toc-level-1">
+		<li>
+		Introduction
+		<ul class="toc-level-2">
+		<li>
+		<a href="#description">
+		Description
+		</a>
+		</li>
+		<li>
+		<a href="#dodont">
+		What this package does
+		</a>
+		</li>
+		</ul>
+		</li>
+		<li>
+		Installation
+		<ul class="toc-level-2">
+		<li>
+		<a href="#installing">
+		Installing
+		</a>
+		</li>
+		<li>
+		<a href="#configuration">
+		Configuration
+		</a>
+		</li>
+		</ul>
+		<li>
+		Help!
+		<ul class="toc-level-2">
+		<li>
+		<a href="#getting_help">
+		Getting Help
+		</a>
+		</li>
+		<li>
+		<a href="#known_issues">
+		Known Issues / Bugs
+		</a>
+		</li>
+		</ul>
+		</li>
+		</ul>
+		</div>
+		<div>
+		<img alt="Gallery 2" src="images/g2Logo.gif">
+		</div>
+		<p>
+		Welcome to Gallery 2.0. This integration package is part of the 
+		ongoing effort to seamlessly integrate Gallery 2 in phpBB2.  
+		Please read through this document carefully
+		before integrating Gallery 2 and before asking for help.  We have
+		taken care to try to answer as many of your questions here as
+		possible.  If you don't read this and have problems, we may
+		refer you back to this document as a first resource.
+		</p>
+		<h2>
+		<a name="description">
+		Description
+		</a>
+		</h2>
+		<p>
+		This package contains all the files and directories you will need 
+		in order to integrate Gallery 2 into your phpBB2 website.  This integration package 
+		is still under very heavy development and is being released as a beta package.  It's 
+		limitations are many, bugs (probably) numerous.  But, we rely on you, the user, to locate 
+		them and make us aware of them.	<b>Standard Disclaimer: Back up all files/folders/databases 
+		related to Gallery 2 before attempting this integration.</b>
+		</p>
+		<h2>
+		<a name="dodont">
+		What this package does
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Simply put, this package allows you to integrate Gallery 2 into phpBB2.  Among 
+		it's many features, it:
+		<ol>
+		<li>Creates an administration link/page in the phpBB2 administration page.</li>
+		<li>Allows you to export your existing phpBB2 users to Gallery 2.</li>
+		</ol>
+		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
+		proceed with this integration, you <b>must</b> install and configure Gallery 2.
+		</p>
+		<h2>
+		<a name="installing">
+		Installation
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		This package contains two folders:
+		<ul>
+		<li>admin/</li>
+		<li>templates/</li>
+		</ul>
+		To install, simply upload the contents of these folders into the 
+		corresponding folders in your phpBB2 installation.  The gallery2.php file 
+		should be copied to your phpBB2 root.
+		</p>
+		<p>The next part of installation is adding one additional table to your phpBB2 
+		database:<br />
+		<div class="instructions">
+		<p><font class="code">CREATE TABLE `phpbb_gallery2` (
+`configID` TINYINT(1) NOT NULL,
+`fullPath` VARCHAR( 255 ) NOT NULL ,
+`embedPath` VARCHAR( 255 ) NOT NULL ,
+`embedURI` VARCHAR( 255 ) NOT NULL ,
+`relativePath` VARCHAR( 255 ) NOT NULL ,
+`loginPath` VARCHAR( 255 ) NOT NULL ,
+`cookiePath` VARCHAR( 255 ) NOT NULL ,
+`activeUserID` INT NOT NULL
+);</font>
+		</p>
+		</div>
+		<p>Next, edit includes/page_header.php:<br />
+		<div class="instructions">
+		<p><font class="code">
+FIND 
+'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '&lt;span 
+  style="color:#' . $theme['fontcolor2'] . '"&gt;', '&lt;/span&gt;'),
+
+AFTER, ADD
+'L_GALLERY2' => 'Gallery 2',
+
+FIND
+'U_GROUP_CP' => append_sid('groupcp.'.$phpEx),
+
+AFTER, ADD
+'U_GALLERY2' => append_sid('gallery2.'.$phpEx),
+		</font></p></div>
+		<p>Next, edit templates/subSilver/overall_header.tpl:<br />
+		<div class="instructions">
+		<p><font class="code">
+FIND
+&lt;img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" /&gt;{L_LOGIN_LOGOUT}&lt;/a&gt;&amp;nbsp;
+
+INLINE, AFTER ADD
+&amp;nbsp;&lt;a href="{U_GALLERY2}" class="mainmenu"&gt;&lt;img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" /&gt;{L_GALLERY2}&lt;/a&gt;&amp;nbsp;
+		</font></p></div>
+		<p>Finally, edit login.php:<br />
+		<div class="instructions">
+		<p><font class="code">
+FIND
+	else if( ( isset($HTTP_GET_VARS['logout']) || isset($HTTP_POST_VARS['logout']) ) && $userdata['session_logged_in'] )
+	{
+
+AFTER, ADD
+		$g2_sql = "SELECT * FROM phpbb_gallery2";
+		$g2_result = $db->sql_query($g2_sql);
+		$g2_row = $db->sql_fetchrow($g2_result);
+		$fullpath = $g2_row['fullPath'];;
+		$embedPath = $g2_row['embedPath'];
+		require_once($fullpath . 'embed.php'); 
+		$g2_ret = GalleryEmbed::logout(array('embedPath'=>$embedPath));
+		</font></p></div></p>
+		<h2>
+		<a name="configuration">
+		Configuration
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Before you can view your Gallery 2 installation in phpBB2, you must 
+		first configure this integration package. To do this, navigate to the 
+		phpBB2 administration page and click on the "Gallery2" link.  You will 
+		now be presented with two options.
+		</p>
+		<p>The first area is the primary integration settings.  If these are 
+		incorrectly set, your integration will not succeed.  Fear not, though, 
+		as it will probably take you two or three attempts before you land upon 
+		the correct settings.
+		</p>
+		<h3>Gallery 2 Integration Settings</h3>
+		The integration package will attempt to fill these values in to the best 
+		of it's ability, however, it is a good idea for you to double-check them, 
+		since your Gallery 2 integration will not work if these values are incorrect.
+		<ol>
+		<li><b>Full path to your Gallery 2 directory</b> - This setting is the complete 
+		path to your Gallery 2 directory.  For example: <br />
+		<div class="instructions">
+		<p>/home/myuser/public_html/gallery2/</p>
+		</div>
+		If you are unsure of what your full path is to your Gallery 2 directory, 
+		create a new php file in your Gallery 2 directory and place the following 
+		code inside of it:
+		<div class="instructions">
+		<p><font class="code">&lt;?php echo dirname(__FILE__); ?&gt;</font></p>
+		</div>
+		Save the file and view it through your web browser.  The text on your screen 
+		is what should be entered in this text box.
+		</li>
+		<li><b>URL to gallery2.php</b> - This is the URL that would take you 
+		to your Gallery 2 installation when it is integrated.  For example:<br />
+		<div class="instructions">
+		<p>/gallery2.php</p>
+		</div>
+		</li>
+		<li><b>URL path from document root to gallery2.php</b> - This one can be tricky.  
+		The way to figure this entry out is to go to your website's home page and look 
+		at the URL.  If there is anything after the domain name, enter it here.  For 
+		example:
+		<div class="instructions">
+		<h3>Example 1</h3>
+		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/</b></p>
+		<p>Then you would enter <b>/</b> in this box</p>
+		</div>
+		<div class="instructions">
+		<h3>Example 2</h3>
+		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/phpBB2/</b></p>
+		<p>Then you would enter <b>/phpBB2/</b> in this box</p>
+		</div>
+		<div class="instructions">
+		<h3>Example 3</h3>
+		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/~my_username/</b></p>
+		<p>Then you would enter <b>/~my_username/</b> in this box</p>
+		</div></li>
+		<li><b>Relative path to your Gallery 2 directory</b> - This is the path 
+		to your Gallery2 directory relative to your root web directory.  For 
+		example: <br />
+		<div class="instructions">
+		<p>gallery2</p>
+		</div>
+		Note that depending on your directory structure, you may need to add a 
+		"/" to the beginning of your relative path.
+		</li>
+		<li><b>URL for user login</b> - This is the URL which users must visit 
+		when they want to log into your phpBB2 forums.  The standard Your_Account 
+		modules URL is:
+		<div class="instructions">
+		<p>login.php</p>
+		</div>
+		If you use a different account module, you should update this setting.
+		</li>
+		<li><b>Active User ID</b> - You can safely leave this set to "0".
+		</li>
+		<li><b>Cookie Path</b> - This you can safely leave set at it's default 
+		value.  But when Gallery is reachable at http://www.example.com/application/gallery2/ 
+		and your website homepage is at http://www.example.com/application/, then 
+		you have to compare the path /application/gallery2/ with /application/. 
+		The cookie path is the part of the paths that is equal, in this case it 
+		is '/application/'.</li>
+		</ol>
+		When you are finished, click the "Submit" button.  
+		This will save your configuration to the phpBB2 database and will 
+		verify that your Gallery 2 installation has been properly set up.  
+		<h3>Export Users to Gallery 2</h3>
+		This will export all your phpBB2 users and create a G2 account for them 
+		if they do not have one. The first phpBB2 admin account will also be 
+		mapped to the G2 admin account.  Therefore, if you're logged as an admin 
+		in phpBB2, you will also been logged as the admin in G2.
+		<p>
+		No group mapping is done at this time, it will come in a future release.<p>
+		Everytime a new user registers on your phpBB2 forum, on their first G2 visit, 
+		an account will be created for him.
+		</p>
+		<h2>
+		<a name="getting_help">
+		Getting Help
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		If you are having problems getting your integration completed successfully, 
+		start out by searching the Forums at <a href="http://www.nukedgallery.net">
+		NukedGallery.net</a>.  Gallery2 specific help is offered in <a href="http://www.nukedgallery.net/forum13.html">
+		this forum</a> on NukedGallery.</p>
+		<p>If you are having general Gallery 2 problems,  you should start by looking in the <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22" target="_blank">Gallery 2 Support Forum</a> on the <a href="http://gallery.sourceforge.net" target="_blank">Gallery
+		  Website</a>.  Search the forum to see if somebody else has
+		  posted a similar problem and maybe there’s an answer
+		  there, otherwise start a new topic to get help.  If the problem
+		  seems like a bug in the Gallery 2 software you can <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130" target="_blank">file a bug</a> in our bug tracker on
+		  SourceForge.  Please read our <a href="http://gallery.sourceforge.net/wiki.php?page=Feature%20Requests%20and%20Bug%20Reports" target="_blank">tracker guidelines</a> before filing a bug so
+		  that we can cut down on the number of spurious reports.  If
+		  you're unsure whether to file a bug you can always post in the
+		  forums first and we'll ask you to file a bug if needed.  If you
+		  want to chat in real time, you can talk on our user-to-user irc
+		  support channel, <a href="irc://irc.freenode.net/#gallery-support" target="_blank">#gallery-support on irc.freenode.net</a>.
+		</p>
+
+		<p>
+		  Remember – reporting bugs is <b>good</b>.  Even if you think
+		  it’s silly, go ahead and report it.  We can always close the bug
+		  or refile it (please don’t be offended in this case) but it’s
+		  harder to find bugs than it is to fix them so we’re counting on
+		  you to help us with the finding part.
+		</p>
+		<h2>
+		<a name="known_issues">
+		Known Issues
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		The following are known issues with this integration package:
+		<ol>
+		<li><b>Verification of settings</b> - Right now, a very rudimentary 
+		check is done to ensure that Gallery2 is installed and configured.  
+		A more robust check of the remaining settings needs to be done.</li>
+		</ol>
+		For a list of known issues with Gallery 2, view the <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/gallery/gallery2/README.html#known_issues">
+		Gallery 2 README</a>.
+		</p>
+		    <p>
+      <a href="http://validator.w3.org/check?uri=referer&amp;ss=1"><img
+	  src="images/xhtml10.png"
+	  alt="This page is valid XHTML 1.0"
+	  style="border: none" width="80" height="15"/></a>
+
+      <a href="http://gallery.sourceforge.net"><img
+	  src="images/gallery.gif"
+	  alt="Gallery 2.0 RC-1"
+	  title="Gallery 2.0 RC-1"
+	  style="border: none" width="80" height="15"/></a>
+
+    </p>
+    <hr />
+	<p class="fineprint">
+	$Id$
+	</p>
+	</body>
+	</html>
