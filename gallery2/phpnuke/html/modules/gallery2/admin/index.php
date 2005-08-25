@@ -108,7 +108,7 @@ function init() {
 		return true;
 	}
 
-	include ("modules/gallery2/gallery2.cfg");
+	include ("modules/".MOD_NAME."/gallery2.cfg");
 	require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang];
@@ -145,7 +145,7 @@ function init() {
 	 */
 	function g2addexternalMapEntry($externalId, $entityId, $entityType) 
 	{
-		include ("modules/gallery2/gallery2.cfg");
+		include ("modules/".MOD_NAME."/gallery2.cfg");
 		
 		// init G2 transaction, load G2 API, if not already done so
 		if (!init()) {
@@ -359,7 +359,7 @@ function SaveG2Config($var, $forceValidate=false) {
 		}
 	}
 	elseif (!is_writable("modules/".MOD_NAME."/")) {
-		g2_message("<b>"._G2_ERROR."</b>: modules/gallery2/ "._NOTWRITABLE);
+		g2_message("<b>"._G2_ERROR."</b>: modules/".MOD_NAME."/ "._NOTWRITABLE);
 	}
 	include ("modules/".MOD_NAME."/gallery2.cfg");
 
@@ -399,7 +399,7 @@ function SaveG2Config($var, $forceValidate=false) {
 
 function check_g2configerror($embedphpfile, $vars=NULL)
 {
-	include ("modules/gallery2/gallery2.cfg");
+	include ("modules/".MOD_NAME."/gallery2.cfg");
 
 	if (!file_exists($embedphpfile)) {
 		g2_message ("<b>"._G2_ERROR." : "._PHPEMBEDFILE."</b><br/>"._PHPEMBEDFILE_ERROR);
@@ -437,7 +437,7 @@ function DisplayMainPage() {
 
 	// display embed settings
 
-	include ("modules/gallery2/gallery2.cfg");
+	include ("modules/".MOD_NAME."/gallery2.cfg");
 
 	$path_found = false;
 
@@ -550,7 +550,7 @@ function form_g2UpdateEmbedSettings() {
 
 function form_g2UpdateMainSettings() {
 
-	include ("modules/gallery2/gallery2.cfg");
+	include ("modules/".MOD_NAME."/gallery2.cfg");
 
 	$g2mainparams['showSidebar'] = $_POST['showsidebar'];
 
@@ -568,7 +568,7 @@ function form_g2UpdateMainSettings() {
 /*********************************************************/
 
 function form_g2UserExportSettings() {
-	include ("modules/gallery2/gallery2.cfg");
+	include ("modules/".MOD_NAME."/gallery2.cfg");
 
 	check_g2configerror($g2embedparams[embedphpfile]);
 	

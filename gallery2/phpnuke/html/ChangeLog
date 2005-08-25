@@ -1,3 +1,11 @@
+2005-08-25  dmolavi  <dari@nukedgallery.net>
+	FIX:
+	  * Corrected module name requirements in admin files.
+	UPDATE:
+	  * Updated Readme.html file for RC2
+	  * Updated Readme.html file for cases where Gallery 2 install
+	    directory is not "gallery2".
+
 2005-08-14  dmolavi  <dari@nukedgallery.net>
 	UPDATE:
 	  * Updated README file for RC-1.  Better late than never...

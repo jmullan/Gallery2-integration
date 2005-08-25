@@ -30,6 +30,8 @@ if (!eregi("modules.php", $_SERVER['PHP_SELF'])) {
     die ("You can't access this file directly...");
 }
 
+define("MOD_NAME","gallery2");
+
 // --------------------------------------------------------
 // Mapping between Phpnuke and Gallery2 language definition
 // --------------------------------------------------------
@@ -59,7 +61,7 @@ else {
 }
   
 if ($g2bodyHtml==null) {
-	include("modules/gallery2/gallery2.cfg");
+	include("modules/".MOD_NAME."/gallery2.cfg");
 	
 	if ($g2configurationdone != "true"){
 			include "header.php";
