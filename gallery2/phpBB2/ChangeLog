@@ -1,2 +1,8 @@
+2205-08-30  dmolavi  <dari@nukedgallery.net>
+	UPDATE:
+	  * Added group sync to admin control panel.  
+	    New users are *not* added to their groups 
+	    yet, that will be next. 
+
 2005-08-25  dmolavi  <dari@nukedgallery.net>
 	First commit of phpBB2 integration code.

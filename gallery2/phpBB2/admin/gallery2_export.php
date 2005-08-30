@@ -35,6 +35,8 @@ require('./pagestart.' . $phpEx);
 
 $failures = array();
 
+$sync_type = ($_GET['type'] == "user") ? "user" : "group";
+$sync_title = ($_GET['type'] == "user") ? "Users" : "Groups";
 
 /*********************************************************/
 /* True if init() was called, else false                 */
@@ -297,6 +299,50 @@ function userExport()
 	echo "<form><input type=\"button\" value=\"Close Window\" onclick=\"window.close()\"></form>";
 }
 
+function groupExport() 
+{
+	global $db, $gallery, $failures;
+
+	// init G2 transaction, load G2 API, if not already done so
+	if (!init()) {
+		return false;
+	}
+
+	// Load all existing phpnuke <-> G2 mappings
+	list ($ret, $mapsbyentityid, $mapsbyexternalid) = g2getallexternalIdmappings();
+	if (!$ret) {
+		return false;
+	}
+
+	$sql = "SELECT group_id, group_name FROM " . GROUPS_TABLE . " WHERE group_single_user = 0";
+	$result = $db->sql_query($sql);
+	while( $row = $db->sql_fetchrow($result) ) 
+	{
+		$ret = GalleryEmbed :: createGroup($row['group_id'],$row['group_name']);
+		if (!$ret->isSuccess()) {
+			$failures[] = $row['group_name'];
+		}
+		$g_sql ="SELECT u.username, ug.user_id FROM " . USERS_TABLE . " u, " . USER_GROUP_TABLE . " ug WHERE ug.user_id = u.user_id AND ug.group_id = " .$row['group_id'];
+		$g_result = $db->sql_query($g_sql) or die(mysql_error());
+		while( $g_row = $db->sql_fetchrow($g_result) ) 
+		{
+			$ret = GalleryEmbed :: addUserToGroup($g_row['user_id'],$row['group_id']);
+			if (!$ret->isSuccess()) {
+				$failures[] = $row['group_name'];
+			}
+		}
+	}
+	if(count($failures) != 0)
+	{
+		echo "<br />The import of the following phpBB2 groups failed:<br />";
+		foreach($failures as $bad_id)
+		{
+			echo $bad_id."<br />";
+		}
+	}
+	echo "<form><input type=\"button\" value=\"Close Window\" onclick=\"window.close()\"></form>";
+}
+
 ?>
 <html><head>
 <script type="text/javascript">
@@ -385,7 +431,7 @@ h1,h2 { font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font
 </div>
 <?php
 	echo "<p>";
-	userExport();
+	$sync_type == "user" ? userExport() : groupExport();
 	echo "</p>";
 ?>
 

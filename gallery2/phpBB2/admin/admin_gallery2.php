@@ -59,6 +59,10 @@ else
 	{
 		$mode = "sync_intro";
 	}
+	else if( isset($HTTP_POST_VARS['gr_sync_intro']) )
+	{
+		$mode = "gr_sync_intro";
+	}
 	else
 	{
 		$mode = "";
@@ -81,7 +85,8 @@ if( $mode == "save" )
 	}
 
 	$sql = "SELECT * FROM phpbb_gallery2";
-	if(!$result = $db->sql_query($sql))
+	$result = $db->sql_query($sql);
+	if(!$db->sql_numrows($result))
 	{
 		$sql = "INSERT INTO phpbb_gallery2 (fullPath, embedPath, embedURI, relativePath, loginPath, cookiePath, activeUserID) 
 			VALUES ('" . $fullPath . "', '" . $embedPath ."', '" . $embedURI . "', '" . $relativePath . "','" . $loginPath . "','" . $cookiePath . "',$activeUserID)";
@@ -109,7 +114,8 @@ else if( $mode == "config" )
 	);
 
 	$sql = "SELECT * FROM phpbb_gallery2";
-	if(!$result = $db->sql_query($sql))
+	$result = $db->sql_query($sql);
+	if(!$db->sql_numrows($result))
 	{
 		$sql = "SELECT * 
 			FROM " . CONFIG_TABLE . " WHERE config_name='cookie_path'";
@@ -180,10 +186,27 @@ else if( $mode == "sync_intro" )
 	);
 
 	$template->assign_vars(array(
-		'S_G2_ACTION' => append_sid("gallery2_export.$phpEx"),
+		'S_G2_ACTION' => append_sid("gallery2_export.$phpEx?type=user"),
 		'L_SYNC_TITLE' => 'Export phpBB Users to Gallery 2',
 		'L_SYNC_EXPLAIN' => 'This will export your current phpBB2 users to Gallery 2.  Note that for large numbers of users, this may take some time.  Once you click the button, a new window will pop up showing you the progress of the export.',
 		'L_SYNC' => 'Begin user export')
+	);
+
+	$template->pparse("body");
+
+	include('./page_footer_admin.'.$phpEx);
+}
+else if( $mode == "gr_sync_intro" )
+{
+	$template->set_filenames(array(
+		"body" => "admin/gallery2_sync_intro_body.tpl")
+	);
+
+	$template->assign_vars(array(
+		'S_G2_ACTION' => append_sid("gallery2_export.$phpEx?type=group"),
+		'L_SYNC_TITLE' => 'Export phpBB Groups to Gallery 2',
+		'L_SYNC_EXPLAIN' => 'This will export your current phpBB2 groups to Gallery 2.  Note that for groups with large numbers of users, this may take some time.  Once you click the button, a new window will pop up showing you the progress of the export.',
+		'L_SYNC' => 'Begin group export')
 	);
 
 	$template->pparse("body");
@@ -200,6 +223,7 @@ else
 		'S_G2_ACTION' => append_sid("admin_gallery2.$phpEx"),
 		'L_CONFIG' => 'Configure Gallery 2 Integration',
 		'L_SYNC' => 'Synchronize phpBB2 Users to Gallery 2',
+		'L_GR_SYNC' => 'Synchronize phpBB2 Groups to Gallery 2',
 		'G2_TITLE' => 'Gallery 2 Administration',
 		'G2_ADMIN_TASK' => 'Choose your Gallery 2 Adminstration Task')
 	);
