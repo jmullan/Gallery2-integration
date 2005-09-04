@@ -1,0 +1,515 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"></meta>
+		<title>
+		How to Convert PHPNuke to UTF-8 for Gallery 2 Integration
+		</title>
+		<style type="text/css">
+
+		html {
+		font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+		font-size: 62.5%;
+		}
+		body {
+		font-size: 1.2em;
+		margin: 16px 16px 0px 16px;
+		background: white;
+		}
+		a {
+		text-decoration: none;
+		}
+		p {
+		line-height: 1.5em;
+		}
+		h2 {
+		/*font-family: Georgia, Palatino, "Times New Roman", serif;*/
+		font-family: "Gill Sans", Verdana, Arial, sans-serif;
+		font-size: 1.5em;
+		color: #333;
+		border-bottom: 1px solid #ddd;
+		margin: 0;
+		padding: 1.0em 0 0.15em 0;
+		}
+		tt {
+		font-family: monospace, serif;
+		font-size: 1.2em;
+		line-height: 1.2em;
+		}
+		ul, ol {
+		margin: 1.2em 0 1.2em 1.75em;
+		padding: 0;
+		}
+		li {
+		padding: 0.2em 0;
+		line-height: 1.5em;
+		}
+		ol ul {
+		margin-top: 0.4em;
+		margin-bottom: 0.4em;
+		}
+		a:link {
+		font-weight: 700;
+		color: #5D728E;
+		background-color: transparent;
+		}
+		a:visited {
+		font-weight: 700;
+		color: #5D728E;
+		background-color: transparent;
+		}
+		a:hover {
+		font-weight: 700;
+		color: #B30400;
+		text-decoration: underline;
+		}
+		div.instructions {
+		background: #ddd;
+		border: 1px solid #777;
+		width: 480px;
+		margin: 8px;
+		padding: 0px;
+		}
+		div.instructions h3 {
+		background: #ccc;
+		border-bottom: 1px solid #777;
+		font-size: 1.1em;
+		margin: 0px 0px 4px 0px;
+		padding: 4px;
+		}
+		div.instructions p {
+		margin: 0px 0px 0px 4px;
+		}
+		.important {
+		background: #FACA61;
+		border: 2px;
+		width: 480px;
+		margin: 0.6em 0 0.6em 0;
+		padding: 0.6em;
+		color: #C00;
+		text-align: center;
+		}
+		.important .email {
+		font-size: 1.3em;
+		color: black;
+		font-weight: 700;
+		margin: 0.6em 0 0 0;
+		}
+		.important h3 {
+		color: #eee;
+		background: #f00;
+		font-size: 1.3em;
+		margin: -0.2em -0.2em 0.2em -0.2em;
+		padding: 0.2em 0.2em;
+		}
+		.fineprint {
+		font-size: .8em;
+		color: #ccc;
+		}
+		.toggle {
+		padding-left: .333em;
+		padding-right: 0.3em;
+		border: solid #a6caf0 1px;
+		background: #eee;
+		}
+		div.toc {
+		float: right;
+		border: 1px solid #F15D22;
+		background: #e9eff3;
+		padding: 2px 4px 2px 4px;
+		margin: 15px auto auto 15px;
+		}
+		div.toc h2 {
+		font-size: 1.1em;
+		margin-top: -8px;
+		}
+		p.toc-link {
+		margin: 0px;
+		}
+		ul.toc-level-1 {
+		margin: 0px 16px 0px 16px;
+		list-style-type: none;
+		}
+		ul.toc-level-1 li {
+		margin: auto;
+		font-weight: bold;
+		}
+		ul.toc-level-2 {
+		margin: auto 0px auto 15px;
+		list-style-type: none;
+		}
+		ul.toc-level-2 li {
+		margin: auto;
+		}
+		ul.toc-level-3 {
+		margin: auto 0px auto 15px;
+		list-style-type: none;
+		}
+		ul.toc-level-3 li {
+		margin: auto;
+		}
+		div.code {
+		background:#fafafa;
+		color:#060;
+		white-space: pre;
+		font:12px Courier,'Courier New',sans-serif;
+		margin:0 20px 0 20px;
+		border:1px solid #a4bad2;
+		padding:2px 2px 3px 3px;
+		width: 700px;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="toc">
+		<h2>
+		<a name="toc">Contents</a>
+		</h2>
+		<ul class="toc-level-1">
+			<li>
+				<a href="#introduction">Introduction</a>
+			</li>
+			<li>Required Software &amp; Links
+				<ul class="toc-level-2">
+					<li>
+						<a href="#software">Required Software</a>
+					</li>
+					<li>
+						<a href="#links">Related Links</a>
+					</li>
+				</ul>
+			</li>
+			<li>PHPNuke Modifications
+				<ul class="toc-level-2">
+					<li>Database Changes - Existing
+						<ul class="toc-level-3">
+							<li><a href="#dump">PHPNuke Database Dump</a></li>
+							<li><a href="#create">Create a New Database</a></li>
+							<li><a href="#convert">Convert Your Database</a></li>
+							<li><a href="#imp_dump">Import a Converted Dump</a></li>
+							<li><a href="#imp_ndump">Import a Non-Converted Dump</a></li>
+						</ul>
+					</li>
+					<li>New PHPNuke Installation
+						<ul class="toc-level-3">
+							<li><a href="#n_create">Create a New Database</a></li>
+						</ul>
+					</li>
+					<li>Change PHPNuke Settings
+						<ul class="toc-level-3">
+							<li><a href="#point">Point to New Database</a></li>
+							<li><a href="#lang_files">Change Language Files</a></li>
+							<li><a href="#sp_chars">Substitute Special Characters</a></li>
+							<li><a href="#check">Check Your Settings</a></li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="#credits">Credits</a>
+			</li>
+		</ul>
+		</div>
+		<h2>
+		<a name="introduction">
+		Introduction
+		</a>
+		</h2>
+		<p>
+		Many web applications, such as <a href="http://gallery.menalto.com">Gallery 2</a> use UTF-8 encoding 
+		to display content.  Others, however, such as <a href="http://www.phpnuke.org">PHPNuke</a> use ISO-8859-1, 
+		otherwise known as Latin-1.<br /><br />
+		Separately, this is not a problem, but when you try to integrate two applications that use different character 
+		encodings, problems can arise, since some special characters cannot be displayed in Latin-1.<br /><br />
+		For a more in-depth discussion, see <a href="http://www.nukedgallery.net/postp10819.html#10819">this discussion</a> 
+		on NukedGallery.net.<br /><br />
+		This document describes the conversion of a MySQL 4.x database for PHPNuke 7.5 from Latin-1 to UTF-8, along with 
+		the changes that need to be made to the PHPNuke language files.<br /><br />
+		<b>This is a "living document" that is undergoing revisions as they become available. Please back up all 
+		data before you make any changes.</b><br /><br />
+		<img class="diag" src="images/utf8ex.png">
+		</p>
+		<h2>
+		<a name="software">
+		Required Software
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Before you begin, you need to have the following pieces of software:
+		<ul>
+		<li><a href="http://www.phpnuke.org">PHPNuke</a></li>
+		<li><a href="http://www.mysql.com">MySQL</a></li>
+		<li><a href="http://www.phpmyadmin.net">PHPMyAdmin</a></li>
+		<li>iconv, or you can use the <a href="http://www.php.net/iconv">iconv function</a> in PHP.</li>
+		<li>An editor that can edit in UTF-8 mode, such as <a href="http://www.ultraedit.com">UltraEdit</a>.</li>
+		<li>And, of course, <a href="http://gallery.menalto.com">Gallery 2</a>.</li>
+		</ul>
+		</p>
+		<h2>
+		<a name="links">
+		Related Links
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		<ul>
+		<li>Unicode
+		<ul>
+		<li><a href="http://www.unicode.org/standard/WhatIsUnicode.html">http://www.unicode.org/standard/WhatIsUnicode.html</a></li>
+		</ul>
+		</li>
+		<li>iconv
+		<ul>
+		<li><a href="http://www.zlatkovic.com/pub/libxml/iconv-1.9.1.win32.zip">http://www.zlatkovic.com/pub/libxml/iconv-1.9.1.win32.zip</a></li>
+		<li><a href="http://www.gnu.org/software/libiconv/">http://www.gnu.org/software/libiconv/</a></li>
+		<li><a href="http://gnuwin32.sourceforge.net">http://gnuwin32.sourceforge.net</a></li>
+		</ul>
+		</li>
+		<li>UltraEdit 32
+		<ul>
+		<li><a href="http://www.ultraedit.com">http://www.ultraedit.com</a></li>
+		</ul>
+		</li>
+		<li>This Document
+		<ul>
+		<li><a href="http://www.frank-ulbrich.de">http://www.frank-ulbrich.de</a></li>
+		<li><a href="http://ulbrich.homelinux.com">http://ulbrich.homelinux.com</a></li>
+		<li><a href="http://www.nukedgallery.net">http://www.nukedgallery.net</a></li>
+		</ul>
+		</li>
+		<li>General Info
+		<ul>
+		<li><a href="http://cpgnuke.com/FAQ/cat=14.html#52">http://cpgnuke.com/FAQ/cat=14.html#52</a></li>
+		</ul>
+		</li>
+		<li>Codepages
+		<ul><li><a href="http://www.unicode.org/charts/">http://www.unicode.org/charts/</a></li></ul>
+		</li>
+		<li>Gallery 2
+		<ul>
+		<li><a href="http://gallery.menalto.com">http://gallery.menalto.com</a></li>
+		<li><a href="http://www.nukedgallery.net">http://www.nukedgallery.net</a></li>
+		</ul>
+		</li>
+		</ul>
+		</p>
+		<h2>
+		<a name="dump">
+		[Existing] PHPNuke Database Dump
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		There are two ways to dump your PHPNuke database.  The first is to use phpMyAdmin:</p>
+		<img src="images/pma_dump.png">
+		<p>
+		The second is to use the MySQL command line:
+		</p>
+		<div class="code">mysqldump --opt -u root -p <your_phpnuke_database_name> > nuke_dump.sql</div>
+		<h2>
+		<a name="create">
+		Create a New Database
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Now, you must create a new PHPNuke database in the UTF-8 format.  Again, this can be 
+		done using phpMyAdmin:
+		</p>
+		<img src="images/pma_new_utf8.png">
+		<h2>
+		<a name="convert">
+		Convert Your Database
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Now, you must convert your old phpNuke database to the UTF-8 format. One way to do 
+		this is to use the iconv program:
+		</p>
+		<div class="code">iconv -f iso-8859-1 -t utf-8 nuke.sql > nukeutf8.sql</div>
+		<p>
+		The following image shows the change from Latin-1 to UTF-8.
+		</p>
+		<img src="images/nuke_conv.png">
+		<p>
+		If you don't have the iconv binary, or this method does not work for you, you can 
+		<a href="#imp_ndump">use phpMyAdmin</a> to do the conversion for you.  For most people, 
+		the <a href="#imp_ndump">phpMyAdmin method</a> will be easier.
+		</p>
+		<h2>
+		<a name="imp_conv">
+		Import a Converted Dump
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		You can use phpMyAdmin to import the new UTF-8 encoded database file into the UTF-8 
+		database you created above:</p>
+		<img src="images/imp_conv.png">
+		<p>
+		Make sure that you set the "Character set of the file" to UTF-8
+		</p>
+		<h2>
+		<a name="imp_ndump">
+		Import a Non-Converted Dump
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		For those of you who can't use the iconv binary, you can also use phpMyAdmin to do 
+		the conversion for you.  When you import the Latin-1 database file into the UTF-8 database 
+		you created earlier, you must change the "Character set of the file" to "Latin-1".
+		</p>
+		<img src="images/imp_ndump.png">
+		<h2>
+		<a name="n_create">
+		[New Install] Create a New Database
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		If you're starting with a fresh install of PHPNuke, before you run the database 
+		installation script, you must set the character set of the database to UTF-8:</p>
+		<img src="images/new_utf8.png">
+		<h2>
+		<a name="point">
+		Point to New Database
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Once you've finished making the required changes to the PHPNuke database, you must 
+		configure phpNuke to use the new UTF-8 encoded database.  In your &lt;nuke_root&gt;/config.php 
+		file, change the "dbname" variable to the name of your new UTF-8 database:</p>
+		<div class="code">$dbhost = "localhost";
+$dbuname = "XXXXXX";
+$dbpass = "XXXXXX";
+$dbname = "nukeutf8";
+$prefix = "nuke";
+$user_prefix = "nuke";
+$dbtype = "MySQL";</div>
+		<h2>
+		<a name="lang_files">
+		Change Language Files
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Next, you must change the character set of phpNuke's language files from Latin-1 to UTF-8.  
+		The files you must change are:</p>
+		<p>
+		<ul>
+		<li>&lt;nuke_root&gt;/language/lang-xxxx.php</li>
+		<li>&lt;nuke_root&gt;/modules/Forums/language/lang-xxxx.php</li>
+		</ul>
+		</p>
+		<p>
+		In these files (and any other language files you use), make the following change:</p>
+		<div class="code">/*define("_CHARSET","ISO-8859-1");*/
+define("_CHARSET","UTF-8");
+define("_SEARCH","Search");
+define("_LOGIN","Login");</div>
+		<p>
+		If possible, edit the httpd.conf file for your Apache webserver:</p>
+		<div class="code">AddDefaultCharset ISO-8859-1 -> AddDefaultCharset UTF-8</div>
+		<h2>
+		<a name="sp_chars">
+		Substitute Special Characters
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		If your language has special characters, such as an umlaute, you must further edit your language 
+		files to use the special HTML entities for the characters.  You can find an entity table for your 
+		language at <a href="http://www.unicode.org/charts/">http://www.unicode.org/charts/</a>.</p>
+		<p>
+		You can use an editor such as <a href="http://www.ultraedit.com">UltraEdit</a> or <a href="http://www.editplus.com">EditPlus</a> 
+		to do a global search and replace in the language files:</p>
+		<img src="images/file_conv.png">
+		<p>
+		In this example, we are replacing the &Ouml; character with it's HTML entity &amp;Ouml;.
+		</p>
+		<h2>
+		<a name="check">
+		Check Your Settings
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		To check and make sure that all your changes have worked, view your newly converted 
+		website in your web browser and see what type of encoding the web browser uses.</p>
+		<p>
+		In Internet Explorer:</p>
+		<img src="images/ie_setting.png">
+		<p>
+		In Mozilla Firefox:</p>
+		<img src="images/ff_setting.png">
+		<h2>
+		<a name="credits">
+		Credits
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		The original PDF of this document was written by Frank Ulbrich (<a href="http://www.frank-ulbrich.de">http:// www.frank-ulbrich.de</a>&nbsp;&nbsp;&nbsp;<a href="http://ulbrich.homelinux.com">http://ulbrich.homelinux.com</a>).<br />
+		The PDF was converted to HTML by Dariush Molavi (<a href="http://www.nukedgallery.net">http://www.nukedgallery.net</a>).
+	<hr />
+	<p class="fineprint">
+	$Id$
+	</p>
+	</body>
+	</html>
