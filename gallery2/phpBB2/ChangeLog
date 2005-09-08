@@ -1,4 +1,9 @@
-2205-08-30  dmolavi  <dari@nukedgallery.net>
+2005-09-08  dmolavi  <dari@nukedgallery.net> 
+	FIX:
+	  * Forgot to include the gallery image for 
+	    navigation menu. 
+
+2005-08-30  dmolavi  <dari@nukedgallery.net>
 	UPDATE:
 	  * Added group sync to admin control panel.  
 	    New users are *not* added to their groups 
