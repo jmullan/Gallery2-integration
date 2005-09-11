@@ -1,21 +1,53 @@
 Installation Instructions
 -------------------------
 
-1.) Install Gallery 2 and Drupal (see their respective installation
-  documents) 
+1. Install Gallery 2 and Drupal (see their respective installation
+   documents).  Gallery2 should be *inside* your Drupal installation
+   so that it's accessible by the same website.  If you accidentally
+   install Gallery somewhere else, you can create a symlink to it
+   from inside your drupal site, eg:
+     cd /var/www/drupal.site
+     ln -s /path/to/gallery2
 
-2.) Copy gallery.module to your drupal modules/ directory.
+   Or you can move Gallery2.  If you're going to do that, read this
+   FAQ:
+     http://codex.gallery2.org/index.php/Gallery2:FAQ#How_can_I_move_my_gallery_installation_from_one_folder_to_another.3F
 
-3.) Enable the gallery module in administer -> modules in your drupal
-  installation.
+2. Copy gallery.module to your drupal modules/ directory.
 
-4.) Enable the "Gallery Navigation" block in administer -> blocks. (You
-  can optionally also enable the "Gallery Image Block"). 
+3. Enable the gallery module in administer -> modules in your drupal
+   installation.
 
-  The "Gallery Navigation" block is required.
+4. Go to administer -> settings -> gallery and enter the path to your
+   gallery2 installation.  So if your Drupal is installed at:
+     /var/www/www.drupal.site
 
+   And your gallery2 is at:
+     /var/www/drupal.site/gallery2
 
-Note: this is beta software, so it might not always work. If you have
+   Then your Gallery2 path would be:
+     gallery2/
+
+  Your gallery should now be available at:
+
+     http://your.site/gallery
+
+5.  Enable the "Gallery Block" in administer -> blocks
+
+Note: the default themes don't work so well with Drupal yet.  You'll get best
+results if you edit the default theme and move all the blocks out of the sidebar
+and into the album and photo pages.  There's a drupal specific theme on the way,
+stay tuned.
+
+Note: To get the rewrite module working, you need to first configure and
+use it with the standalone Gallery2 install.  Once it's working there disable
+all the rules except for the 'Show Item' rule and set its URL pattern to:
+    gallery/%path%
+
+Then when you browse to http://your.site/gallery you should see short urls
+inside drupal.
+
+NOTE: this is beta software, so it might not always work. If you have
 questions or problems contact:
 
 James Walker <walkah@walkah.net>
