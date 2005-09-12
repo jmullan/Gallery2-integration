@@ -35,7 +35,7 @@ if(!isset($admin_file)) {
 if (!eregi("".$admin_file.".php", $_SERVER['PHP_SELF'])) { die ("Access Denied"); }
 if ($radminsuper==1) 
 {
-    adminmenu("admin.php?op=gallery2", "Gallery2", "gallery2.gif");
+    adminmenu("".$admin_file.".php?op=gallery2", "Gallery2", "gallery2.gif");
 }
 
 
