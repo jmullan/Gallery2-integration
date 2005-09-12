@@ -288,7 +288,12 @@ function _gallery_init($full = false) {
   }
 
   include_once($galleryDir . '/embed.php');
+
+  // TODO: using the galleryDir as the relativeG2Path requires that
+  // Gallery2 be installed as a subdir of Drupal, which is not necessarily
+  // ideal.  Make this a configuration option.
   $relativeG2Path = $galleryDir;
+
   $embedUri = url('gallery');
   $embedPath = str_replace('http://'.$_SERVER['HTTP_HOST'], '', $base_url) . '/';
   $params = array('embedUri' => $embedUri,
@@ -300,36 +305,36 @@ function _gallery_init($full = false) {
                   'fullInit' => $full);
   $ret = GalleryEmbed::init($params);
   if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-    // Our user mapping is missing.  Create the user.
-    $ret = GalleryEmbed::checkActiveUser($user->uid);
+    // Our user mapping is missing.  Make a mapping, or create a new user.
     $g2_user = null;
-    if ($user->uid == 1) {
-      // The admin user is unmapped.  We want to map it to the original Gallery2
-      // admin user, so fetch the G2 admin with the lowest id.
-      list ($ret, $admin_group_id) =
-	GalleryCoreApi::getPluginParameter('modules', 'core', 'id.adminGroup');
-      if ($ret->isError()) {
-	return array(false, $ret);
-      }
 
-      list ($ret, $g2_users) = GalleryCoreApi::fetchUsersForGroup($admin_group_id);
-      if ($ret->isError()) {
-	return array(false, $ret);
-      }
+    // Get the G2 user that matches the Drupal username
+    list ($ret, $g2_user) = GalleryCoreApi::fetchUserByUsername($user->name);
+    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+      return array(false, $ret);
+    }
 
-      $keys = array_keys($g2users);
-      $g2_user_name = $users[$keys[0]];
-      list ($ret, $g2_user) = GalleryCoreApi::fetchUserByUsername($g2_user_name);
-      if ($ret->isError()) {
-	return array(false, $ret);
-      }
-    } else {
-      // Get the G2 user that matches the Drupal username
-      list ($ret, $g2_user) = GalleryCoreApi::fetchUserByUsername($user->name);
-      if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	// Do nothing, leave $g2_user as null
-      } else if ($ret->isError()) {
-	return array(false, $ret);
+    if (!isset($g2_user)) {
+      // No G2 user with a matching username.  If this is the admin user, we're going to
+      // try a little harder and match it to the oldest admin in G2.
+      if ($user->uid == 1) {
+	list ($ret, $admin_group_id) =
+	  GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) {
+	  return array(false, $ret);
+	}
+
+	list ($ret, $g2_users) = GalleryCoreApi::fetchUsersForGroup($admin_group_id);
+	if ($ret->isError()) {
+	  return array(false, $ret);
+	}
+
+	$keys = array_keys($g2_users);
+	$g2_user_name = $users[$keys[0]];
+	list ($ret, $g2_user) = GalleryCoreApi::fetchUserByUsername($g2_user_name);
+	if ($ret->isError()) {
+	  return array(false, $ret);
+	}
       }
     }
 
