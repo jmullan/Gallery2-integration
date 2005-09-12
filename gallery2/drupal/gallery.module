@@ -361,7 +361,7 @@ function _gallery_init($full = false) {
 }
 
 function gallery_error($message, $ret) {
-  $error_mode = variable_get('gallery_error_mode', 0);
+  $error_mode = variable_get('gallery_error_mode', array());
   if (in_array(2, $error_mode)) {
     drupal_set_message($message);
   }
