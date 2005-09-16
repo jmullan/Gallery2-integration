@@ -256,15 +256,25 @@
 		</a>
 		</p>
 		<p>
-		This package contains two folders:
+		This package contains three folders:
 		<ul>
+		<li>gallery2/</li>
 		<li>admin/</li>
 		<li>templates/</li>
 		</ul>
-		To install, simply upload the contents of these folders into the 
+		To install, simply upload the contents of the admin and templates folders into the 
 		corresponding folders in your phpBB2 installation.  The gallery2.php file 
-		should be copied to your phpBB2 root.
+		should be copied to your phpBB2 root. <br />
+		The gallery2 folder contains a customized breadcrumb navigation file that will include 
+		a link back to your forum's index page. To use this feature, create a directory called 
+		"local" within gallery2/modules/core/templates/blocks and copy this version of BreadCrumb.tpl 
+		into your new "local" directory:
 		</p>
+		<div class="instructions">
+		<h3>Unix Example</h3>
+		<p>$ mkdir ~/public_html/gallery2/modules/core/templates/blocks/local
+		$ cp BreadCrumb.tpl ~/public_html/gallery2/modules/core/templates/blocks/local/</p>
+		</div>
 		<p>The next part of installation is adding one additional table to your phpBB2 
 		database:<br />
 		<div class="instructions">
