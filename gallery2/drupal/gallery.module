@@ -1,10 +1,9 @@
 <?php
-  // $Id$
-  // This version is from Bharat on Sep 5
+// $Id$
 
-  /**
-   * Implementation of hook_help
-   */
+/**
+ * Implementation of hook_help
+ */
 function gallery_help($section) {
   switch($section) {
   case 'admin/modules#description':
@@ -85,15 +84,27 @@ function gallery_user($op, &$edit, &$user, $category = NULL) {
       return;
     }
 
+    // on update we can't be sure how much info $edit will contain.
+    $name = ($edit['name']) ? $edit['name'] : $user->name;
+    $language = ($edit['language']) ? $edit['language'] : $user->language;
+    $pass = ($edit['pass']) ? md5($edit['pass']) : $user->pass;
+    $email = ($edit['email']) ? $edit['mail'] : $user->mail;
     $ret = GalleryEmbed::updateUser($user->uid,
-				    array('username' => $edit['name'],
-					  'email' => $edit['mail']));
+				    array('username' => $name,
+                                          'fullname' => $name,
+					  'email' => $mail,
+                                          'language' => $language,
+                                          'hashedpassword' => $pass,
+                                          'hashmethod' => 'md5'));
     if ($ret->isError()) {
       // try to create user then.
       $ret = GalleryEmbed::createUser($user->uid,
-				      array('username' => $edit['name'],
-					    'email' => $edit['mail'],
-					    'language' => $edit['language'],
+				      array('username' => $name,
+                                            'fullname' => $name,
+					    'email' => $mail,
+					    'language' => $language,
+                                            'hashedpassword' => $pass,
+                                            'hashmethod' => 'md5'
 					    ));
       if ($ret->isError()) {
 	gallery_error(t('Error updating Gallery user'), $ret);
@@ -269,7 +280,7 @@ function gallery_page() {
       drupal_set_html_head(implode("\n",$javascript));
     }
     drupal_set_html_head(implode("\n",$css));
-
+    drupal_set_title($title);
     print theme('page', $result['bodyHtml']);
   }
 }
