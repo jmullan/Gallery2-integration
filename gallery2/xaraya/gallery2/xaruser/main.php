@@ -18,7 +18,10 @@ function gallery2_user_main()
     // first check if the module has been configured
     if(!xarGallery2Helper::isConfigured()) {
 	$data['g2modhtml'] = xarML('The module has not yet been configured.');
+	$data['configured'] = 0;
 	return $data;
+    } else {
+	$data['configured'] = 1;
     }
   
     // init G2
@@ -93,14 +96,34 @@ function gallery2_user_main()
      */
     // xarTplAddStyleLink('gallery2', $styleName, $themeFolder='');
     // dirty hack:
+    $cssfiles = array();
     if (!empty($css)) {
-      
+	/* Get the relative path from modules/gallery2/xarstyles/ to relativeG2Path/ css file */
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$g2Url = $urlGenerator->getCurrentUrlDir(true);
+	$relativeG2Path = xarModGetVar('gallery2','g2.relativeurl');
+	
       foreach (array_reverse($css) as $style) {
-	$GLOBALS['xarTpl_additionalStyles'] =  $style .'
-	'. $GLOBALS['xarTpl_additionalStyles'];
+	  /* TODO: Can only handle <link tag (not <style) due to xaraya */
+	  if (preg_match('/<link.* href\s*=\s*[\'"](.+)[\'"].*/Usi', $style, $regs)) {
+	      $url = $regs[1];
+	      /* Replace absolute URL by relative url
+	       * e.g. http://example.com/gallery2/themes/matrix/theme.css to
+	       *      ../../../$relativeG2Path/themes/matrix/theme.css
+	       * Use G2 UrlGenerator to replace strings since it was also used to generate
+	       * the css url.
+	       */
+	      $path = str_replace($g2Url, '../../../' . $relativeG2Path, $url);
+	      /* TODO: Can only add css links that end on .css due to xaraya */
+	      if (preg_match('/\.css$/', $path)) {
+		  $cssfiles[] = str_replace('.css', '', $path);
+	      }
+	  }
       }
     }
-
+    $data['cssfiles'] = $cssfiles;
+    
     // set the g2 sideBar (menu) html global, so that we can retrieve it,
     // when xaraya calls all the blocks for their html
     if (isset($g2moddata['sidebarBlocksHtml']) && !empty($g2moddata['sidebarBlocksHtml'])) {

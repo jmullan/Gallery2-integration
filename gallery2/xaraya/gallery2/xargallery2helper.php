@@ -150,7 +150,7 @@ class xarGallery2Helper
 
     // initiate G2 
     $ret = GalleryEmbed::init(array('embedUri' => xarModGetVar('gallery2','g2.basefile'),
-				    'embedPath' => xarGallery2Helper::xarServerGetBaseURI(),
+				    'embedPath' => xargallery2helper::xarServerGetBaseURI(),
 				    'relativeG2Path' => xarModGetVar('gallery2','g2.relativeurl'),
 				    'loginRedirect' => xarModGetVar('gallery2','g2.loginredirect'),
 				    'activeUserId' => $uid, 'activeLanguage' => $g2LangCode,
@@ -801,10 +801,10 @@ class xarGallery2Helper
     // the filesystem include path
     if (!isset($g2IncludePath) || empty($g2IncludePath)) {
       if (isset($g2RelativeUrl)) {
-	// in php CGI, SCRIPT_FILENAME isn't what we need. But sometimes PATH_TRANSLATED isn't defined either.
-	$g2IncludePath = realpath(dirname($_SERVER['PATH_TRANSLATED']) . '/' . $g2RelativeUrl) . '/';
+	  /* from path/xaraya/modules/gallery2/ to path/xaraya/$g2RelativeUrl which is often path/gallery2/ */
+	  $g2IncludePath = realpath(dirname(dirname(dirname(__FILE__))) . '/' . $g2RelativeUrl) . '/';
       } else {
-	$g2IncludePath = xarModGetVar('gallery2','g2.includepath');
+	  $g2IncludePath = xarModGetVar('gallery2','g2.includepath');
       }
     } 
     // else = different paths for url and filesystem
@@ -815,8 +815,11 @@ class xarGallery2Helper
     }
    
     if ($setifcorrect) {
-      // get the name of the xaraya entry point file (usually index.php)
-      $scriptName = preg_replace('|/([^/]+/)*|', '', $_SERVER['PATH_TRANSLATED']);
+	/* Get the name of the xaraya entry point file (usually index.php) */
+	$scriptName = xarCore_getSystemVar('BaseModURL', true);
+	if (!isset($scriptName)) {
+	    $scriptName  = 'index.php';
+	}
       
       //  short urls enabled in xaraya?
       $shortUrlActive = xarConfigGetVar('Site.Core.EnableShortURLsSupport');
@@ -828,10 +831,6 @@ class xarGallery2Helper
 	$g2basefile = $scriptName .'?module=gallery2';
       }
       $xarayaPath = xarGallery2Helper::xarServerGetBaseURI();
-      $length = strlen($xarayaPath);
-      if ($length == 0 || $xarayaPath{$length-1} != '/') {
-	  $xarayaPath .= '/';
-      }
       $g2loginredirect = $xarayaPath . $scriptName .'?module=roles&func=register';
     } else {
       $g2loginredirect = xarModGetVar('gallery2','g2.loginredirect');
@@ -893,7 +892,7 @@ class xarGallery2Helper
       xarModSetVar('gallery2','g2.includepath', $g2IncludePath);
       // the login redirect url
       xarModSetVar('gallery2','g2.loginredirect',$g2loginredirect);
-      // the G2 basefile
+      // the g2/xaraya basefile
       xarModSetVar('gallery2','g2.basefile',$g2basefile);
 
  /*
@@ -1715,9 +1714,10 @@ class xarGallery2Helper
    */
   function xarServerGetBaseURI()
   {
-    $path = xarServerGetBaseURI();  
-    if (empty($path)) {
-	$path = '/';
+    $path = xarServerGetBaseURI();
+    $length = strlen($path);
+    if ($length == 0 || $path{$length-1} != '/') {
+	$path .= '/';
     }
     return $path;
   }

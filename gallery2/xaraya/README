@@ -25,7 +25,7 @@ How to use it?
 
 Before you can use G2 in your xaraya installation, you'll have to configure first G2, then xaraya:
 
-    * Install xaraya. The minimum version required is 0.9.12+ (bitkeeper version of 2005/03/21 +).
+    * Install xaraya. The minimum version required is RC 3
     * Install G2 somewhere on your website. Get G2 from the offical Gallery website http://gallery.sf.net. It doesn't matter where you install G2 on your website, you probably want to install it on the top level, i.e. /path/to/documentRoot/gallery/ or as a subdirectory in your gallery2 module, i.e. /path/to/documentRoot/modules/gallery2/g2/ assuming xaraya was installed directly in the DocumentRoot folder. Go through the standard install wizard of G2 and finish all steps.
     * Install this gallery2 module in xaraya in a directory called modules/gallery2
 
@@ -104,10 +104,11 @@ Language Settings:
 
 Known Bugs
 ----------
-
-none
+    * Since the xaraya RC candidates, you cannot use G2 URL rewrite with xaraya. Deactivate the G2 URL rewrite module when using it embedded in xaraya
+    * Since the xaraya RC candidates, only the G2 theme.css file is included in xaraya. Xaraya changed the API and we're waiting for another API change until we can dynamically include other G2 CSS files again in xaraya
 
 TODO List
+---------
 
 The gallery2 module is not finished, yet:
 

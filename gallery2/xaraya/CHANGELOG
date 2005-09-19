@@ -1,3 +1,8 @@
+Version 0.6.11 - 2005/09/19
+----------------------------------
+Including the G2 theme.css again, G2 URL rewrite doesn't work anymore 
+(related to CSS issues) when embedded
+
 Version 0.6.10 - 2005/07/15
 ----------------------------------
 Sidebar inside / block switch works again (thanks to bharat)
