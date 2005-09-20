@@ -1,114 +1,91 @@
 2005-09-12  Dariush Molavi  <dari@nukedgallery.net>
-	UPDATE:
-	  * Fixed two hardcoded admin.php references (thanks DavePC).
+	* New: German language file added. Thanks to fulbrich.
+	* Change: Modified ChangeLog format.
+
+2005-09-12  Dariush Molavi  <dari@nukedgallery.net>
+	* Fix: Fixed two hardcoded admin.php references (thanks DavePC).
 
 2005-08-30  Dariush Molavi  <dari@nukedgallery.net>
-	UPDATE:
-	  * Added Spanish language files (translated by 
-	    Diego Vego).
+	* New: Added Spanish language files (translated by 
+	  Diego Vego).
 
 2005-08-25  Dariush Molavi  <dari@nukedgallery.net>
-	UPDATE:
-	  * Minor CSS tweaks and alignment fixes in readme.
+	* Fix: Minor CSS tweaks and alignment fixes in readme.
 
 2005-08-25  Dariush Molavi  <dari@nukedgallery.net>
-	UPDATE:
-	  * Minor CSS tweaks and alignment fixes in readme.
-
-2005-08-25  Dariush Molavi  <dari@nukedgallery.net>
-	FIX:
-	  * Corrected module name requirements in admin files.
-	UPDATE:
-	  * Updated Readme.html file for RC2
-	  * Updated Readme.html file for cases where Gallery 2 install
-	    directory is not "gallery2".
+	* Fix: Corrected module name requirements in admin files.
+	* Change: Updated Readme.html file for RC2
+	* Change: Updated Readme.html file for cases where Gallery 2 install
+	  directory is not "gallery2".
 
 2005-08-14  Dariush Molavi  <dari@nukedgallery.net>
-	UPDATE:
-	  * Updated README file for RC-1.  Better late than never...
+	* Change: Updated README file for RC-1.  Better late than never...
 
 2005-08-10  Dariush Molavi  <dari@nukedgallery.net>
-	FIX:
-	  * Sidebar did not include G2 CSS. This fix takes care of that,
-	    but invalidates the HTML that is generated, since the CSS
-	    link tag is included within the body of the page.  Doesn't 
-	    matter anyway, since PHPNuke's HTML is light years from valid 
-	    to begin with.
+	* Change: Sidebar did not include G2 CSS. This fix takes care of that,
+	  but invalidates the HTML that is generated, since the CSS
+	  link tag is included within the body of the page.  Doesn't 
+	  matter anyway, since PHPNuke's HTML is light years from valid 
+	  to begin with.
 
 2005-08-04  Dariush Molavi  <dari@nukedgallery.net>
-	NEW:
-	  * German language file
-	FIX:
-	  * Changelog format
+	* New: German language file
+	* Change: Changelog format
 	
 2005-08-02  Dariush Molavi  <dari@nukedgallery.net>
-	NEW:
- 	  * Added ChangeLog to repository.
+	* New: Added ChangeLog to repository.
 
 2005-08-01  Dariush Molavi  <dari@nukedgallery.net>
-	UPDATE:
-	  * Another minor update to sidebar block code.
+	* Change: Another minor update to sidebar block code.
 
 2005-08-01  Dariush Molavi  <dari@nukedgallery.net>
-	FIX:
-	  * Fixed borked CVS commit in index.php and minor update to sidebar
-	    code.
+	* Fix: Fixed borked CVS commit in index.php and minor update to sidebar
+	  code.
 
 2005-07-27  Dariush Molavi  <dari@nukedgallery.net>
-	* Stupid me, forgot to add image block to repository
+	* New: Stupid me, forgot to add image block to repository
 
 2005-07-27  Dariush Molavi  <dari@nukedgallery.net>
-	* UPDATE:
-	    - Update Readme.html with new admin options
-		- Add proper versioning info to top of each file
-		- Language file updates NEW:
-		- Image block now works :)
-		- Sidebar block now works :)
+	* Change: Update Readme.html with new admin options
+	* Change: Add proper versioning info to top of each file
+	* Change: Language file updates
+	* New: Image block now works :)
+	* New: Sidebar block now works :)
 
 2005-07-27  Dariush Molavi  <dari@nukedgallery.net>
-	* NEW:
-	   - New readme file in HTML format.
+	* New: New readme file in HTML format.
 
 2005-07-27  Dariush Molavi  <dari@nukedgallery.net>
-	* FIX:
-	   - Got the sidebar working for a random image.
-	   - Added embedPath to GalleryEmbed::init() calls
-	   - Minor updates in admin.php file
+	* Fix: Got the sidebar working for a random image.
+	* Fix: Added embedPath to GalleryEmbed::init() calls
+	* Fix: Minor updates in admin.php file
 
 2005-07-25  Dariush Molavi  <dari@nukedgallery.net>
-	* doh..forgot the README update
+	* Change: doh..forgot the README update
 
 2005-07-25  Dariush Molavi  <dari@nukedgallery.net>
-	* UPDATE:
-	   - Added cookie path to admin setup
-	   - Added check to verify Gallery2 is installed, not just copied to a
-             directory.
-	   - Updated language files.
-	   - Updated sidebar capabilities.
+	* Change: Added check to verify Gallery2 is installed, not just copied to a
+      directory.
+	* Change: Updated language files.
+	* Change: Updated sidebar capabilities.
 
 2005-07-20  Dariush Molavi  <dari@nukedgallery.net>
-	* FIX: 
-	   - Updated incorrect embedUri usage 
-	* NEW: 
-	   - admin setup page now
-	     tries to guess and pre-fill as many of the fields as possible.
+	* Fix: Updated incorrect embedUri usage 
+	* New: admin setup page now tries to guess and pre-fill as many 
+	  of the fields as possible.
 
 2005-07-20  Dariush Molavi  <dari@nukedgallery.net>
-	* FIX: 
-	   - For new phpNuke compatibility, used $admin_file check in place
-	     of admin.php.
+	* Fix: For new phpNuke compatibility, used $admin_file check in place
+	  of admin.php.
 
 2005-07-13  Dariush Molavi  <dari@nukedgallery.net>
-	* UPDATE:
-	   - Clarified README.txt file
-	* NEW: 
-	   - Added new admin folder in html/ to allow for users of older
-             versions of PHPNuke to integrate without any problems.
+	* Change: Clarified README.txt file
+	* New: Added new admin folder in html/ to allow for users of older
+      versions of PHPNuke to integrate without any problems.
 
 2005-06-24  Dariush Molavi  <dari@nukedgallery.net>
-	* FIX: 
-	   - Slideshow didn't work when embedded. Updated to include
-	     javascript in header.
+	* Fix: Slideshow didn't work when embedded. Updated to include
+	  javascript in header.
 
 2005-05-21  andy_st
 	* Removed obsolete / duplicate readme
