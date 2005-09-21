@@ -48,14 +48,14 @@ function gallery2_admin_updateconfig()
 		}
 		// the relative URL
 		// first replace all '\' by '/'
-		$g2RelativeUrl = trim(ereg_replace("[\]", "//", $path['g2-relative-url']));
+		$g2RelativeUrl = trim(str_replace("\\", "/", $path['g2-relative-url']));
 		// then remove any trailing '/' if there is one and add a '/'
-		$g2RelativeUrl = ereg_replace('\/$', '', $g2RelativeUrl);
+		$g2RelativeUrl = preg_replace('|/$|', '', $g2RelativeUrl);
 		$g2RelativeUrl = $g2RelativeUrl . '/';
 		// remove './' from the beginning
-		$g2RelativeUrl = ereg_replace('^\.\/', '', $g2RelativeUrl);
+		$g2RelativeUrl = preg_replace('|^\./|', '', $g2RelativeUrl);
 		// if the path is absolute, don't accept it.
-		if (ereg('^\/', $g2RelativeUrl)) {
+		if (preg_match('|^/|', $g2RelativeUrl)) {
 		  $msg = xarML('The relative G2 url path "[#(1)]" is not relative, it starts with a "/"! Please make it relative!', $g2RelativeUrl);
 		  xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
 		  return;
