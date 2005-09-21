@@ -123,7 +123,7 @@ function gallery_user($op, &$edit, &$user, $category = NULL) {
 
     $ret = GalleryEmbed::deleteUser($user->uid);
     if ($ret->isError()) {
-      gallery_user(t('Error deleting Gallery user'));
+      gallery_error(t('Error deleting Gallery user'), $ret);
     }
     GalleryEmbed::done();
     break;
