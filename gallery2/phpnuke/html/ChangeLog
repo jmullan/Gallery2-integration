@@ -87,22 +87,22 @@
 	* Fix: Slideshow didn't work when embedded. Updated to include
 	  javascript in header.
 
-2005-05-21  andy_st
+2005-05-21  Andy Staudacher  <ast@gmx.ch>
 	* Removed obsolete / duplicate readme
 
-2005-04-06  andy_st
+2005-04-06  Andy Staudacher  <ast@gmx.ch>
 	* drumicube updates his integration code. now, it creates users on the
 	  fly, i.e. user accounts (creation) are synchronized. update/delete
 	  user is still not synchronized.
 
-2005-03-29  andy_st
+2005-03-29  Andy Staudacher  <ast@gmx.ch>
 	* drumicube included dmolavi's css links hack.
 
-2005-03-29  andy_st
+2005-03-29  Andy Staudacher  <ast@gmx.ch>
 	* update in the name of drumicube.
 
-2005-02-13  andy_st
+2005-02-13  Andy Staudacher  <ast@gmx.ch>
 	* update of the phpnuke module for gallery2 integration
 
-2005-01-23  andy_st
+2005-01-23  Andy Staudacher  <ast@gmx.ch>
 	* Added the G2 phpnuke integration in the name of drumicube.
