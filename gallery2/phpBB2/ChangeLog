@@ -1,18 +1,19 @@
+2005-09-26  Dariush Molavi  <dari@nukedgallery.net>
+	* Change: Updated Readme.html with information on correct 
+	  path for Forum Index link.
+
 2005-09-16  Dariush Molavi  <dari@nukedgallery.net>
-	CHANGE:
-	  * Added customized BreadCrumb.tpl which adds link 
-	    back to forum index in the breadcrumb trail.
+	* Change: Added customized BreadCrumb.tpl which adds link 
+	  back to forum index in the breadcrumb trail.
 
 2005-09-08  Dariush Molavi  <dari@nukedgallery.net> 
-	FIX:
-	  * Forgot to include the gallery image for 
-	    navigation menu. 
+	* Fix: Forgot to include the gallery image for 
+	  navigation menu. 
 
 2005-08-30  Dariush Molavi  <dari@nukedgallery.net>
-	UPDATE:
-	  * Added group sync to admin control panel.  
-	    New users are *not* added to their groups 
-	    yet, that will be next. 
+	* New: Added group sync to admin control panel.  
+	  New users are *not* added to their groups 
+	  yet, that will be next. 
 
 2005-08-25  Dariush Molavi  <dari@nukedgallery.net>
-	First commit of phpBB2 integration code.
+	* New: First commit of phpBB2 integration code.
