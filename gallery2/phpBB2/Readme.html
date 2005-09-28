@@ -4,10 +4,9 @@
 		<meta content="text/html; charset=us-ascii" http-equiv="Content-Type">
 		</meta>
 		<title>
-		README: Gallery 2 Release Candidate 2 phpBB2 Integration Package
+		README: Gallery 2 phpBB2 Integration Package
 		</title>
 		<style type="text/css">
-
 		html {
 		font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 		font-size: 62.5%;
@@ -24,18 +23,12 @@
 		line-height: 1.5em;
 		}
 		h2 {
-		/*font-family: Georgia, Palatino, "Times New Roman", serif;*/
 		font-family: "Gill Sans", Verdana, Arial, sans-serif;
 		font-size: 1.5em;
 		color: #333;
 		border-bottom: 1px solid #ddd;
 		margin: 0;
 		padding: 1.0em 0 0.15em 0;
-		}
-		tt {
-		font-family: monospace, serif;
-		font-size: 1.2em;
-		line-height: 1.2em;
 		}
 		ul, ol {
 		margin: 1.2em 0 1.2em 1.75em;
@@ -81,37 +74,9 @@
 		div.instructions p {
 		margin: 0px 0px 0px 4px;
 		}
-		.important {
-		background: #FACA61;
-		border: 2px;
-		width: 480px;
-		margin: 0.6em 0 0.6em 0;
-		padding: 0.6em;
-		color: #C00;
-		text-align: center;
-		}
-		.important .email {
-		font-size: 1.3em;
-		color: black;
-		font-weight: 700;
-		margin: 0.6em 0 0 0;
-		}
-		.important h3 {
-		color: #eee;
-		background: #f00;
-		font-size: 1.3em;
-		margin: -0.2em -0.2em 0.2em -0.2em;
-		padding: 0.2em 0.2em;
-		}
 		.fineprint {
 		font-size: .8em;
 		color: #ccc;
-		}
-		.toggle {
-		padding-left: .333em;
-		padding-right: 0.3em;
-		border: solid #a6caf0 1px;
-		background: #eee;
 		}
 		div.toc {
 		float: right;
@@ -142,11 +107,34 @@
 		ul.toc-level-2 li {
 		margin: auto;
 		}
-		font.code {
-		font:12px Courier,'Courier New',sans-serif;
-		white-space:pre;
+		PRE.CodeSnippet	{
+		background-color: #f0f0f0;
+		padding: 1em;
+		margin: 0px;
+		border: 1px solid gray;
+		font-family: "Lucida Console";
+		font-size: 1em ;
+		width: 800px ;
+		color: #000000;
+		overflow:auto;
 		}
-		</style>
+		PRE.Console	{
+		width: 774px ;
+		background-color: #000000; 
+		color: #00ff00;
+		}
+		div.codecontainer {
+		margin: 0px;
+		width:800px;
+		padding: 1em;
+		}
+		div.codecontainer h3 {
+		background: #ccc;
+		font-size: 1.1em;
+		margin: 0px 0px 0px 0px;
+		padding: 4px;
+		}
+	</style>
 	</head>
 	<body>
 		<div class="toc">
@@ -270,19 +258,23 @@
 		"local" within gallery2/modules/core/templates/blocks and copy this version of BreadCrumb.tpl 
 		into your new "local" directory:
 		</p>
-		<div class="instructions">
-		<h3>Unix Example</h3>
-		<p>$ mkdir ~/public_html/gallery2/modules/core/templates/blocks/local
-		$ cp BreadCrumb.tpl ~/public_html/gallery2/modules/core/templates/blocks/local/</p>
-		</div>
+		<br />
+		<div class="codecontainer"><h3>Unix Example</h3>
+		<PRE class="CodeSnippet Console">$ mkdir ~/public_html/gallery2/modules/core/templates/blocks/local
+$ cp BreadCrumb.tpl ~/public_html/gallery2/modules/core/templates/blocks/local/</PRE></div>
+		<br />
+		<div class="codecontainer"><h3>Windows Example</h3>
+		<PRE class="CodeSnippet Console">C:\> mkdir c:\web\gallery2\modules\core\templates\blocks\local
+C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</PRE></div>
 		<p>Note that you may want to alter the following line in the included BreadCrumb.tpl file to 
 		reflect the actual home page of your forums:</p>
 		<div class="instructions">
 		<p><font class="code">&lt;a href="/" class="BreadCrumb-1"&gt;Forum Index&lt;/a&gt;</font></p></div>
-		<p>The next part of installation is adding one additional table to your phpBB2 
-		database:<br />
-		<div class="instructions">
-		<p><font class="code">CREATE TABLE `phpbb_gallery2` (
+		<p>The following MOD contains the required SQL and file modifications:</p><br />
+		<PRE class="CodeSnippet">#
+#-----[ SQL ]------------------------------------------
+# 
+CREATE TABLE `phpbb_gallery2` (
 `configID` TINYINT(1) NOT NULL,
 `fullPath` VARCHAR( 255 ) NOT NULL ,
 `embedPath` VARCHAR( 255 ) NOT NULL ,
@@ -291,50 +283,74 @@
 `loginPath` VARCHAR( 255 ) NOT NULL ,
 `cookiePath` VARCHAR( 255 ) NOT NULL ,
 `activeUserID` INT NOT NULL
-);</font>
-		</p>
-		</div>
-		<p>Next, edit includes/page_header.php:<br />
-		<div class="instructions">
-		<p><font class="code">
-FIND 
-'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '&lt;span 
-  style="color:#' . $theme['fontcolor2'] . '"&gt;', '&lt;/span&gt;'),
+);
 
-AFTER, ADD
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/page_header.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '&lt;span style="color:#' . $theme['fontcolor2'] . '"&gt;', '&lt;/span&gt;'),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
 'L_GALLERY2' => 'Gallery 2',
 
-FIND
+#
+#-----[ FIND ]------------------------------------------
+# 
 'U_GROUP_CP' => append_sid('groupcp.'.$phpEx),
 
-AFTER, ADD
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
 'U_GALLERY2' => append_sid('gallery2.'.$phpEx),
-		</font></p></div>
-		<p>Next, edit templates/subSilver/overall_header.tpl:<br />
-		<div class="instructions">
-		<p><font class="code">
-FIND
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+templates/subSilver/overall_header.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
 &lt;img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" /&gt;{L_LOGIN_LOGOUT}&lt;/a&gt;&amp;nbsp;
 
-INLINE, AFTER ADD
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+# 
 &amp;nbsp;&lt;a href="{U_GALLERY2}" class="mainmenu"&gt;&lt;img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" /&gt;{L_GALLERY2}&lt;/a&gt;&amp;nbsp;
-		</font></p></div>
-		<p>Finally, edit login.php:<br />
-		<div class="instructions">
-		<p><font class="code">
-FIND
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+login.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
 	else if( ( isset($HTTP_GET_VARS['logout']) || isset($HTTP_POST_VARS['logout']) ) && $userdata['session_logged_in'] )
 	{
 
-AFTER, ADD
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
 		$g2_sql = "SELECT * FROM phpbb_gallery2";
 		$g2_result = $db->sql_query($g2_sql);
 		$g2_row = $db->sql_fetchrow($g2_result);
-		$fullpath = $g2_row['fullPath'];;
+		$fullpath = $g2_row['fullPath'];
 		$embedPath = $g2_row['embedPath'];
 		require_once($fullpath . 'embed.php'); 
 		$g2_ret = GalleryEmbed::logout(array('embedPath'=>$embedPath));
-		</font></p></div></p>
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM</PRE>
 		<h2>
 		<a name="configuration">
 		Configuration
@@ -494,19 +510,6 @@ AFTER, ADD
 		For a list of known issues with Gallery 2, view the <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/gallery/gallery2/README.html#known_issues">
 		Gallery 2 README</a>.
 		</p>
-		    <p>
-      <a href="http://validator.w3.org/check?uri=referer&amp;ss=1"><img
-	  src="images/xhtml10.png"
-	  alt="This page is valid XHTML 1.0"
-	  style="border: none" width="80" height="15"/></a>
-
-      <a href="http://gallery.sourceforge.net"><img
-	  src="images/gallery.gif"
-	  alt="Gallery 2.0 RC-1"
-	  title="Gallery 2.0 RC-1"
-	  style="border: none" width="80" height="15"/></a>
-
-    </p>
     <hr />
 	<p class="fineprint">
 	$Id$
