@@ -1,0 +1,4 @@
+1) Unpack the g2_filter module into your /modules directory.
+2) Enable the module under admin/modules.
+3) Set up your defaults and paths at admin/settings/g2_filter.
+4) Add the filter to at least one of your input types at /admin/filters

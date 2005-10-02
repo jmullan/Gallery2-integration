@@ -1,0 +1,275 @@
+<?php
+// $Id$
+
+// Note to self: This version from 9/27
+
+/******************************* Help sections ************************************/
+
+function g2_filter_short_tip_translated() {
+  return t('You may link to G2 items on this site <a href="%explanation-url">using a special syntax</a>',
+    array('%explanation-url' => url('filter/tips', NULL, 'filter-g2_filter-0')));
+}
+
+function g2_filter_long_tip_translated() {
+  $filtercode = variable_get("g2_filter_filtercode", "G2");
+
+$output = "";
+$output .= '<strong>G2 Filter:</strong><p>You can link to items in your ';
+$output .= 'embedded Gallery 2 using a special code. ';
+$output .= 'This code will be replaced by a thumbnail image that is ';
+$output .= 'linked to the actual item in your Gallery. ';
+$output .= '<em>Syntax:</em><br />';
+$output .= '<blockquote><code>';
+$output .= '['.$filtercode.':<em>item_id</em> size=<em>number</em> class=<em>name</em> frame=<em>name</em>]';
+$output .= '</code></blockquote>';
+$output .= '<ul><li>item_id (required): This is the item ID from G2. ';
+$output .= 'If you look at the URL of the item, this is the last number.</li> ';
+$output .= '<li>class: The block that G2 returns is wrapped in a DIV so additional styling can be done. ';
+$output .= 'The classes for this DIV are located in g2_filter.css.  Included with the module ';
+$output .= 'are "left", "right", and "nowrap". These position the image block to the left or ';
+$output .= 'right or on a line all its own with the text not wrapping. You can also add your '; 
+$output .= 'own class(es) to the CSS file and they will automatically be available.</li> ';
+$output .= '<li>size: The length of the longest side for the thumbnail. ';
+$output .= 'The other side is determined automatically to keep the same aspect ratio.</li> ';
+$output .= '<li>frame: G2 comes with several item/album frames and allows you to add more. ';
+$output .= 'You can use any of these frames for the embedded thumbnail just by specifying a name. ';
+$output .= 'Frames included with the default install are: Bamboo, Book, Branded Wood, Dot Apple, ';
+$output .= 'Dots, Flicking, Gold, Gold 2, Polaroid, Polaroids, Shadow, Shells, ';
+$output .= 'Slide, Solid, Spiral Notebook, Wood.</li>';
+
+return t($output);
+
+}
+
+function g2_filter_help($section = 'admin/help#image_filter') {
+  $output = '';
+  switch ($section) {
+    case 'admin/help#g2_filter':
+      $output = t('<p>Used to add an item from your embedded Gallery 2 to a node like a blog entry or a story. To enable this feature and learn the proper syntax, visit the <a href="%filters">filters configuration screen</a>.</p>', array('%filters' => url('admin/filters')));
+      break;
+    case 'admin/modules#description':
+      $output = t("Allow users to reference G2 items from nodes.");
+      break;
+    case 'filter#short-tip':
+      return g2_filter_short_tip_translated();
+    case 'filter#long-tip':
+      return g2_filter_long_tip_translated();
+  }
+
+  return $output;
+}
+
+
+/******************************* Configuration ************************************/
+
+function g2_filter_get_settings_form() {
+
+  $output .= form_textfield(t("Filter name"), "g2_filter_filtercode",
+             variable_get("g2_filter_filtercode", "G2"), 10, 10,
+             t("Codename to trigger filter. Example: 'G2' means you use [G2: 999]."));  
+
+  $output .= form_textfield(t("Default thumbnail size"), "g2_filter_defsize",
+             variable_get("g2_filter_defsize", "150"), 3, 3,
+             t("If no size is specified, this size will be used."));  
+
+  $output .= form_textfield(t("Default class"), "g2_filter_defdivclass",
+             variable_get("g2_filter_defdivclass", "nowrap"), 20, 20,
+             t("left, right, or nowrap. (See g2_filter.css to add more or modify these.)"));  
+
+  $output .= form_textfield(t("Default frame"), "g2_filter_defframe",
+             variable_get("g2_filter_defframe", "none"), 20, 20,
+             t("Enter a frame name like notebook, polaroid, shadow, slide, wood, etc. See your G2 install for a complete list. Use 'none' or blank for no frame.) "));  
+
+  $output .= form_textfield(t("Path to embed.php"), "g2_filter_embedphppath",
+             variable_get("g2_filter_embedphppath", ""), 80, 150,
+             t("Complete filesystem path to the embed.php file. Ex: /home/myname/gallery2/embed.php"));  
+
+  $output .= form_textfield(t("Embed URI"), "g2_filter_embeduri",
+             variable_get("g2_filter_embeduri", "./gallery/index.php?page=photos"), 50, 150,
+             t("Filename (and any query parameters, but NO path) for access point"));  
+
+  $output .= form_textfield(t("Embed path"), "g2_filter_embedpath",
+             variable_get("g2_filter_embedpath", "/"), 50, 150,
+             t("URL path from document root to embedUri."));  
+
+  $output .= form_textfield(t("Relative G2 Path"), "g2_filter_relativeG2Path",
+             variable_get("g2_filter_relativeG2Path", "./gallery"), 50, 150,
+             t("Path from directory for access point to Gallery 2 base directory."));  
+	return $output;
+}
+
+// Hook which handles filtering.
+function g2_filter_filter($op, $delta = 0, $format = -1, $text = '') {
+  switch ($op) {
+    case 'list':
+      return array(0 => t('G2 filter'));
+    case 'description':
+      return t('Allow users to easily reference G2 items from nodes.');
+    case 'process':
+      return g2_filter_process($text);
+		case 'settings':
+		  $group = g2_filter_get_settings_form();
+      return form_group(t("Gallery 2 Filter"), $group);
+    default:
+      return $text;
+  }
+}
+
+function g2_filter_filter_tips($delta = 0, $format = -1, $long = false) {
+  if ($long) {
+    return g2_filter_long_tip_translated();
+  }
+  else {
+    return g2_filter_short_tip_translated();
+  }
+}
+
+// ***************** The Filter in Action ***********************
+
+define("G2_FILTER_WORD", 1);
+define("G2_FILTER_INTEGER", 2);
+define("G2_FILTER_STRING", 3);
+
+function g2_filter_attr_value($text, $value_type = G2_FILTER_WORD) {
+  // Strip off initial and final quotes.
+  $first = substr($text, 0, 1);
+  if ($first == "\"" || $first == "\'") {
+    if (substr($text, -1, 1) == $first) {
+      $text = substr($text, 1, -1);
+    }
+  }
+  switch ($value_type) {
+  case G2_FILTER_WORD:
+    return preg_replace("/\W/", '', $text);
+  case G2_FILTER_INTEGER:
+    return preg_replace("/\D/", '', $text);
+  default:
+    return check_plain($text);
+  }
+}
+
+// Execute filter on given text.
+function g2_filter_process($text) {
+
+  // Find all the image codes and loop over them, replacing each with the G2 image block
+  $filtercode       = variable_get("g2_filter_filtercode", "G2");
+
+	$matchetxt = "/\[".trim($filtercode).":(\d+)(\s*,)?\s*(.*?)\]/i";
+  preg_match_all($matchetxt, $text, $matches, PREG_SET_ORDER);
+
+  // If we have at least one match, set everything up
+  if (count($matches) > 0) { 
+    // Set the default and path variables based on module settings
+    $default_size     = variable_get("g2_filter_defsize", 150);
+    $default_divclass = variable_get("g2_filter_defdivclass", "nowrap");
+    $default_frame    = variable_get("g2_filter_defframe", "");
+		if ($default_frame = "none") {
+		  $default_frame = "";
+	  }
+		
+    $embedphppath     = variable_get("g2_filter_embedphppath", "");
+    $embeduri         = variable_get("g2_filter_embeduri", "./gallery/index.php?page=photos");
+    $embedpath        = variable_get("g2_filter_embedpath", "/");
+    $relativeG2Path   = variable_get("g2_filter_relativeG2Path", "./gallery");
+
+		// This will hold the list of frames used for images so we can add the CSS link(s) at the end
+		$frame_list = array() ;
+
+    // Link to the embedding code
+		require_once($embedphppath);
+
+		// Grab the user information from Drupal
+		global $user;
+
+		// This sets up the embedding
+		$ret = GalleryEmbed::init(array('embedUri' => $embeduri,
+       'embedPath' => $embedpath,
+       'relativeG2Path' => $relativeG2Path,
+       'loginRedirect' => '',
+       'fullInit' => true,
+       'activeUserId' => $user->uid)); 
+  }
+
+	foreach ($matches as $match) {
+
+    // Pull out the arguments into the $args array
+    $args = array();
+    preg_match_all("/(\w+)\=(\"[^\"]*\"|\S*)/", $match[3], $a, PREG_SET_ORDER);
+    foreach ($a as $arg) {
+      $args[strtolower($arg[1])] = $arg[2];
+    }
+
+		// Set the size of the thumbnail
+    $size = g2_filter_attr_value($args['size'], G2_FILTER_INTEGER);
+		if ($size == 0) {
+		  // No size specified; use the default
+			$size = $default_size;
+		}
+
+		// Set the class of the div
+    $divclass = g2_filter_attr_value($args['class'], G2_FILTER_WORD);
+		if (empty($divclass)) {
+		  // No class specified; use the default
+			$divclass = $default_divclass;
+		}
+
+		// Set the frame and add the frame to the list for the CSS
+    $frame = g2_filter_attr_value($args['frame'], G2_FILTER_WORD);
+		if (empty($frame)) {
+		  // No frame specified; use the default
+			$frame = $default_frame;
+			$frame_list = array_push($frame_list,$frame);
+		}
+
+		// This part actually fetches the image block. It uses the same paramaters as the code
+		// found under "Image Block" in site admin in G2. Copied and slightly modified here for reference.
+    // blocks  	  Pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem; default is randomImage
+    // show  	    Pipe(|) separated list chosen from: title, date, views, owner, heading, fullSize; the value can also be: none
+    // itemId 	  Limit the item selection to the subtree of the gallery under the album with the given id; or the id of the item to display when used with specificItem block type
+    // maxSize 	  Scale images to this maximum size
+    // linkTarget Add a link target (for example, to open links in a new browser window)
+    // itemFrame  Image frame to use around images
+    // albumFrame Image frame to use around albums
+
+		// NOTE: If you want your size to be bigger than the thumbnail size for that image as
+		// defined in your G2, you must use 'show' => 'fullSize'
+
+		list ($ret, $imageBlockHtml) = 
+		GalleryEmbed::getImageBlock(array('blocks' => 'specificItem', 'show' => 'fullSize', 
+		'itemId' => $match[1], 'maxSize' => $size, 'itemFrame' => $frame));
+
+		// Add a div around the table for styling
+    $imageBlockHtml = '<div class ="' .$divclass . '">' . $imageBlockHtml . '</div>';
+
+		// This puts the image block HTML back into the rest of the text
+    $text = str_replace($match[0], $imageBlockHtml, $text);
+
+  } // end of for loop through matches
+
+	// If we had at least one match, finish up
+  if (count($matches) > 0) { 
+
+	  GalleryEmbed::done();
+
+    // Add the CSS link(s)
+    $css_links = "" ;
+
+	  // In order to use the album/image frames, we need to link to the style sheet(s)
+	  $frame_list = array_unique($frame_list);
+    foreach ($frame_list as $frame) {
+    $css_links .= '<link rel="stylesheet" href="' . $relativeG2Path . 
+											'/main.php?g2_controller=imageblock.ExternalCSS&amp;g2_frames=' .$frame.'"/> ' ;
+    }
+
+		// Link to the CSS that controls the styling of the wrapping div
+		$divcss = drupal_get_path('module', 'g2_filter') . "/g2_filter.css";
+		$css_links .= '<link rel="stylesheet" href="' . $divcss . '"/> ' ;
+
+    $text = $css_links .= $text ;
+
+  }
+
+  return $text;
+}
+
+?>

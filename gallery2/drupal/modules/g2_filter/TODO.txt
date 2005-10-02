@@ -1,0 +1,8 @@
+Left to do as of 2005/9/23:
+
+* Add arguments for the rest of the "show" items
+* More frame options: frame (both item and album), iframe (just items), aframe (just albums)
+* Add arguments for the rest of the "block" items
+* Find out which filter causes there to be a gap in the text before the image.
+* Move CSS file links to the top to avoid redundant linking.
+* Add a better explanation of the paths or see if some/all of them can be figured out by the system.

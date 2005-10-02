@@ -1,0 +1,4 @@
+This module would not exist without image_filter by Eric Scouten (http://drupal.org/node/9707). I started with that module and transformed it bit by bit into this module. While there's not a lot of original code left, I wouldn't have been able
+to do this without using image_filter as a template.
+
+This module is dependent on Drupal (of course), Gallery 2, and the gallery.module (http://drupal.org/project/gallery) so thanks to everyone for all the work on those. Without them, this module would be useless. :)
