@@ -30,7 +30,7 @@ function gallery2_userapi_getmenulinks()
     }
 	
     // Security Check
-    if (xarSecurityCheck('ReadGallery2')) {
+    if (xarSecurityCheck('ReadGallery2', 0)) {
 		// put G2 menu links in here
 		// TODO: get menu links from G2
 	}

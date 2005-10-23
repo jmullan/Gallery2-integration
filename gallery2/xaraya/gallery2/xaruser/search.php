@@ -23,7 +23,7 @@ include_once(dirname(__FILE__) .'/../xargallery2helper.php');
 function gallery2_user_search()
 {
 // Security Check
-    if(!xarSecurityCheck('ReadGallery2')) return;
+    if(!xarSecurityCheck('ReadGallery2', 0)) return;
 
     if (!xarVarFetch('q', 'isset', $q, NULL, XARVAR_DONT_SET)) {return;}
     if (!xarVarFetch('gallery2_check', 'isset', $gallery2_check, NULL, XARVAR_DONT_SET)) {return;}

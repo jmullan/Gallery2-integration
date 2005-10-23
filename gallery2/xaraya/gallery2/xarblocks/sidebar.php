@@ -29,7 +29,7 @@ function gallery2_sidebarblock_info()
 function gallery2_sidebarblock_display($blockinfo)
 {
   // security check
-  if (!xarSecurityCheck('ReadGallery2', 1, 'Block', $blockinfo['title'])) {return;}
+  if (!xarSecurityCheck('ReadGallery2', 0, 'Block', $blockinfo['title'])) {return;}
 
   global $g2sidebarHtml;
   if (!empty($g2sidebarHtml)) {

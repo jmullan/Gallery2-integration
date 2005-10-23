@@ -12,7 +12,7 @@ include_once(dirname(__FILE__) .'/../xargallery2helper.php');
 function gallery2_user_main()
 {     
     // Security Check
-    if (!xarSecurityCheck('ReadGallery2')) return;
+    if (!xarSecurityCheck('ReadGallery2', 0)) return;
     $data = array();
 
     // first check if the module has been configured
