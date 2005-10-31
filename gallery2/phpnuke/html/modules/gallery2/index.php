@@ -32,6 +32,41 @@ if (!eregi("modules.php", $_SERVER['PHP_SELF'])) {
 
 define("MOD_NAME","gallery2");
 
+	/**
+	 * g2addexternalMapEntry: add an externalId map entry
+	 *
+	 * Add an entry in the G externalId, entityId map table
+	 *
+	 * @author Andy Staudacher
+	 * @access public
+	 * @param integer the uid
+	 * @param integer the entityId from G2
+	 * @param integer/string the roles type, 1 for groups, 0 for users, or the entityType string
+	 * @return bool true or false
+	 */
+	function g2addexternalMapEntry($externalId, $entityId, $entityType) 
+	{
+		include ("modules/".MOD_NAME."/gallery2.cfg");
+		
+		// init G2 transaction, load G2 API, if not already done so
+		if (!init()) {
+			return false;
+		}
+		if (is_int($entityType)) {
+			$entityType = $entityType == 0 ? 'GalleryUser' : 'GalleryGroup';
+		}
+		
+		require_once ($g2embedparams['embedphpfile']."/".'modules/core/classes/ExternalIdMap.class');
+		
+		$ret = ExternalIdMap :: addMapEntry(array ('externalId' => $externalId, 'entityType' => $entityType, 'entityId' => $entityId));
+		if ($ret->isError()) {
+			g2_message('Failed to create a extmap entry for role uid ['.$externalId.'] and entityId ['.$entityId.'], entityType ['.$entityType.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
+			return false;
+		}
+		return true;
+	}
+
+
 // --------------------------------------------------------
 // Mapping between Phpnuke and Gallery2 language definition
 // --------------------------------------------------------

@@ -68,7 +68,7 @@ function g2_message($mess) {
 	include ("header.php");
 	OpenTable();
 	echo	"<br><center><a href=\"".$admin_file.".php?op=gallery2\">".
-				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Gallery2 Module Administration</H3>".
+				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2.png' border=0></a><H3>Gallery2 Module Administration</H3>".
 				"<br/><a href=\"".$admin_file.".php?op=gallery2\">Return Home</center>";
 	CloseTable();
 	echo "<br/>";
@@ -430,7 +430,7 @@ function DisplayMainPage() {
 	include ("header.php");
 	OpenTable();
 	echo	"<br><center><a href=\"".$admin_file.".php?op=gallery2\">".
-				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2Logo.gif' border=0></a><H3>Module Administration</H3>".
+				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2.png' border=0></a><H3>Module Administration</H3>".
 				"</center>";
 	CloseTable();
 	echo "<br/>";

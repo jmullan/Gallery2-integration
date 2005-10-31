@@ -1,3 +1,9 @@
+2005-10-31  Dariush Molavi  <dari@nukedgallery.net>
+	* Change: Updated PHPNuke ACP with non-Alpha Gallery 
+	  banner.
+	* Fix: Re-added g2addexternalMapEntry() function to 
+	  index.php.
+
 2005-10-25  Dariush Molavi  <dari@nukedgallery.net>
 	* Change: Updated Readme with explicit instructions that 
 	  Gallery 2 must be installed in the modules directory.
