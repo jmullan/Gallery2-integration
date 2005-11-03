@@ -1,3 +1,10 @@
+2005-11-03  Dariush Molavi  <dari@nukedgallery.net> 
+	* Fix: Broken G2 image in Readme.html
+	* New: g2helper.inc class (J. Mike Rollins)
+	* New: User update/delete and password changes 
+	  now supported (J. Mike Rollins)
+	* New: Addition ACP features (J. Mike Rollins)
+
 2005-09-30  Dariush Molavi  <dari@nukedgallery.net>
 	* Change: Got the CSS in Readme to work as required.
 	  Props to thumb for the fix.

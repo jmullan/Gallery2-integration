@@ -133,6 +133,28 @@
 		margin: 0px 0px 0px 0px;
 		padding: 4px;
 		}
+		.important {
+		background: #FACA61;
+		border: 2px;
+		width: 480px;
+		margin: 0.6em 0 0.6em 0;
+		padding: 0.6em;
+		color: #C00;
+		text-align: center;
+		}
+		.important .email {
+		font-size: 1.3em;
+		color: black;
+		font-weight: 700;
+		margin: 0.6em 0 0 0;
+		}
+		.important h3 {
+		color: #eee;
+		background: #f00;
+		font-size: 1.3em;
+		margin: -0.2em -0.2em 0.2em -0.2em;
+		padding: 0.2em 0.2em;
+		}
 	</style>
 	</head>
 	<body>
@@ -255,8 +277,31 @@
 		</ul>
 		<p>
 		To install, simply upload the contents of the admin and templates folders into the 
-		corresponding folders in your phpBB2 installation.  The gallery2.php file 
-		should be copied to your phpBB2 root. <br />
+		corresponding folders in your phpBB2 installation.</p>
+		<pre class="CodeSnippet">    phpBB2/admin/admin_gallery2.php
+    phpBB2/admin/gallery2_export.php
+
+    phpBB2/templates/subSilver/admin/gallery2_sync_intro_body.tpl
+    phpBB2/templates/subSilver/admin/gallery2_show_body.tpl
+    phpBB2/templates/subSilver/admin/gallery2_config_body.tpl
+    phpBB2/templates/subSilver/images/exif_parser.gif
+    phpBB2/templates/subSilver/gallery2.tpl</pre>
+		<p>
+		The gallery2.php and g2helper.inc files 
+		should be copied to your phpBB2 root.</p>
+		<pre class="CodeSnippet">    phpBB2/gallery2.php
+    phpBB2/g2helper.inc</pre>
+		<p>
+    <div class="important">
+      <h3>Important!</h3>
+      <span>You <b>must</b> check the g2helper.inc file for this line:<br />
+	  $sql = "SELECT * FROM phpbb_gallery2";<br />
+	  If your table prefix is not "phpbb", you <b>must</b> change it to match your 
+	  setup.
+      </span>
+    </div>		
+		</p>
+		<p>
 		The gallery2 folder contains a customized breadcrumb navigation file that will include 
 		a link back to your forum's index page. To use this feature, create a directory called 
 		"local" within gallery2/modules/core/templates/blocks and copy this version of BreadCrumb.tpl 
@@ -286,6 +331,77 @@ CREATE TABLE `phpbb_gallery2` (
 `cookiePath` VARCHAR( 255 ) NOT NULL ,
 `activeUserID` INT NOT NULL
 );
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+admin/admin_users.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+                if (!($this_userdata = get_userdata($user_id)))
+                {
+                        message_die(GENERAL_MESSAGE, $lang['No_user_id_specified'] );
+                }
+
+                if( $HTTP_POST_VARS['deleteuser'] && ( $userdata['user_id'] != $user_id ) )
+                {
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+                     // Remove user from Gallerhy
+                     require($phpbb_root_path . 'g2helper.inc');
+                     $g2h = new g2helper($db);
+                     $g2h->init_admin();
+                     $g2h->deleteUser($user_id);
+                     $g2h->done();
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+                        if($password != $password_confirm)
+                        {
+                                $error = TRUE;
+                                $error_msg .= ( ( isset($error_msg) ) ? '&lt;br /&gt;' : '' ) . $lang['Password_mismatch'];
+                        }
+                        else
+                        {
+                                $password = md5($password);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+                                // Change password in gallery
+                                require($phpbb_root_path . 'g2helper.inc');
+                                $g2h = new g2helper($db);
+                                $g2h->init_admin();
+                                $g2h->changePassword($user_id,$password);
+                                $g2h->done();
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/usercp_register.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+                        }
+
+                        if ( !$error )
+                        {
+                                $new_password = md5($new_password);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+                                require($phpbb_root_path . 'g2helper.inc');
+                                $g2h = new g2helper($db);
+                                $g2h->init_admin();
+                                $g2h->changePassword($user_id,$new_password);
+                                $g2h->done();
 
 #
 #-----[ OPEN ]------------------------------------------

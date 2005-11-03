@@ -30,6 +30,7 @@ define('IN_PHPBB', true);
 $phpbb_root_path = './';
 include($phpbb_root_path . 'extension.inc');
 include($phpbb_root_path . 'common.'.$phpEx);
+include($phpbb_root_path . 'g2helper.inc');
 
 //
 // Start session management
@@ -40,52 +41,12 @@ init_userprefs($userdata);
 // End session management
 //
 
-//
-// Lets build a page ...
-//
 
-$page_title = "Gallery 2";
-include($phpbb_root_path . 'includes/page_header.'.$phpEx);
+$template->set_filenames(array( 'body' => 'gallery2.tpl'));
 
-$template->set_filenames(array(
-	'body' => 'gallery2.tpl')
-);
+$g2h = new g2helper($db);
+$g2h->init($userdata);
 
-$sql = "SELECT * FROM phpbb_gallery2";
-$result = $db->sql_query($sql);
-$row = $db->sql_fetchrow($result);
-$fullpath = $row['fullPath'];;
-$embedPath = $row['embedPath'];
-$relativeG2Path = $row['relativePath'];
-$embedUri = $row['embedURI'];
-$loginRedirect = $row['loginPath'];
-$cookiePath = $row['cookiePath'];
-
-require_once($fullpath . 'embed.php'); 
-
-if($userdata['user_level'] == ADMIN) 
-{
-	$ret = GalleryEmbed::init(array( 'embedUri' => $embedUri, 'embedPath' => $embedPath, 'relativeG2Path' => $relativeG2Path, 'loginRedirect' => $loginRedirect, 'activeUserId' => "admin")); 
-	if ($ret->isError()) { 
-		 echo $ret->getAsHtml();
-		 exit; 
-	} 
-}
-else if($userdata['user_id'] != ANONYMOUS) 
-{
-	$ret = GalleryEmbed::init(array( 'embedUri' => $embedUri, 'embedPath' => $embedPath, 'relativeG2Path' => $relativeG2Path, 'loginRedirect' => $loginRedirect, 'activeUserId' => $userdata['user_id'])); 
-	if ($ret->isError()) { 
-		 echo $ret->getAsHtml();
-		 exit; 
-	} 
-}
-else {
-	$ret = GalleryEmbed::init(array( 'embedUri' => $embedUri, 'embedPath' => $embedPath, 'relativeG2Path' => $relativeG2Path, 'loginRedirect' => $loginRedirect, 'activeUserId' => 0)); 
-	if ($ret->isError()) { 
-		 echo $ret->getAsHtml();
-		 exit; 
-	} 
-}
 
 GalleryCapabilities::set('showSidebarBlocks', true);
 $g2data = GalleryEmbed::handleRequest(); 
@@ -93,6 +54,13 @@ $g2data = GalleryEmbed::handleRequest();
 if ($g2data['isDone']) { 
 	exit; // Gallery 2 has already sent output (redirect or binary data) 
 } 
+
+//
+// Lets build a page ...
+//
+
+$page_title = "Gallery 2";
+include($phpbb_root_path . 'includes/page_header.'.$phpEx);
 
 // Use $g2data['headHtml'] and $g2data['bodyHtml'] 
 // to display Gallery 2 content inside embedding application 
