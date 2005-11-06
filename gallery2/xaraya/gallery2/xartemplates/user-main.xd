@@ -1,7 +1,2 @@
-<xar:if condition="$configured">
-    <xar:foreach in="$cssfiles" value="$cssfile">
-        <xar:style scope="module" module="gallery2" file="'.$cssfile.'" />
-    </xar:foreach>
-</xar:if>
 #$g2modhtml#
 

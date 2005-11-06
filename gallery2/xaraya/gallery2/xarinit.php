@@ -171,6 +171,7 @@ function gallery2_upgrade($oldversion)
 	xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0.0');
     case '0.6.9':
     case '0.6.10':
+    case '0.6.11':
 	break;
 	
     default:

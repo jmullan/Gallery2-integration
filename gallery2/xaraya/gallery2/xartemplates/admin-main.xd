@@ -130,7 +130,6 @@
         <div style="margin-left: 1em; margin-right: 1em; text-align:left;">
             <ul>
                 <li><xar:mlstring>Since the xaraya RC candidates, you cannot use G2 URL rewrite with xaraya. Deactivate the G2 URL rewrite module when using it embedded in xaraya</xar:mlstring></li>
-		<li><xar:mlstring>Since the xaraya RC candidates, only the G2 theme.css file is included in xaraya. Xaraya changed the API and we're waiting for another API change until we can dynamically include other G2 CSS files again in xaraya</xar:mlstring></li>
             </ul>
         </div>
         <br />
@@ -145,7 +144,6 @@
             <ul>
                 <li><xar:mlstring>Add the search hook.</xar:mlstring></li>
 		<li><xar:mlstring>Incorporate the G2 menu links in the xaraya menu.</xar:mlstring></li>
-		<li><xar:mlstring>Fix CSS interferences between G2 and xaraya</xar:mlstring></li>
 		<li><xar:mlstring>Drop pending users during (initial) user synchronization.</xar:mlstring></li>
             </ul>
         </div>
