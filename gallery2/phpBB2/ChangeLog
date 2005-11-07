@@ -1,3 +1,7 @@
+2005-11-07  Dariush Molavi  <dari@nukedgallery.net>
+	* Change: Remove notice about SQL table name, since 
+	  we create the table.
+
 2005-11-03  Dariush Molavi  <dari@nukedgallery.net> 
 	* Fix: Broken G2 image in Readme.html
 	* New: g2helper.inc class (J. Mike Rollins)
