@@ -48,7 +48,7 @@ function gallery2_init()
   /* min g2 version */
   xarModSetVar('gallery2', 'g2.minCoreVersion', '0.9.25');
   /* min xar version */
-  xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0.0');
+  xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0');
   
   // whether to display the sidebar menu within the module html 
   // (else, instantiate a sidebar block)
@@ -168,10 +168,12 @@ function gallery2_upgrade($oldversion)
 	 /* min g2 version */
 	xarModSetVar('gallery2', 'g2.minCoreVersion', '0.9.25');
 	/* min xar version */
-	xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0.0');
+	xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0');
     case '0.6.9':
     case '0.6.10':
     case '0.6.11':
+	/* changed 1.0.0 to 1.0 */
+	xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0');
 	break;
 	
     default:
