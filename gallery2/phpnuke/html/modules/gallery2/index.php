@@ -32,40 +32,28 @@ if (!eregi("modules.php", $_SERVER['PHP_SELF'])) {
 
 define("MOD_NAME","gallery2");
 
-	/**
-	 * g2addexternalMapEntry: add an externalId map entry
-	 *
-	 * Add an entry in the G externalId, entityId map table
-	 *
-	 * @author Andy Staudacher
-	 * @access public
-	 * @param integer the uid
-	 * @param integer the entityId from G2
-	 * @param integer/string the roles type, 1 for groups, 0 for users, or the entityType string
-	 * @return bool true or false
-	 */
-	function g2addexternalMapEntry($externalId, $entityId, $entityType) 
-	{
-		include ("modules/".MOD_NAME."/gallery2.cfg");
-		
-		// init G2 transaction, load G2 API, if not already done so
-		if (!init()) {
-			return false;
-		}
-		if (is_int($entityType)) {
-			$entityType = $entityType == 0 ? 'GalleryUser' : 'GalleryGroup';
-		}
-		
-		require_once ($g2embedparams['embedphpfile']."/".'modules/core/classes/ExternalIdMap.class');
-		
-		$ret = ExternalIdMap :: addMapEntry(array ('externalId' => $externalId, 'entityType' => $entityType, 'entityId' => $entityId));
-		if ($ret->isError()) {
-			g2_message('Failed to create a extmap entry for role uid ['.$externalId.'] and entityId ['.$entityId.'], entityType ['.$entityType.']. Here is the error message from G2: <br />'.$ret->getAsHtml());
-			return false;
-		}
-		return true;
-	}
+/*********************************************************/
+/* Standalone Message Function                           */
+/*********************************************************/
 
+function g2_message($mess) {
+	global $admin, $bgcolor2, $module_name, $admin_file;
+	include ("header.php");
+	OpenTable();
+	echo	"<br><center><a href=\"".$admin_file.".php?op=gallery2\">".
+				"<img alt='Gallery::your photos on your website' src='modules/$module_name/images/g2.png' border=0></a><H3>Gallery2 Module Administration</H3>".
+				"<br/><a href=\"".$admin_file.".php?op=gallery2\">Return Home</center>";
+	CloseTable();
+	echo "<br/>";
+
+	OpenTable();
+	echo "<center><font class=\"option\">";
+	echo $mess;
+	echo "</font></center>";
+	CloseTable();
+
+	include ("footer.php");
+}
 
 // --------------------------------------------------------
 // Mapping between Phpnuke and Gallery2 language definition
@@ -123,29 +111,18 @@ if ($g2bodyHtml==null) {
 				$result=$db->sql_query($query);
 				$sqluserdata		= $db->sql_fetchrow($result);
 				$nukeuser_regdate	= $sqluserdata['user_regdate'];
-			
-				list( $regmonth, $regday, $regyear ) = split( " ", $nukeuser_regdate );
-				$regphpusertimestamp = mktime( 0, 0, 0, $regmonth, $regday, $regyear );
 				$nukeuser_lang		= $sqluserdata['user_lang'];
-				$nukeuser_uname		= $sqluserdata['username'];
 							
 				// Get Arguments for the new user:
-				$args['fullname']  	=	$sqluserdata['name'];
-				$args['username'] 	= $nukeuser_uname;
-				$args['hashedpassword'] =	$sqluserdata['user_password'];
-				$args['hashmethod'] = 	'md5';
-				$args['email'] 		=	$sqluserdata['user_email'];
-				$args['language']	=	$phpnuke2G2Lang[$nukeuser_lang];
-				$args['creationtimestamp']	=	$regphpusertimestamp;
-									
-				$retcreate = GalleryEmbed :: createUser($uid, $args);
+				$args = array('fullname'=> $sqluserdata['username'], 'username'=> $sqluserdata['username'], 'hashedpassword'=> $sqluserdata['user_password'], 'hashmethod'=> 'md5' , 'email'=> $sqluserdata['user_email'] , 'language' => $phpnuke2G2Lang[$nukeuser_lang], 'creationtimestamp'=> strtotime($nukeuser_regdate));
+	
+				$retcreate = GalleryEmbed::createUser($sqluserdata['user_id'], $args);
 				if (!$retcreate->isSuccess()) {
-					echo 'Failed to create G2 user with extId ['.$uid.']. Here is the error message from G2: <br />'.$retcreate->getAsHtml();
-					return false;
-				}
-									
-				if (!g2addexternalMapEntry($nukeuser_uname, $uid, 0)) {
-					return false;
+					list($ret,$user) = GalleryCoreApi::fetchUserByUsername($sqluserdata['username']);
+					$g2userId = $user->getId();
+					if(!GalleryEmbed::addExternalIdMapEntry($sqluserdata['user_id'], $g2userId, "GalleryUser")) {
+						echo 'Sorry, but your the following PHPNuke user could not be imported to Gallery 2:<br> '.$nukeuser_uname.'.<p> Here is the error message from G2: <br />'.$retcreate->getAsHtml();
+					}
 				}
 						   		
 				// Full G2 reinit with the new created user

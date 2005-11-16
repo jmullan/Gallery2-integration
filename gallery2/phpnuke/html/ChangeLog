@@ -1,3 +1,15 @@
+2005-11-16  Dariush Molavi  <dari@nukedgallery.net>
+	* New: New popup window when exporting PHPNuke users
+	  to Gallery 2.  Displays a progress bar to show how 
+	  many users have been synced.  This is a port of the
+	  user sync code from the phpBB2 integration.
+	* Fix: Better error handling with initial user sync.  This
+	  should resolve most user's issues with collisions.
+	* New: Code to add to the PHPNuke Account module to 
+	  create a new Gallery 2 user when the user activates 
+	  their PHPNuke account.
+	* Change: Cleaned up code, removed un-needed functions.
+
 2005-10-31  Dariush Molavi  <dari@nukedgallery.net>
 	* Change: Updated PHPNuke ACP with non-Alpha Gallery 
 	  banner.

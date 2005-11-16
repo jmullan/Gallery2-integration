@@ -144,6 +144,33 @@
 		font.code {
 		font:12px Courier,'Courier New',sans-serif;
 		}
+		pre.CodeSnippet	{
+		background-color: #f0f0f0;
+		padding: 1em;
+		margin: 0px;
+		border: 1px solid gray;
+		font-family: "Lucida Console";
+		font-size: 1em ;
+		width: 800px ;
+		color: #000000;
+		overflow:auto;
+		}
+		pre.Console	{
+		width: auto ;
+		background-color: #000000; 
+		color: #00ff00;
+		}
+		div.codecontainer {
+		margin: 0px;
+		width:800px;
+		padding: 1em;
+		}
+		div.codecontainer h3 {
+		background: #ccc;
+		font-size: 1.1em;
+		margin: 0px 0px 0px 0px;
+		padding: 4px;
+		}
 		</style>
 	</head>
 	<body>
@@ -248,8 +275,6 @@
 		<li>Contains a PHPNuke block that allows you to utilize Gallery 2's built-in sidebar.</li>
 		<li>Allows you to export your existing PHPNuke users to Gallery 2.</li>
 		</ol>
-		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
-		proceed with this integration, you <b>must</b> install and configure Gallery 2.
 		</p>
 		<h2>
 		<a name="installing">
@@ -261,11 +286,13 @@
 		[table of contents]
 		</a>
 		</p>
+		<div class="important">
+		<h3>NOTICE</h3>
 		<p>
-		Before you install this integration package, you 
-<b>must</b> install and configure Gallery 2.  Gallery 2 <b>must</b> be 
-installed inside your PHPNuke modules directory.
-		</p>
+		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
+		proceed with this integration, you <b>must</b> install and configure Gallery 2.  Additionally, Gallery 2 <b>must</b>
+		be installed into the "modules" directory of your PHPNuke installation.
+		</p></div>
 		<p>
 		This package contains four folders:
 		<ul>
@@ -277,6 +304,93 @@ installed inside your PHPNuke modules directory.
 		To install, simply upload the contents of these folders into the 
 		corresponding folders in your PHPNuke installation.
 		</p>
+		<p>If you want to have the added feature of users being added to your Gallery 2 installation 
+		when they activate their PHPNuke user account, you will need to do the following:</p>
+		<pre class="CodeSnippet">#
+#-----[ OPEN ]------------------------------------------
+# 
+modules/Your_Account/index.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+function activate($username, $check_num) {
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+/*********************************************************/
+/* True if init() was called, else false                 */
+/*********************************************************/
+
+function g2isInitiated($newvalue = null) {
+	static $initiated;
+	if (!isset ($initiated)) {
+		$initiated = false;
+	}
+	if (isset ($newvalue) && (is_bool($newvalue) || is_int($newvalue))) {
+		$initiated = $newvalue;
+	}
+	return $initiated;
+}
+
+/*********************************************************/
+/* Init G2 API                                           */
+/*********************************************************/
+function g2_init() {
+	global $gallery;
+
+	if (g2isInitiated()) {
+		return true;
+	}
+
+	define("G2_MODULE","gallery2");  // Edit this if you need to.
+	include("modules/".G2_MODULE."/gallery2.cfg");
+	require_once ($g2embedparams['embedphpfile']."/embed.php");
+
+	$ret = GalleryEmbed :: init(array (
+		'embedPath' =&gt; $g2embedparams['embedPath'],
+		'embedUri' =&gt; $g2embedparams['embedUri'], 
+		'relativeG2Path' =&gt; $g2embedparams['relativeG2Path'],
+		'loginRedirect' =&gt; $g2embedparams['loginRedirect'],
+		'activeUserId' =&gt; ''));
+
+	$gallery-&gt;guaranteeTimeLimit(300);
+
+	if (!$ret-&gt;isSuccess()) {
+		g2_message('G2 did not return a success status upon an init request. Here is the error message: &lt;br /&gt; [#(1)]'.$ret-&gt;getAsHtml());
+		return false;
+	}
+	g2isInitiated(true);
+	return true;
+}
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	$db->sql_query("DELETE FROM ".$user_prefix."_users_temp WHERE username='$username' AND check_num='$check_num'");
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+
+	// init G2 transaction, load G2 API, if not already done so
+	if (!g2_init()) {
+		return false;
+	}
+	define("G2_MODULE","gallery2");  // Edit this if you need to.
+	include("modules/".G2_MODULE."/gallery2.cfg");
+	require_once($g2embedparams['embedphpfile']."/embed.php");
+	$result = $db-&gt;sql_query("SELECT user_id, username, user_password, user_email, user_lang, user_regdate FROM ". $user_prefix . "_users WHERE username = '$username'"); 
+	$row = $db-&gt;sql_fetchrow($result);
+	$user_id = $row['user_id'];
+	$args = array('fullname'=&gt; $row['username'], 'username'=&gt; $row['username'], 'hashedpassword'=&gt; $row['user_password'], 'hashmethod'=&gt; 'md5' , 'email'=&gt; $row['user_email'] , 'creationtimestamp'=&gt; strtotime($row['user_regdate']));
+	$ret = GalleryEmbed::createUser($user_id, $args);
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM</pre>
 		<h2>
 		<a name="requirements">
 		Things to check
@@ -329,6 +443,22 @@ installed inside your PHPNuke modules directory.
 		</div>
 		<div class="instructions">
 			<h3>In html/modules/gallery2/index.php</h3>
+			<p>
+			You will need to update the following line:<br />
+			<font class="code">define("MOD_NAME","gallery2");</font><br />
+			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
+			</p>
+		</div>
+		<div class="instructions">
+			<h3>In html/modules/gallery2/admin/export.php</h3>
+			<p>
+			You will need to update the following line:<br />
+			<font class="code">define("MOD_NAME","gallery2");</font><br />
+			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
+			</p>
+		</div>
+		<div class="instructions">
+			<h3>In html/modules/gallery2/admin/index.php</h3>
 			<p>
 			You will need to update the following line:<br />
 			<font class="code">define("MOD_NAME","gallery2");</font><br />
@@ -442,12 +572,11 @@ installed inside your PHPNuke modules directory.
 		in PHPNuke, you will also been logged as the admin in G2 regardless of 
 		your PHPNuke normal user login.<p>
 		No group mapping is done at this time, it may come in a future release.<p>
-		The export user is split in multiple pages which allows a maximum export 
-		of 100 users per page, preventing timeout errors during a large database 
-		export.<p>
 		The dynamic addition of users now works.  Everytime a new user registers 
 		on your PHPNuke portal, on their first G2 visit, an account will be 
-		created for him.
+		created for him.<p>
+		Users are now automatically added to Gallery 2 when they activate their membership 
+		on your PHPNuke site.
 		<h3>Almost done...</h3>
 		Don't forget to activate your Gallery 2 modules via the PHPNuke administration 
 		panel.
@@ -473,7 +602,7 @@ installed inside your PHPNuke modules directory.
 		this forum</a> on NukedGallery.</p>
 		<p>If you are having general Gallery 2 problems,  you should start by looking in the <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22" target="_blank">Gallery 2 Support Forum</a> on the <a href="http://gallery.sourceforge.net" target="_blank">Gallery
 		  Website</a>.  Search the forum to see if somebody else has
-		  posted a similar problem and maybe there’s an answer
+		  posted a similar problem and maybe there's an answer
 		  there, otherwise start a new topic to get help.  If the problem
 		  seems like a bug in the Gallery 2 software you can <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130" target="_blank">file a bug</a> in our bug tracker on
 		  SourceForge.  Please read our <a href="http://gallery.sourceforge.net/wiki.php?page=Feature%20Requests%20and%20Bug%20Reports" target="_blank">tracker guidelines</a> before filing a bug so
@@ -485,10 +614,10 @@ installed inside your PHPNuke modules directory.
 		</p>
 
 		<p>
-		  Remember – reporting bugs is <b>good</b>.  Even if you think
-		  it’s silly, go ahead and report it.  We can always close the bug
-		  or refile it (please don’t be offended in this case) but it’s
-		  harder to find bugs than it is to fix them so we’re counting on
+		  Remember - reporting bugs is <b>good</b>.  Even if you think
+		  it's silly, go ahead and report it.  We can always close the bug
+		  or refile it (please don't be offended in this case) but it's
+		  harder to find bugs than it is to fix them so we're counting on
 		  you to help us with the finding part.
 		</p>
 		<h2>
