@@ -62,6 +62,53 @@ $phpnuke2G2Lang = array (
 	'chinese'	=> 'zh');
 
 /*********************************************************/
+/* True if init() was called, else false                 */ 	 
+/*********************************************************/ 
+  	 
+function isInitiated($newvalue = null) { 	 
+	static $initiated; 	 
+    if (!isset ($initiated)) { 	 
+		$initiated = false; 	 
+	} 	 
+	if (isset ($newvalue) && (is_bool($newvalue) || is_int($newvalue))) { 	 
+		$initiated = $newvalue; 	 
+	} 	 
+	return $initiated; 	 
+} 	 
+  	 
+/*********************************************************/ 	 
+/* Init G2 API                                           */ 	 
+/*********************************************************/ 	 
+  	 
+function init() { 	 
+	// only init if not already done so 	 
+	if (isInitiated()) { 	 
+		return true; 	 
+	} 	 
+
+	include ("modules/".MOD_NAME."/gallery2.cfg"); 	 
+	require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE); 	 
+
+	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
+
+	$ret = GalleryEmbed :: init(array ( 	 
+			'embedPath' => $g2embedparams['embedPath'], 	 
+			'embedUri' => $g2embedparams['embedUri'], 	 
+			'relativeG2Path' => $g2embedparams['relativeG2Path'], 	 
+			'loginRedirect' => $g2embedparams['loginRedirect'], 	 
+			'activeUserId' => '', 	 
+			'activeLanguage' => $g2currentlang, 	 
+			'fullInit' => $fullInit)); 	 
+
+	if (!$ret->isSuccess()) { 	 
+		g2_message('G2 did not return a success status upon an init request. Here is the error message from G2: <br /> [#(1)]'.$ret->getAsHtml()); 	 
+		return false; 	 
+	} 	 
+	isInitiated(true); 	 
+	return true; 	 
+}
+
+/*********************************************************/
 /* Standalone Message Function                           */
 /*********************************************************/
 

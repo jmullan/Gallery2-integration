@@ -1,3 +1,7 @@
+2005-11-21  Dariush Molavi  <dari@nukedgallery.net>
+	* Fix: Oops, deleted the init() function wrapper from 
+	  modules/gallery2/admin/index.php.  Re-added.
+
 2005-11-16  Dariush Molavi  <dari@nukedgallery.net>
 	* New: New popup window when exporting PHPNuke users
 	  to Gallery 2.  Displays a progress bar to show how 
