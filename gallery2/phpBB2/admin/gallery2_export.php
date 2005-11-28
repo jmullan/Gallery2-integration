@@ -334,11 +334,23 @@ function groupExport()
 	}
 	if(count($failures) != 0)
 	{
-		echo "<br />The import of the following phpBB2 groups failed:<br />";
-		foreach($failures as $bad_id)
-		{
-			echo $bad_id."<br />";
-		}
+      $sql = "SELECT user_id, username FROM ". USERS_TABLE. " WHERE user_id IN (".implode(",", $failures).")";
+      if(!$result = $db->sql_query($sql))
+      {
+         message_die(GENERAL_ERROR, "Could not retrieve data from Gallery 2 table", $lang['Error'], __LINE__, __FILE__, $sql);
+      }
+      $fail_assoc = array();
+      while($row= $db->sql_fetchrow($result)) {
+         $fail_assoc[$row['user_id']] = $row['username'];   
+      }
+      
+      
+      echo "<br />The import of the following phpBB2 accounts  failed <i>(username [user_id])</i>:<br />";
+      reset($fail_assoc);
+      foreach($fail_assoc as $bad_id => $bad_name))
+      {
+         echo "$bad_name [$bad_id]<br />";
+      }
 	}
 	echo "<form><input type=\"button\" value=\"Close Window\" onclick=\"window.close()\"></form>";
 }

@@ -21,14 +21,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * Gallery 2 integration helper file for phpBB2.
+ * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
- * @author J. Mike Rollins <rollins@camotruck.net>
- * 
- * Much of the code for this file was taken from
- * the gallery2.php mod by Dariush Molavi <dari@nukedgallery.net>
- **/
-
+ * @author Dariush Molavi <dari@nukedgallery.net>
+ * @author Mike Rollins
+ */
 
 class g2helper
 {
@@ -94,6 +91,9 @@ class g2helper
                                            'relativeG2Path' => $this->relativeG2Path, 
                                            'loginRedirect'  => $this->loginRedirect, 
                                            'activeUserId'   => $userdata['user_id'])); 
+
+          //echo "KEYS: " . join("<li>",array_keys($userdata)) ;
+          //echo "<li>PASSWD: " . $userdata['user_password'];
 
           if ($ret->isError()) 
             { 
@@ -175,9 +175,18 @@ class g2helper
   function deleteUser($id)
     {
       $ret = GalleryEmbed::deleteUser($id);
-      if ($ret->isError()) 
+      if ($ret->isError())
         {
-          echo $ret->getAsHtml();  
+          if( $ret->getErrorCode() & ERROR_MISSING_OBJECT )
+            {
+              // This happen when there is no gallery account for the user.
+              echo "<center><b>Note: There was no gallery account for this user.</b></center>";
+            }
+          else
+            {
+              echo $ret->getAsHtml();
+              exit;
+            }
         }
     }
 
@@ -192,10 +201,6 @@ class g2helper
         }
       $this->done();
     }
-
-
-
 }
-
 
 ?>

@@ -1,3 +1,7 @@
+2005-11-28  Dariush Molavi  <dari@nukedgallery.net>
+    * Fix: Broken delete user code in g2helper.inc (J. Mike Rollins)
+	* Update: Modified code listing failed user exports (websnail)
+
 2005-11-07  Dariush Molavi  <dari@nukedgallery.net>
 	* Change: Remove notice about SQL table name, since 
 	  we create the table.
