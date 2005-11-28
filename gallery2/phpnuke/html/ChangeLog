@@ -1,3 +1,9 @@
+2005-11-28  Dariush Molavi  <dari@nukedgallery.net>
+	* Update: Notice in Readme regarding rewrite module in 
+	  integrated installations.
+	* Fix: Removed outdated function references in 
+	  modules/gallery2/admin/index.php
+
 2005-11-21  Dariush Molavi  <dari@nukedgallery.net>
 	* Fix: Oops, deleted the init() function wrapper from 
 	  modules/gallery2/admin/index.php.  Re-added.

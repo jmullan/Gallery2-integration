@@ -296,7 +296,7 @@ function DisplayMainPage() {
 	$hidden_input = "<input type=\"hidden\" name=\"startuser\" value=\"2\">";
 	OpenTable();
 	echo "<center><font class=\"option\"><b>Export Users to Gallery2</b></font></center><br/>";
-	echo "<form action=\"".$admin_file.".php\" method=\"post\"><input type=\"submit\" value=\"Export Users\" onclick=\"window.open('','myWin',config='height=500, width=500, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no'); this.form.target='myWin';this.form.action='".$admin_file.".php'\"><input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\"></form>";
+	echo "<form action=\"".$admin_file.".php\" method=\"post\"><input type=\"submit\" value=\"Export Users\" onclick=\"window.open('','myWin',config='height=500, width=500, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no'); this.form.target='myWin';this.form.action='".$admin_file.".php'\"></form>";
 	CloseTable();
 
 	include ("footer.php");
@@ -345,25 +345,6 @@ function form_g2UpdateMainSettings() {
 	g2_message(_CFG_UPDATED);
 }
 
-/*********************************************************/
-/* Export phpNuke users to Gallery2                      */
-/*********************************************************/
-
-function form_g2UserExportSettings() {
-	include ("modules/".MOD_NAME."/gallery2.cfg");
-
-	check_g2configerror($g2embedparams[embedphpfile]);
-	
-	$output = g2_phpnukeTog2UserExport();
-	if ($output==false) {
-		g2_message(_USER_EXPORT_FAILED);
-	}
-	
-	SaveG2Config(array(),'true');
-
-	g2_message($output);
-}
-
 /// ------------------------------------------------------------------------------------------
 /// ---------------------------------- Admin Page Start Here ---------------------------------
 /// ------------------------------------------------------------------------------------------
@@ -385,10 +366,6 @@ if ($row['radminsuper'] == 1) {
 
 		case "gallery2_update_main" :
 			form_g2UpdateMainSettings();
-			break;
-
-		case "gallery2_user_export" :
-			form_g2UserExportSettings();
 			break;
 	}
 
