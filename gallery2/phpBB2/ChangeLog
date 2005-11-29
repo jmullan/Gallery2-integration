@@ -1,3 +1,7 @@
+2005-11-29  Dariush Molavi  <dari@nukedgallery.net>
+	* Update: Added notices in Readme regarding integrated rewrites and 
+	  suggested Gallery 2 installation locations.
+
 2005-11-28  Dariush Molavi  <dari@nukedgallery.net>
     * Fix: Broken delete user code in g2helper.inc (J. Mike Rollins)
 	* Update: Modified code listing failed user exports (websnail)
