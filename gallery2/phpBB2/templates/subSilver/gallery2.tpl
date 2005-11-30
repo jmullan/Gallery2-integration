@@ -25,7 +25,6 @@
  * @author Dariush Molavi <dari@nukedgallery.net>
  */
  -->
-	{CSS}
-	{JAVASCRIPT}
-	{BODY}
+	
+	{GALLERY2_BODY}
 	</td></tr></table></td></tr></table>

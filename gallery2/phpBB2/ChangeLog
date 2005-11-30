@@ -1,3 +1,7 @@
+2005-11-30  Dariush Molavi  <dari@nukedgallery.net>
+	* Fix: Moved Gallery's CSS and javascript to overall_header.tpl
+	  (Scott Gregory).  This should fix the funky font issues.
+
 2005-11-29  Dariush Molavi  <dari@nukedgallery.net>
 	* Update: Added notices in Readme regarding integrated rewrites and 
 	  suggested Gallery 2 installation locations.
