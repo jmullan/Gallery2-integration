@@ -1,3 +1,6 @@
+2005-12-01  Dariush Molavi  <dari@nukedgallery.net> 
+	* Fix: Removed extra closing paren in foreach statement.
+
 2005-11-30  Dariush Molavi  <dari@nukedgallery.net>
 	* Fix: Moved Gallery's CSS and javascript to overall_header.tpl
 	  (Scott Gregory).  This should fix the funky font issues.

@@ -347,7 +347,7 @@ function groupExport()
       
       echo "<br />The import of the following phpBB2 accounts  failed <i>(username [user_id])</i>:<br />";
       reset($fail_assoc);
-      foreach($fail_assoc as $bad_id => $bad_name))
+      foreach($fail_assoc as $bad_id => $bad_name)
       {
          echo "$bad_name [$bad_id]<br />";
       }
