@@ -1,3 +1,7 @@
+2005-12-05  Dariush Molavi  <dari@nukedgallery.net>
+	* Fix: Hmm, removing old code broke more than it fixed. Re-added 
+	  problem code and *really* fixed it this time.
+
 2005-11-28  Dariush Molavi  <dari@nukedgallery.net>
 	* Update: Notice in Readme regarding rewrite module in 
 	  integrated installations.
