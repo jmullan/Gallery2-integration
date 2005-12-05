@@ -167,6 +167,7 @@ if ($g2bodyHtml==null) {
 			$line = fgets($fd, 1024);
 			$line = str_replace('<?php', '', $line);
 			$line = str_replace(' ?>', '', $line);
+			$line = str_replace('include("includes/javascript.php");', '',$line);
 			$header .= $line;
 			if (strstr($line, "<head")) {
 				foreach($css as $stylesheet) {

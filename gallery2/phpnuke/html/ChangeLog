@@ -1,4 +1,9 @@
 2005-12-05  Dariush Molavi  <dari@nukedgallery.net>
+	* Fix: TinyMCE editor in new versions of phpNuke conflicted w/ the 
+	  textareas in G2.  Added code to remove call to TinyMCE js files 
+	  when in G2 pages.
+
+2005-12-05  Dariush Molavi  <dari@nukedgallery.net>
 	* Fix: Hmm, removing old code broke more than it fixed. Re-added 
 	  problem code and *really* fixed it this time.
 
