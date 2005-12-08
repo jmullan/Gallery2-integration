@@ -26,9 +26,9 @@
  * @author Dariush Molavi <dari@nukedgallery.net>
  */
 
-define("MOD_NAME","gallery2");
+global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
 
-global $prefix, $db, $g2config_error, $currentlang, $admin_file;
+$embedVersion = "0.4.0";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -80,13 +80,14 @@ function isInitiated($newvalue = null) {
 /* Init G2 API                                           */ 	 
 /*********************************************************/ 	 
   	 
-function init() { 	 
+function init($var) { 	 
+
 	// only init if not already done so 	 
 	if (isInitiated()) { 	 
 		return true; 	 
 	} 	 
 
-	include ("modules/".MOD_NAME."/gallery2.cfg"); 	 
+	extract($var);
 	require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
@@ -113,7 +114,7 @@ function init() {
 /*********************************************************/
 
 function g2_message($mess) {
-	global $admin, $bgcolor2, $module_name, $admin_file;
+	global $admin, $module_name, $admin_file;
 	include ("header.php");
 	OpenTable();
 	echo	"<br><center><a href=\"".$admin_file.".php?op=gallery2\">".
@@ -135,16 +136,9 @@ function g2_message($mess) {
 /* Save & Validate module config file                    */
 /*********************************************************/
 
-function SaveG2Config($var, $forceValidate=false) {
-	if (file_exists("modules/".MOD_NAME."/gallery2.cfg")) {
-		if (!is_writable("modules/".MOD_NAME."/gallery2.cfg")) {
-			g2_message("<b>"._G2_ERROR."</b>: gallery2.cfg "._NOTWRITABLE);
-		}
-	}
-	elseif (!is_writable("modules/".MOD_NAME."/")) {
-		g2_message("<b>"._G2_ERROR."</b>: modules/".MOD_NAME."/ "._NOTWRITABLE);
-	}
-	include ("modules/".MOD_NAME."/gallery2.cfg");
+function SaveG2Config($var, $installed) {
+	
+	global $db, $prefix, $embedVersion;
 
 	extract($var);
 
@@ -155,22 +149,17 @@ function SaveG2Config($var, $forceValidate=false) {
 		$g2mainparams = array ();
 	}
 
-	$content = "<?php\n".'$g2embedparams = '.var_export($g2embedparams, TRUE).";\n".'$g2mainparams = '.var_export($g2mainparams, TRUE).";\n";
-	if ($forceValidate=='true') {
-		$content .='$g2configurationdone = \'true\';';
+	if($installed) {
+		$sql = "UPDATE ".$prefix."_g2config SET embedphpfile = '".$g2embedparams['embedphpfile']."', embedUri = '".$g2embedparams['embedUri']."', relativeG2Path = '".$g2embedparams['relativeG2Path']."', loginRedirect = '".$g2embedparams['loginRedirect']."', activeUserId = ".$g2embedparams['activeUserId'].", embedPath = '".$g2embedparams['embedPath']."', cookiepath = '".$g2embedparams['cookiepath']."', embedVersion = '".$embedVersion."'";
+		$result = $db->sql_query($sql);
 	}
 	else {
-		if ($g2configurationdone=='true') $content .='$g2configurationdone = \'true\';';
-		else $content .='$g2configurationdone = \'false\';';
+		$sql = "INSERT INTO ".$prefix."_g2config VALUES ('".$g2embedparams['embedphpfile']."', '".$g2embedparams['embedUri']."', '".$g2embedparams['relativeG2Path']."', '".$g2embedparams['loginRedirect']."', ".$g2embedparams['activeUserId'].", '".$g2embedparams['embedPath']."', '".$g2embedparams['cookiepath']."',0,0,'".$embedVersion."')";
+		$result = $db->sql_query($sql) or die(mysql_error());
 	}
-	$content .= " \n?>";
 
-	$handle = fopen("modules/".MOD_NAME."/gallery2.cfg", "w");
-	fwrite($handle, $content);
-	fclose($handle);
-	
- 	require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
-	init();
+	require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
+	init($var);
 	$cookiepath = $g2embedparams['cookiepath'];
 	$ret = GalleryCoreApi::setPluginParameter('module','core','cookie.path',$cookiepath);
 }
@@ -182,11 +171,6 @@ function SaveG2Config($var, $forceValidate=false) {
 
 function check_g2configerror($embedphpfile, $vars=NULL)
 {
-	include ("modules/".MOD_NAME."/gallery2.cfg");
-
-	if (!file_exists($embedphpfile)) {
-		g2_message ("<b>"._G2_ERROR." : "._PHPEMBEDFILE."</b><br/>"._PHPEMBEDFILE_ERROR);
-	}
 	if (isset($vars)) {
 		extract($vars);
 		require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
@@ -208,7 +192,7 @@ function check_g2configerror($embedphpfile, $vars=NULL)
 /*********************************************************/
 
 function DisplayMainPage() {
-	global $admin, $bgcolor2, $prefix, $db, $currentlang, $multilingual, $admin_file, $module_name;
+	global $admin, $prefix, $db, $currentlang, $admin_file, $module_name, $dbname;
 
 	include ("header.php");
 	OpenTable();
@@ -218,21 +202,92 @@ function DisplayMainPage() {
 	CloseTable();
 	echo "<br/>";
 
-	// display embed settings
-
-	include ("modules/".MOD_NAME."/gallery2.cfg");
-
-	$path_found = false;
-
-	if (file_exists($g2embedparams['embedphpfile'])) {
-		$path_found = true;
-	}
-
-	// --------------  embed settings
-
+	// Display the version information
 	OpenTable();
+	$version_text = "<center><font class=\"option\"><b>Integration Package Status</b></font><br/>";
+	$exist_sql = "SHOW TABLES FROM ".$dbname." LIKE '".$prefix."_g2config'";
+	$exist_result = $db->sql_query($exist_sql);
+	if($db->sql_numrows($exist_result) == 0) {
+		$installed = 0;
+		$setup_sql = "CREATE TABLE ".$prefix."_g2config (
+					embedphpfile VARCHAR( 255 ) NOT NULL ,
+					embedUri VARCHAR( 255 ) NOT NULL ,
+					relativeG2Path VARCHAR( 255 ) NOT NULL ,
+					loginRedirect VARCHAR( 255 ) NOT NULL ,
+					activeUserId INT( 10 ) NOT NULL ,
+					embedPath VARCHAR( 255 ) NOT NULL ,
+					cookiepath VARCHAR( 255 ) NOT NULL ,
+					showSidebar TINYINT( 1 ) NOT NULL ,
+					g2configurationDone TINYINT( 1 ) NOT NULL ,
+					embedVersion VARCHAR( 255 ) NOT NULL
+					)";
+		$setup_result = $db->sql_query($setup_sql);
+		$version_text .= '<p style="color:green">You are currently installing the integration package for the first time.</p></center>';
+	}
+	else {
+		$installed = 1;
+		$config_sql = "SELECT embedVersion FROM ".$prefix."_g2config";
+		$config_result = $db->sql_query($config_sql);
 
-    if($g2configurationdone == 'false') {
+		list($embedVersion) = $db->sql_fetchrow($config_result);
+
+		$current_version = explode('.', $embedVersion);
+
+		$minor_revision = (int) $current_version[2];
+
+		$errno = 0;
+		$errstr = $version_info = '';
+
+		if ($fsock = @fsockopen('www.nukedgallery.net', 80, $errno, $errstr, 10)) {
+			@fputs($fsock, "GET /upgradecheck/upgrade.txt HTTP/1.1\r\n");
+			@fputs($fsock, "HOST: www.nukedgallery.net\r\n");
+			@fputs($fsock, "Connection: close\r\n\r\n");
+
+			$get_info = false;
+			while (!@feof($fsock)) {
+				if ($get_info) {
+					$version_info .= @fread($fsock, 1024);
+				}
+				else {
+					if (@fgets($fsock, 1024) == "\r\n")	{
+						$get_info = true;
+					}
+				}
+			}
+			@fclose($fsock);
+
+			$version_info = explode("\n", $version_info);
+			$latest_head_revision = (int) $version_info[0];
+			$latest_minor_revision = (int) $version_info[2];
+			$latest_version = (int) $version_info[0] . '.' . (int) $version_info[1] . '.' . (int) $version_info[2];
+
+			// UPDATE ME WHEN CHANGING MAJOR REV
+			if ($latest_head_revision == 0 && $minor_revision == $latest_minor_revision) {	
+				$version_text .= '<p style="color:green">You have the most current integration package.</p></center>';
+			}
+			else {
+				$version_text .= '<p style="color:red">Your integration package is <b>not</b> up to date.';
+				$version_text .= '<br />Latest version available is <b>' . $latest_version . '</b>.  Your installed version is <b>' . $embedVersion . '</b><br />';
+				$version_text .= 'You can download the latest integration package from <a href="http://www.nukedgallery.net/downloads-cat11.html">http://www.nukedgallery.net/downloads-cat11.html</a>.</p></center>';
+			}
+		}
+		else {
+			if ($errstr) {
+				$version_text .= '<p style="color:red">Socket connection error: ' . $errstr . '</p></center>';
+			}
+			else {
+				$version_text .= '<p>PHP socket functions have been disabled.</p></center>';
+			}
+		}
+	}
+	echo $version_text;
+	CloseTable();
+	echo "<br />";
+	// End of version information display
+
+	// Display integration settings
+	OpenTable();
+    if($installed == 0) {
 		$path  = $_SERVER['SCRIPT_NAME'];
 		$path = preg_replace('/[#\?].*/', '', $path);
 		$path = preg_replace('/\.php\/.*$/', '', $path);
@@ -245,57 +300,59 @@ function DisplayMainPage() {
 			$path = '/';
 		}
 		
-		$g2embedparams['embedPath'] = $path;
+		$embedPath = $path;
         $t_embedphpfile = dirname(__FILE__);
         $a_embedphpfile = explode("/",$t_embedphpfile);
         $dummy = array_pop($a_embedphpfile);
-        $g2embedparams['embedphpfile'] = implode("/",$a_embedphpfile)."/";
-        $g2embedparams['embedUri'] = "modules.php?name=".$module_name;
-        $g2embedparams['relativeG2Path'] = "modules/".$module_name."/";
-        $g2embedparams['loginRedirect'] = 'modules.php?name=Your_Account';
-        $g2embedparams['activeUserId'] = 0;
+        $embedphpfile = implode("/",$a_embedphpfile)."/";
+        $embedUri = "modules.php?name=".$module_name;
+        $relativeG2Path = "modules/".$module_name."/";
+        $loginRedirect = 'modules.php?name=Your_Account';
+        $activeUserId = 0;
 
 		$c_result = $db->sql_query("SELECT config_value FROM ".$prefix."_bbconfig WHERE config_name='cookie_path'");
 		list($cookie_path) = $db->sql_fetchrow($c_result);
-		$g2embedparams['cookiepath'] = $cookie_path;
+		$cookiepath = $cookie_path;
+	}
+	else {
+		$config_sql = "SELECT * FROM ".$prefix."_g2config";
+		$config_result = $db->sql_query($config_sql);
+		list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
 	}
 
-	echo "<center><font class=\"option\"><b>Gallery2 Integration Settings</b></font></center><br/><center><font color=\"red\"><b>We have done our best to fill these values in for you.  However, you should double check them for correctness.</b></font></center><br/>"
+
+	echo "<center><font class=\"option\"><b>Gallery 2 Integration Settings</b></font></center><br/><center><font color=\"red\"><b>We have done our best to fill these values in for you.  However, you should double check them for correctness.</b></font></center><br/>"
 		."<form action=\"".$admin_file.".php\" method=\"post\">"
 		."<table border=\"0\"><tr><td>"._PHPEMBEDFILE.":</td>"
-		."<td><input type=\"text\" name=\"embedphpfile\" size=\"60\" value=\"".$g2embedparams['embedphpfile']."\" maxlength=\"90\"></td></tr>"
+		."<td><input type=\"text\" name=\"embedphpfile\" size=\"60\" value=\"".$embedphpfile."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._EMBEDURI.":</td>"
-		."<td><input type=\"text\" name=\"embedUri\" size=\"60\" value=\"".$g2embedparams['embedUri']."\" maxlength=\"90\"></td></tr>"
+		."<td><input type=\"text\" name=\"embedUri\" size=\"60\" value=\"".$embedUri."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>URL path from document root to embedURI:</td>"
-		."<td><input type=\"text\" name=\"embedPath\" size=\"60\" value=\"".$g2embedparams['embedPath']."\" maxlength=\"90\"></td></tr>"
+		."<td><input type=\"text\" name=\"embedPath\" size=\"60\" value=\"".$embedPath."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._RELATIVEG2PATH.":</td>"
-		."<td><input type=\"text\" name=\"relativeG2Path\" size=\"60\" value=\"".$g2embedparams['relativeG2Path']."\" maxlength=\"90\"></td></tr>"
+		."<td><input type=\"text\" name=\"relativeG2Path\" size=\"60\" value=\"".$relativeG2Path."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._LOGINREDIRECT.":</td>"
-		."<td><input type=\"text\" name=\"loginRedirect\" size=\"60\" value=\"".$g2embedparams['loginRedirect']."\" maxlength=\"90\"></td></tr>"
+		."<td><input type=\"text\" name=\"loginRedirect\" size=\"60\" value=\"".$loginRedirect."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._ACTIVEUSERID.":</td>"
-		."<td><input type=\"text\" name=\"activeUserId\" size=\"60\" value=\"".$g2embedparams['activeUserId']."\" maxlength=\"90\"></td></tr>"
-		."<tr><td>Cookie Path:</td><td><input type=\"text\" name=\"cookiepath\" size=\"60\" value=\"".$g2embedparams['cookiepath']."\"></td></tr>";
-	echo "<tr><td>&nbsp;</td></tr><input type=\"hidden\" name=\"op\" value=\"gallery2_update_embed\"><tr><td><input type=\"submit\" value=\""._UPDATEEMBEDSETTINGSG2."\"></td></tr></table></form>";
+		."<td><input type=\"text\" name=\"activeUserId\" size=\"60\" value=\"".$activeUserId."\" maxlength=\"90\"></td></tr>"
+		."<tr><td>Cookie Path:</td><td><input type=\"text\" name=\"cookiepath\" size=\"60\" value=\"".$cookiepath."\"></td></tr>";
+	echo "<tr><td>&nbsp;</td></tr><input type=\"hidden\" name=\"op\" value=\"gallery2_update_embed\"><input type=\"hidden\" name=\"installed\" value=".$installed."><tr><td><input type=\"submit\" value=\""._UPDATEEMBEDSETTINGSG2."\"></td></tr></table></form>";
 	CloseTable();
 
-	// --------------  main settings
-
+	// Sidebar settings
 	OpenTable();
-	echo "<center><font class=\"option\"><b>Gallery2 Main Settings</b></font></center><br/>";
+	echo "<center><font class=\"option\"><b>Gallery 2 Sidebar Settings</b></font></center><br/>";
 	echo "<form action=\"".$admin_file.".php\" method=\"post\"><table border=\"0\"><td><input type=\"checkbox\" name=\"showsidebar\" value=\"1\"";
-	if ($g2mainparams['showSidebar'] == "true") {
+	if ($showSidebar == 1) {
 		echo " checked";
 	}
 	echo ">"._SHOWSIDEBAR."</td>";
 	echo "<tr><td>&nbsp;</td></tr><input type=\"hidden\" name=\"op\" value=\"gallery2_update_main\"><tr><td><input type=\"submit\" value=\""._UPDATEMAINSETTINGSG2."\"></td></tr></table></form>";
 	CloseTable();
 
-	// -------------- user export settings
-	// --- Dari (http://www.nukedgallery.net) addon: split user export in a multiple pass ---
-	
-	$hidden_input = "<input type=\"hidden\" name=\"startuser\" value=\"2\">";
+	// Export Users
 	OpenTable();
-	echo "<center><font class=\"option\"><b>Export Users to Gallery2</b></font></center><br/>";
+	echo "<center><font class=\"option\"><b>Export Users to Gallery 2</b></font></center><br/>";
 	echo "<form action=\"".$admin_file.".php\" method=\"post\"><input type=\"submit\" value=\"Export Users\" onclick=\"window.open('','myWin',config='height=500, width=500, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no'); this.form.target='myWin';this.form.action='".$admin_file.".php'\"><input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\"></form>";
 	CloseTable();
 
@@ -303,13 +360,11 @@ function DisplayMainPage() {
 
 }
 
-
- function form_g2UserExportSettings() { 	 
-         include ("modules/".MOD_NAME."/gallery2.cfg"); 	 
-  	 
-         check_g2configerror($g2embedparams['embedphpfile']); 	 
-  	 
-         SaveG2Config(array(),'true'); 	 	 
+/*********************************************************/
+/* Dummy, actual export is in export.php				 */
+/*********************************************************/
+ function form_g2UserExportSettings() { 
+	return true;
  }
 
 /*********************************************************/
@@ -328,10 +383,9 @@ function form_g2UpdateEmbedSettings() {
 	$g2embedparams['cookiepath'] = $_POST['cookiepath'];
 
 	$vars = compact("g2embedparams");
-
-	check_g2configerror($g2embedparams[embedphpfile], $vars);
-	SaveG2Config($vars);
-
+	$installed = $_POST['installed'];
+	check_g2configerror($g2embedparams['embedphpfile'], $vars);
+	SaveG2Config($vars, $installed);
 	g2_message(_CFG_UPDATED."<br><br>If this is your first time configuring Gallery2, you must export your PHPNuke users to Gallery2 before your configuration is complete.");
 }
 
@@ -340,22 +394,22 @@ function form_g2UpdateEmbedSettings() {
 /*********************************************************/
 
 function form_g2UpdateMainSettings() {
+	global $db, $prefix;
 
-	include ("modules/".MOD_NAME."/gallery2.cfg");
-
-	$g2mainparams['showSidebar'] = $_POST['showsidebar'];
-
-	$vars = compact("g2mainparams");
-	
-	check_g2configerror($g2embedparams['embedphpfile']);
-	
-	SaveG2Config($vars);
+	if($_POST['showsidebar']) {
+		$checked = 1;
+	}
+	else {
+		$checked = 0;
+	}
+	$sql = "UPDATE ".$prefix."_g2config SET showSidebar = ".$checked;
+	$result = $db->sql_query($sql);
 
 	g2_message(_CFG_UPDATED);
 }
 
 /// ------------------------------------------------------------------------------------------
-/// ---------------------------------- Admin Page Start Here ---------------------------------
+/// ---------------------------------- Admin Page Starts Here --------------------------------
 /// ------------------------------------------------------------------------------------------
 
 // ---- TODO: Allow G2 control Admin panel access on a per admin basis (from database)

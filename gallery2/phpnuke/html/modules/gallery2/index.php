@@ -30,8 +30,6 @@ if (!eregi("modules.php", $_SERVER['PHP_SELF'])) {
     die ("You can't access this file directly...");
 }
 
-define("MOD_NAME","gallery2");
-
 /*********************************************************/
 /* Standalone Message Function                           */
 /*********************************************************/
@@ -55,6 +53,65 @@ function g2_message($mess) {
 	include ("footer.php");
 }
 
+function checkVersion() {
+	global $db, $prefix;
+
+	$config_sql = "SELECT embedVersion FROM ".$prefix."_g2config";
+	$config_result = $db->sql_query($config_sql);
+
+	list($embedVersion) = $db->sql_fetchrow($config_result);
+
+	$current_version = explode('.', $embedVersion);
+
+	$minor_revision = (int) $current_version[2];
+
+	$errno = 0;
+	$errstr = $version_info = '';
+
+	if ($fsock = @fsockopen('www.nukedgallery.net', 80, $errno, $errstr, 10)) {
+		@fputs($fsock, "GET /upgradecheck/upgrade.txt HTTP/1.1\r\n");
+		@fputs($fsock, "HOST: www.nukedgallery.net\r\n");
+		@fputs($fsock, "Connection: close\r\n\r\n");
+
+		$get_info = false;
+		while (!@feof($fsock)) {
+			if ($get_info) {
+				$version_info .= @fread($fsock, 1024);
+			}
+			else {
+				if (@fgets($fsock, 1024) == "\r\n")	{
+					$get_info = true;
+				}
+			}
+		}
+		@fclose($fsock);
+
+		$version_info = explode("\n", $version_info);
+		$latest_head_revision = (int) $version_info[0];
+		$latest_minor_revision = (int) $version_info[2];
+		$latest_version = (int) $version_info[0] . '.' . (int) $version_info[1] . '.' . (int) $version_info[2];
+
+		// UPDATE ME WHEN CHANGING MAJOR REV
+		if ($latest_head_revision == 0 && $minor_revision == $latest_minor_revision) {	
+			return;
+		}
+		else {
+			$version_text = '<center><p style="color:red">Your integration package is <b>not</b> up to date.';
+			$version_text .= '<br />Latest version available is <b>' . $latest_version . '</b>.  Your installed version is <b>' . $embedVersion . '</b><br />';
+			$version_text .= 'You can download the latest integration package from <a href="http://www.nukedgallery.net/downloads-cat11.html">http://www.nukedgallery.net/downloads-cat11.html</a>.</p></center>';
+		}
+	}
+	else {
+		if ($errstr) {
+			$version_text .= '<p style="color:red">Socket connection error: ' . $errstr . '</p></center>';
+		}
+		else {
+			$version_text .= '<p>PHP socket functions have been disabled.</p></center>';
+		}
+	}
+	return $version_text;
+}
+
 // --------------------------------------------------------
 // Mapping between Phpnuke and Gallery2 language definition
 // --------------------------------------------------------
@@ -62,7 +119,7 @@ function g2_message($mess) {
 $phpnuke2G2Lang = array('danish' => 'da','dutch' => 'nl','german' => 'de','greek' => 'el','english'	=> 'en','american' => 'en','spanish' => 'es','finnish' => 'fi','french' => 'fr','irish' => 'ga','italian' => 'it','japanese' => 'ja','norwegian' => 'no','polish' => 'pl','portuguese' => 'pt','swedish' => 'sv','chinese' => 'zh');
 
 
-global $currentlang,$g2bodyHtml,$db,$user_prefix;
+global $currentlang, $g2bodyHtml, $db, $user_prefix, $prefix;
 
 require_once("mainfile.php");
 $module_name = basename(dirname(__FILE__));
@@ -71,6 +128,7 @@ get_lang($module_name);
 if (is_admin($admin)) {
 	// we log as an admin
 	$uid='admin';
+	$updateCheck = checkVersion();
 }
 else {
 	if (is_user($user))	{
@@ -84,9 +142,11 @@ else {
 }
   
 if ($g2bodyHtml==null) {
-	include("modules/".MOD_NAME."/gallery2.cfg");
+	$config_sql = "SELECT * FROM ".$prefix."_g2config";
+	$config_result = $db->sql_query($config_sql);
+	list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
 	
-	if ($g2configurationdone != "true"){
+	if ($g2configurationDone == 0){
 			include "header.php";
 		  	OpenTable();
 		  	echo "<center>"._G2_CONFIGURATION_NOT_DONE."</center>";
@@ -95,11 +155,11 @@ if ($g2bodyHtml==null) {
 		    return;
 	}
 
-	require_once($g2embedparams['embedphpfile']._G2_EMBED_PHP_FILE);
+	require_once($embedphpfile._G2_EMBED_PHP_FILE);
 				
 	$g2currentlang = $phpnuke2G2Lang[$currentlang];
 				
-	$ret = GalleryEmbed::init(array('embedPath' => $g2embedparams['embedPath'], 'embedUri' => $g2embedparams['embedUri'],'relativeG2Path' => $g2embedparams['relativeG2Path'],'loginRedirect' => $g2embedparams['loginRedirect'],'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
+	$ret = GalleryEmbed::init(array('embedPath' => $embedPath, 'embedUri' => $embedUri,'relativeG2Path' => $relativeG2Path,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
 
 	if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -126,7 +186,7 @@ if ($g2bodyHtml==null) {
 				}
 						   		
 				// Full G2 reinit with the new created user
-				$ret = GalleryEmbed :: init(array ('embedPath' => $g2embedparams['embedPath'], 'embedUri' => $g2embedparams['embedUri'], 'relativeG2Path' => $g2embedparams['relativeG2Path'],'loginRedirect' => $g2embedparams['loginRedirect'],'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
+				$ret = GalleryEmbed :: init(array ('embedPath' => $embedPath, 'embedUri' => $embedUri, 'relativeG2Path' => $relativeG2Path,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
 			} 
 			else {
 				echo 'G2 did not return a success status. Here is the error message from G2: <br />'.$ret->getAsHtml();
@@ -139,7 +199,7 @@ if ($g2bodyHtml==null) {
 		  
 	// handle the G2 request
 
-	if ($g2mainparams['showSidebar']) {
+	if ($showSidebar) {
 		GalleryCapabilities::set('showSidebarBlocks', true);
 		$g2moddata = GalleryEmbed::handleRequest();
 		if (isset($g2moddata['sidebarBlocksHtml']) && !empty($g2moddata['sidebarBlocksHtml'])) {
@@ -201,8 +261,9 @@ if ($g2bodyHtml==null) {
 	if ($ret->isError()) {
 		echo $ret->getAsHtml();
 	}
-			  
-	$g2bodyHtml=$g2moddata['bodyHtml'];
+	
+	$g2bodyHtml = $updateCheck;
+	$g2bodyHtml .= $g2moddata['bodyHtml'];
 }
 	  
 OpenTable();

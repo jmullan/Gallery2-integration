@@ -1,3 +1,16 @@
+2005-12-08  Dariush Molavi  <dari@nukedgallery.net> 0.4.0
+	* New: Update checks performed when setting up the integration package, 
+	  and when admin user visits integrated installation.  This lets the admin 
+	  know if there is an update to the integration package that they should download.
+	* New: Integration config info is now stored in the phpnuke database, old 
+	  gallery2.cfg file has been removed.
+	* Fix: Blank popup issues have been resolved (thanks to Vermithrax for helping 
+	  debug and fix).
+	* Fix: Progress bar on the user export now works in IE and FF (thanks to Vermithrax 
+	  for helping debug and fix).
+	* Fix: Solved re-declaration errors.  Added note in the Readme file for users of 
+	  old/new versions of PHPNuke and what they need to do to avoid the error. 
+
 2005-12-07  Dariush Molavi  <dari@nukedgallery.net> 0.3.5
 	* New: Added version info to ChangeLog. This paves the way for the 
 	  automatic update check which will hopefully make it into the next 

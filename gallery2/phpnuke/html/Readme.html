@@ -300,6 +300,17 @@
 		The use of the Gallery 2 rewrite module in an integrated environment has proven to be a tricky task.  It is highly 
 		recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration.
 		</p></div>
+		<br />
+		<div class="important">
+		<h3>IMPORTANT</h3>
+		<p>
+		If you are using a version of PHPNuke <b>older than</b> version 7.5, you must delete the following files from the integration package:<br />
+		html/modules/gallery2/admin/case.php<br />
+		html/modules/gallery2/admin/links.php<br /><br />
+		If you are using a version of PHPNuke <b>newer than</b> version 7.5, you must delete the following files from the integration package:<br />
+		html/admin/case/case.gallery2.php<br />
+		html/admin/links/links.gallery2.php
+		</p></div>
 		<p>
 		This package contains four folders:
 		<ul>
@@ -409,18 +420,6 @@ function g2_init() {
 		</a>
 		</p>
 		<p>
-		The most crucial element of the success of your integration is to 
-		ensure that the following file is writable:<br />
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>modules/gallery2/gallery2.cfg</i><br />
-		To make this file writable, you need to do the following:<br />
-		<div class="instructions">
-			<h3>Unix Example</h3>
-			<p>
-			$ chmod 666 gallery2.cfg
-			</p>
-		</div>
-		</p>
-		<p>
 		By default, the Gallery 2 installation will be installed in html/modules/gallery2/. 
 		If you decide to change the name of your Gallery 2 directory (ie, to just "Gallery"), then 
 		you must make the following changes:<br />
@@ -445,30 +444,6 @@ function g2_init() {
 			<p>
 			You will need to update the following line:<br />
 			<font class="code">include("modules/gallery2/gallery2.cfg");</font><br />
-			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
-			</p>
-		</div>
-		<div class="instructions">
-			<h3>In html/modules/gallery2/index.php</h3>
-			<p>
-			You will need to update the following line:<br />
-			<font class="code">define("MOD_NAME","gallery2");</font><br />
-			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
-			</p>
-		</div>
-		<div class="instructions">
-			<h3>In html/modules/gallery2/admin/export.php</h3>
-			<p>
-			You will need to update the following line:<br />
-			<font class="code">define("MOD_NAME","gallery2");</font><br />
-			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
-			</p>
-		</div>
-		<div class="instructions">
-			<h3>In html/modules/gallery2/admin/index.php</h3>
-			<p>
-			You will need to update the following line:<br />
-			<font class="code">define("MOD_NAME","gallery2");</font><br />
 			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
 			</p>
 		</div>

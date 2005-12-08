@@ -25,17 +25,13 @@
  * @author Dariush Molavi <dari@nukedgallery.net>
  */
 
-define("MOD_NAME","gallery2");
-
-global $admin_file;
+global $admin_file, $currentlang, $module_name;
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
 }
 
 if (!eregi("".$admin_file.".php", $_SERVER['PHP_SELF'])) { die ("Access Denied"); }
-
-ob_end_flush();
 
 $failures = array();
 
@@ -99,28 +95,25 @@ function isInitiated($newvalue = null) {
 /*********************************************************/
 /* Init G2 API                                           */
 /*********************************************************/
-function init() {
-	global $gallery;
+function init($var) {
+	global $currentlang, $gallery;
+	// only init if not already done so 	 
+	if (isInitiated()) { 	 
+		return true; 	 
+	} 	 
 
-	if (isInitiated()) {
-		return true;
-	}
+	require_once ($var['embedphpfile']."/"._G2_EMBED_PHP_FILE); 	 
 
-	$g2currentlang = $phpnuke2G2Lang[$currentlang];
+	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
-	include("modules/".MOD_NAME."/gallery2.cfg");
-	require_once ($g2embedparams['embedphpfile']."/embed.php");
-
-	$g2currentlang = $phpnuke2G2Lang[$currentlang];
-
-	$ret = GalleryEmbed :: init(array (
-									'embedPath' => $g2embedparams['embedPath'],
-									'embedUri' => $g2embedparams['embedUri'], 
-									'relativeG2Path' => $g2embedparams['relativeG2Path'],
-									'loginRedirect' => $g2embedparams['loginRedirect'],
-									'activeUserId' => '', 
-									'activeLanguage' => $g2currentlang, 
-									'fullInit' => $fullInit));
+	$ret = GalleryEmbed :: init(array ( 	 
+			'embedPath' => $var['embedPath'], 	 
+			'embedUri' => $var['embedUri'], 	 
+			'relativeG2Path' => $var['relativeG2Path'], 	 
+			'loginRedirect' => $var['loginRedirect'], 	 
+			'activeUserId' => '', 	 
+			'activeLanguage' => $g2currentlang, 	 
+			'fullInit' => 1)); 	 
 
 	$gallery->guaranteeTimeLimit(300);
 
@@ -138,12 +131,16 @@ function init() {
 function userExport() {
 	global $db, $gallery, $failures, $prefix;
 
-	include("modules/".MOD_NAME."/gallery2.cfg");
-	require_once ($g2embedparams['embedphpfile']."/embed.php");
-	require_once ($g2embedparams['embedphpfile']."/".'modules/core/classes/ExternalIdMap.class');
+	$sql = "SELECT * FROM ".$prefix."_g2config";
+	$result = $db->sql_query($sql);
+	list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($result);
+
+	require_once ($embedphpfile."/embed.php");
+	require_once ($embedphpfile."/modules/core/classes/ExternalIdMap.class");
 
 	// init G2 transaction, load G2 API, if not already done so
-	if (!init()) {
+	$vars = array('embedphpfile' => $embedphpfile, 'embedUri' => $embedUri, 'relativeG2Path' => $relativeG2Path, 'loginRedirect' => $loginRedirect, 'activeUserId' => $activeUserId, 'embedPath' => $embedPath, 'cookiepath' => $cookiepath, 'showSidebar' => $showSidebar, 'g2configurationDone' => $g2configurationDone, 'embedVersion' => $embedVersion);
+	if (!init($vars)) {
 		return false;
 	}
 
@@ -156,6 +153,7 @@ function userExport() {
 	// Map the ExternalMapId "admin" to the last phpnuke admin account found
 	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
+		ob_flush();
 		flush();
 		g2_message('Unable to fetch the admin group. Here is the error message from G2: <br />'.$ret->getAsHtml());
 	    return false;
@@ -164,6 +162,7 @@ function userExport() {
 	// Grab all the existing G2 admins
 	list ($ret, $adminList) = GalleryCoreApi::fetchUsersForGroup($adminGroupId);
 	if ($ret->isError()) {
+		ob_flush();
 		flush();
 		g2_message('Unable to fetch a member in the admin group. Here is the error message from G2: <br />'.$ret->getAsHtml());
 	    return false;
@@ -175,6 +174,7 @@ function userExport() {
 	if (!isset ($mapsByExternalId["admin"])) {
 		$ret = ExternalIdMap::addMapEntry(array('externalId'=>"admin", 'entityType'=>'GalleryUser', 'entityId'=>$adminId));
 		if ($ret->isError()) {
+			ob_flush();
 			flush();
 			return false;
 		}
@@ -204,6 +204,7 @@ function userExport() {
 				updateProgressBar(\"".$users_imported." users imported\", $percentInDecimal);
 				</script>
 				";
+				ob_flush();
 				flush();
 			}
 
@@ -227,9 +228,15 @@ function userExport() {
 			}
 		}
 	}
+	
+	$ret = GalleryEmbed::done();
+
+	$sql = "UPDATE ".$prefix."_g2config SET g2configurationDone = 1";
+	$result = $db->sql_query($sql);
 
 	$percentInDecimal = ($users_imported / $ucount) *100;
 	print "<script> updateProgressBar(\"Export Complete\", $percentInDecimal);</script>";
+	ob_flush();
 	flush();
 	if(count($failures) != 0) {
 		echo "<br />The import of the following PHPNuke user_id's failed:<br />";
@@ -241,14 +248,6 @@ function userExport() {
 		."Check the failed user_ids and re-run the export";
 	}
 
-	extract($var);
-	$content = "<?php\n".'$g2embedparams = '.var_export($g2embedparams, TRUE).";\n".'$g2mainparams = '.var_export($g2mainparams, TRUE).";\n";
-	$content .='$g2configurationdone = \'true\';';
-	$content .= " \n?>";
-	$handle = fopen("modules/".MOD_NAME."/gallery2.cfg", "w");
-	fwrite($handle, $content);
-	fclose($handle);
-
 	echo "<form><input type=\"button\" value=\"Close Window\" onclick=\"window.close()\"></form>";
 }
 
@@ -256,8 +255,9 @@ function userExport() {
 
 <html><head>
 <script type="text/javascript">
-var saveToGoDisplay = document.getElementById('progressToGo').style.display;
+
 function updateProgressBar(description, percentComplete) {
+	var saveToGoDisplay = document.getElementById('progressToGo').style.display;
 	document.getElementById('progressDescription').innerHTML = description;
     var progressMade = Math.round(percentComplete * 100);
     var progressToGo = document.getElementById('progressToGo');
