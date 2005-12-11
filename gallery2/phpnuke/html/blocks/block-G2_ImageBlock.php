@@ -66,19 +66,20 @@ if (eregi("block-G2_ImageBlock.php", $_SERVER['SCRIPT_NAME'])) {
     die();
 }
 
-global $admin, $user, $cookie;
+global $admin, $user, $cookie, $db, $prefix;
 
 define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
 
-include("modules/gallery2/gallery2.cfg");
+$g2result = $db->sql_query("SELECT * FROM ".$prefix."_g2config");
+list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
 
-if ($g2configurationdone != "true") {
+if ($g2configurationdone != 1) {
 	$content = _G2_CONFIGURATION_NOT_DONE; 
 	return;
 }
 
-require_once($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
+require_once($embedphpfile."/"._G2_EMBED_PHP_FILE);
 
 if (is_admin($admin)) {
 	$uid='admin';
@@ -94,14 +95,14 @@ else {
 }
 
 $ret = GalleryEmbed::init(array(
-	'embedPath' => $g2embedparams['embedPath'],
-	'embedUri' => $g2embedparams['embedUri'],
-	'relativeG2Path' => $g2embedparams['relativeG2Path'],
-	'loginRedirect' => $g2embedparams['loginRedirect'],
+	'embedPath' => $embedPath,
+	'embedUri' => $embedUri,
+	'relativeG2Path' => $relativeG2Path,
+	'loginRedirect' => $loginRedirect,
 	'activeUserId' => "$uid",
 	'fullInit' => true));
 
-if ($g2mainparams['showSidebar']=="true") {
+if ($showSidebar) {
 	$content = "The Gallery2 sidebar is enabled.<br>You should disable it before using this block.";
 	return true;
 }

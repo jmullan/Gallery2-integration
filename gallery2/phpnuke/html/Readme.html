@@ -300,17 +300,6 @@
 		The use of the Gallery 2 rewrite module in an integrated environment has proven to be a tricky task.  It is highly 
 		recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration.
 		</p></div>
-		<br />
-		<div class="important">
-		<h3>IMPORTANT</h3>
-		<p>
-		If you are using a version of PHPNuke <b>older than</b> version 7.5, you must delete the following files from the integration package:<br />
-		html/modules/gallery2/admin/case.php<br />
-		html/modules/gallery2/admin/links.php<br /><br />
-		If you are using a version of PHPNuke <b>newer than</b> version 7.5, you must delete the following files from the integration package:<br />
-		html/admin/case/case.gallery2.php<br />
-		html/admin/links/links.gallery2.php
-		</p></div>
 		<p>
 		This package contains four folders:
 		<ul>
@@ -322,6 +311,17 @@
 		To install, simply upload the contents of these folders into the 
 		corresponding folders in your PHPNuke installation.
 		</p>
+		<br />
+		<div class="important">
+		<h3>IMPORTANT</h3>
+		<p>
+		If you are using a version of PHPNuke <b>older than</b> version 7.5, you must delete the following files from the integration package:<br />
+		html/modules/gallery2/admin/case.php<br />
+		html/modules/gallery2/admin/links.php<br /><br />
+		If you are using a version of PHPNuke <b>newer than</b> version 7.5, you must delete the following files from the integration package:<br />
+		html/admin/case/case.gallery2.php<br />
+		html/admin/links/links.gallery2.php
+		</p></div>
 		<p>If you want to have the added feature of users being added to your Gallery 2 installation 
 		when they activate their PHPNuke user account, you will need to do the following:</p>
 		<pre class="CodeSnippet">#
@@ -356,21 +356,21 @@ function g2isInitiated($newvalue = null) {
 /* Init G2 API                                           */
 /*********************************************************/
 function g2_init() {
-	global $gallery;
+	global $gallery, $db, $prefix;
 
 	if (g2isInitiated()) {
 		return true;
 	}
 
-	define("G2_MODULE","gallery2");  // Edit this if you need to.
-	include("modules/".G2_MODULE."/gallery2.cfg");
-	require_once ($g2embedparams['embedphpfile']."/embed.php");
+	$g2result = $db->sql_query("SELECT * FROM ".$prefix."_g2config");
+	list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
+	require_once ($embedphpfile."/embed.php");
 
 	$ret = GalleryEmbed :: init(array (
-		'embedPath' =&gt; $g2embedparams['embedPath'],
-		'embedUri' =&gt; $g2embedparams['embedUri'], 
-		'relativeG2Path' =&gt; $g2embedparams['relativeG2Path'],
-		'loginRedirect' =&gt; $g2embedparams['loginRedirect'],
+		'embedPath' =&gt; $embedPath,
+		'embedUri' =&gt; $gembedUri, 
+		'relativeG2Path' =&gt; $relativeG2Path,
+		'loginRedirect' =&gt; $loginRedirect,
 		'activeUserId' =&gt; ''));
 
 	$gallery-&gt;guaranteeTimeLimit(300);
@@ -396,9 +396,11 @@ function g2_init() {
 	if (!g2_init()) {
 		return false;
 	}
-	define("G2_MODULE","gallery2");  // Edit this if you need to.
-	include("modules/".G2_MODULE."/gallery2.cfg");
-	require_once($g2embedparams['embedphpfile']."/embed.php");
+
+	$g2result = $db->sql_query("SELECT * FROM ".$prefix."_g2config");
+	list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
+	require_once ($embedphpfile."/embed.php");
+
 	$result = $db-&gt;sql_query("SELECT user_id, username, user_password, user_email, user_lang, user_regdate FROM ". $user_prefix . "_users WHERE username = '$username'"); 
 	$row = $db-&gt;sql_fetchrow($result);
 	$user_id = $row['user_id'];

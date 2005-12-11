@@ -1,3 +1,8 @@
+2005-12-08  Dariush Molavi  <dari@nukedgallery.net> 0.4.1
+	* Fix: Updated Your_Account hack in Readme to reflect new configuration info 
+	  that is stored in the database.
+	* Fix: Updated block files to pull config data from database.
+
 2005-12-08  Dariush Molavi  <dari@nukedgallery.net> 0.4.0
 	* New: Update checks performed when setting up the integration package, 
 	  and when admin user visits integrated installation.  This lets the admin 
