@@ -1,3 +1,8 @@
+2005-12-12  Dariush Molavi  <dari@nukedgallery.net> 0.4.2
+	* Fix: Variable name in block files.
+	* Fix: Removed obsolete references in Readme.
+	* New: Russian language files (thanks Lexaero).
+
 2005-12-11  Dariush Molavi  <dari@nukedgallery.net> 0.4.1
 	* Fix: Updated Your_Account hack in Readme to reflect new configuration info 
 	  that is stored in the database.

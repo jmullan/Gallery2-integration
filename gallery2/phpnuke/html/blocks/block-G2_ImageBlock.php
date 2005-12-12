@@ -74,7 +74,7 @@ define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
 $g2result = $db->sql_query("SELECT * FROM ".$prefix."_g2config");
 list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
 
-if ($g2configurationdone != 1) {
+if ($g2configurationDone != 1) {
 	$content = _G2_CONFIGURATION_NOT_DONE; 
 	return;
 }
