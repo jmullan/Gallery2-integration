@@ -1,3 +1,6 @@
+2005-12-20  Dariush Molavi  <dari@nukedgallery.net> 
+	* New: Added user profile MODification (Thanks PilotSpike).
+
 2005-12-01  Dariush Molavi  <dari@nukedgallery.net> 
 	* Fix: Removed extra closing paren in foreach statement.
 

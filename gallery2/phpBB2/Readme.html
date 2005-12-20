@@ -106,6 +106,13 @@
 		ul.toc-level-2 li {
 		margin: auto;
 		}
+		ul.toc-level-3 {
+		margin: auto 0px auto 20px;
+		list-style-type: none;
+		}
+		ul.toc-level-3 li {
+		margin: auto;
+		}
 		pre.CodeSnippet	{
 		background-color: #f0f0f0;
 		padding: 1em;
@@ -185,6 +192,13 @@
 					<a href="#installing">
 					Installing
 					</a>
+					<ul class="toc-level-3">
+						<li>
+						<a href="#mod">
+						Optional MOD
+						</a>
+						</li>
+					</ul>
 					</li>
 					<li>
 					<a href="#configuration">
@@ -479,6 +493,467 @@ login.php
 		$embedPath = $g2_row['embedPath'];
 		require_once($fullpath . 'embed.php'); 
 		$g2_ret = GalleryEmbed::logout(array('embedPath'=>$embedPath));
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM</pre>
+		<h2>
+		<a name="mod">
+		Optional Profile MODification
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		This MOD will create a "Gallery" button in the user's profile, as well as in the user's posts, where the AIM/ICQ buttons appear.  See 
+		<a href="http://www.nukedgallery.net/postp13384.html#13384">http://www.nukedgallery.net/postp13384.html#13384</a> for screenshots.
+		</p>
+		<pre class="CodeSnippet">##############################################################
+## MOD Title: Gallery Profile Mod 
+## MOD Author: PilotSpike &lt; firefighterspike33@yahoo.com &gt; (N/A) NA 
+## MOD Description: This mod integrates the nuked G2 integration into user profiles 
+## MOD Version: 0.1.0 
+##
+## Installation Level: Intermediate
+## Installation Time: 45 Minutes
+## Files To Edit: admin/admin_users.php, 
+##      includes/usercp_viewprofile.php,
+##      includes/functions_validate.php,
+##	language/lang_english/lang_admin.php,
+##	templates/subSilver/admin/user_edit_body.tpl,
+##	templates/subSilver/viewtopic_body.tpl,
+##	templates/subSilver/profile_view_body.tpl,
+##	templates/subSilver/privmsgs_read_body.tpl,
+##	templates/subSilver/subSilver.cfg,
+##	viewtopic.php,
+##	privmsg.php
+## Included Files: images/icon_gallery.gif 
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+## For security purposes, please check: http://www.phpbb.com/mods/
+## for the latest version of this MOD. Although MODs are checked
+## before being allowed in the MODs Database there is no guarantee
+## that there are no security problems within the MOD. No support
+## will be given for MODs not found within the MODs Database which
+## can be found at http://www.phpbb.com/mods/
+##############################################################
+## Author Notes:
+##
+##############################################################
+## MOD History:
+##
+## 2005-12-17 - Version 0.1.0 
+##      - Initial Developmental Release 
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+
+
+#
+#-----[ SQL ]------------------------------------------
+#
+ALTER TABLE phpbb_users ADD user_gallery VARCHAR(10) NULL DEFAULT NULL; 
+
+
+#
+#-----[ COPY ]------------------------------------------
+#
+images/icon_gallery.gif to templates/subSilver/images/lang_english/icon_gallery.gif
+
+#
+#-----[ OPEN ]------------------------------------------ 
+#
+admin/admin_users.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+$yim = ( !empty($HTTP_POST_VARS['yim']) ) ? trim(strip_tags( $HTTP_POST_VARS['yim'] ) ) : '';
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+$user_gallery = ( !empty($HTTP_POST_VARS['user_gallery']) ) ? trim( strip_tags($HTTP_POST_VARS['user_gallery'] ) ) : '';
+
+#
+#----[ FIND ]-----------------------------------
+#
+validate_optional_fields($icq, $aim, $msn, $yim, $website, $location, $occupation, $interests, $signature);
+
+
+#
+#-----[ REPLACE WITH ]----------------------------------
+#
+validate_optional_fields($icq, $aim, $msn, $yim, $website, $location, $occupation, $interests, $signature, $user_gallery);
+
+#
+#-----[ FIND ]----------------------------------------
+#
+$yim = htmlspecialchars(stripslashes($yim));
+
+#
+#-----[ AFTER, ADD ]------------------------------------------------------
+#
+$gallery = htmlspecialchars(stripslashes($gallery));
+
+#
+#-----[ FIND ]-------------------------------------------
+#
+SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) . "', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", $aim) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_sig_bbcode_uid = '$signature_bbcode_uid', user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowavatar = $user_allowavatar, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_allow_pm = $user_allowpm, user_notify_pm = $notifypm, user_popup_pm = $popuppm, user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_active = $user_status, user_rank = $user_rank" . $avatar_sql . "
+
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------------
+#
+user_rank = $user_rank
+
+#
+#-----[ IN-LINE AFTER, ADD ]-----------------------------
+#
+, user_gallery = '" . str_replace("\'", "''", $user_gallery) . "'
+
+#
+#-----[ FIND ]--------------------------------------
+#
+$yim = htmlspecialchars(stripslashes($yim));
+
+#
+#-----[ AFTER, ADD ]------------------------------------------------------
+#
+$gallery = htmlspecialchars(stripslashes($gallery));
+
+#
+#-----[ FIND ]---------------------------------------------
+#
+$yim = htmlspecialchars($this_userdata['user_yim']);
+
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+$user_gallery = htmlspecialchars($this_userdata['user_gallery']);
+
+#
+#-----[ FIND ]---------------------------------------
+#
+$s_hidden_fields .= '&lt;input type="hidden" name="user_rank" value="' . $user_rank . '" /&gt;';
+
+#
+#-----[ AFTER, ADD]-----------------------------------
+#
+$s_hidden_fields .= '&lt;input type="hidden" name="user_gallery" value="' . $user_gallery . '" /&gt;';
+
+
+#
+#-----[ FIND ]------------------------------------
+#
+'RANK_SELECT_BOX' =&gt; $rank_select_box,
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+'GALLERYID' =&gt; $user_gallery,
+
+#
+#-----[ FIND ]------------------------------------
+#
+'L_SELECT_RANK' =&gt; $lang['Rank_title'],
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+'L_GALLERY_ID' =&gt; $lang['Gallery_id'],
+
+
+#
+#-----[ OPEN ]------------------------------------
+#
+includes/usercp_viewprofile.php
+
+#
+#-----[ FIND ]------------------------------------
+#
+$aim_img = ( $profiledata['user_aim'] ) ? '&lt;a href="aim:goim?screenname=' . $profiledata['user_aim'] . '&amp;message=Hello+Are+you+there?"&gt;&lt;img src="' . $images['icon_aim'] . '" alt="' . $lang['AIM'] . '" title="' . $lang['AIM'] . '" border="0" /&gt;&lt;/a&gt;' : '&nbsp;';
+
+
+#
+#-----[ BEFORE, ADD ]------------------------------------
+#
+if ( !empty($profiledata['user_gallery']) )
+{
+  $gallery_uri = append_sid("gallery2.$phpEx?g2_view=core.ShowItem&g2_itemId=" . $profiledata['user_gallery']);
+  $gallery_img = '&lt;a href="' . $gallery_uri . '"&gt;&lt;img src="' . $images['icon_gallery'] . '" alt="' . $lang['Gallery'] . '" title="' . $lang['Gallery'] . '" border="0" /&gt;&lt;/a&gt;';
+}
+else
+{
+  $gallery_img = "";
+}
+
+#
+#-----[ FIND ]------------------------------------
+#
+'YIM' =&gt; $yim,
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+'GALLERY_IMG' =&gt; $gallery_img,
+
+#
+#-----[ OPEN ]------------------------------------
+#
+includes/functions_validate.php
+
+#
+#-----[ FIND ]------------------------------------
+#
+function validate_optional_fields(&$icq, &$aim, &$msnm, &$yim, &$website, &$location, &$occupation, &$interests, &$sig)
+
+#
+#-----[ REPLACE WITH ]------------------------------------
+#
+function validate_optional_fields(&$icq, &$aim, &$msnm, &$yim, &$website, &$location, &$occupation, &$interests, &$sig, &$gallery)
+
+#
+#-----[ FIND ]------------------------------------
+#
+// website has to start with http://, followed by something with length at least 3 that
+
+#
+#-----[ BEFORE, ADD ]------------------------------------
+#
+  // Gallery ID has to be only numbers.
+  if (!preg_match('/^[0-9]+$/', $gallery))
+  {
+    $gallery = '';
+  }
+
+#
+#-----[ OPEN ]------------------------------------
+#
+language/lang_english/lang_admin.php
+
+#
+#-----[ FIND ]------------------------------------
+#
+$lang['User_special_explain'] = 'These fields are not able to be modified by the users.  Here you can set their status and other options that are not given to users.';
+
+#
+#-----[ AFTER, ADD]------------------------------------
+#
+$lang['Gallery_id'] = 'Gallery ID';
+
+#
+#-----[ OPEN ]------------------------------------
+#
+templates/subSilver/admin/user_edit_body.tpl
+
+#
+#-----[ FIND ]------------------------------------
+#
+&lt;tr&gt;
+   &lt;td class="row1"&gt;&lt;span class="gen"&gt;{L_SELECT_RANK}&lt;/span&gt;&lt;/td&gt;
+   &lt;td class="row2"&gt;&lt;select name="user_rank"&gt;{RANK_SELECT_BOX}&lt;/select&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+&lt;tr&gt;
+    &lt;td class="row1"&gt;&lt;span class="gen"&gt;{L_GALLERY_ID}&lt;/span&gt;&lt;/td&gt;
+    &lt;td class="row2"&gt;
+      &lt;input class="post" type="text" name="user_gallery" size="10" maxlength="10" value="{GALLERYID}" /&gt;
+    &lt;/td&gt;
+ &lt;/tr&gt;
+
+
+#
+#-----[ OPEN ]------------------------------------
+#
+templates/subSilver/viewtopic_body.tpl
+
+#
+#-----[ FIND ]------------------------------------
+#
+&lt;td valign="middle" nowrap="nowrap"&gt;{postrow.PROFILE_IMG} {postrow.PM_IMG} {postrow.EMAIL_IMG} {postrow.WWW_IMG} {postrow.AIM_IMG} {postrow.YIM_IMG} {postrow.MSN_IMG} &lt;script language="JavaScript" type="text/javascript"&gt;&lt;!--
+
+#
+#-----[ IN-LINE FIND ]------------------------------------
+#
+{postrow.MSN_IMG}
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------
+#
+{postrow.GALLERY_IMG}
+
+
+#
+#-----[ OPEN ]------------------------------------
+#
+templates/subSilver/profile_view_body.tpl
+
+#
+#-----[ FIND ]------------------------------------
+#
+  //--&gt;&lt;/script&gt;&lt;noscript&gt;{ICQ_IMG}&lt;/noscript&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+&lt;tr&gt;
+   &lt;td valign="middle" nowrap="nowrap" align="right"&gt;&lt;span class="gen"&gt;{L_GALLERY}:&lt;/span&gt;&lt;/td&gt;
+   &lt;td class="row1" valign="middle"&gt;&lt;span class="gen"&gt;{GALLERY_IMG}&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+#
+#-----[ OPEN ]------------------------------------
+#
+templates/subSilver/privmsgs_read_body.tpl
+
+#
+#-----[ FIND ]------------------------------------
+#
+{WWW_IMG} {AIM_IMG} {YIM_IMG} {MSN_IMG} &lt;/td&gt;&lt;td&gt;&nbsp;&lt;/td&gt;&lt;td valign="top" nowrap="nowrap"&gt;&lt;script language="JavaScript" type="text/javascript"&gt;&lt;!--
+
+#
+#-----[ IN-LINE FIND ]------------------------------------
+#
+{MSN_IMG}
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------
+#
+{GALLERY_IMG}
+
+
+#
+#-----[ OPEN ]------------------------------------
+#
+templates/subSilver/subSilver.cfg
+
+
+#
+#----[ FIND ]------------------------------------
+#
+$images['icon_msnm'] = "$current_template_images/{LANG}/icon_msnm.gif";
+
+#
+#----[ AFTER, ADD ]------------------------------------
+#
+$images['icon_gallery'] = "$current_template_images/{LANG}/icon_gallery.gif";
+
+#
+#-----[ OPEN ]------------------------------------
+#
+viewtopic.php
+
+#
+#-----[ FIND ]------------------------------------
+#
+$sql = "SELECT u.username, u.user_id, u.user_posts, u.user_from, u.user_website, u.user_email, u.user_icq, u.user_aim, u.user_yim, u.user_regdate, u.user_msnm, u.user_viewemail, u.user_rank, u.user_sig, u.user_sig_bbcode_uid, u.user_avatar, u.user_avatar_type, u.user_allowavatar, u.user_allowsmile, p.*,  pt.post_text, pt.post_subject, pt.bbcode_uid
+
+#
+#-----[ IN-LINE FIND ]------------------------------------
+#
+pt.bbcode_uid
+
+#
+#----[ IN-LINE AFTER, ADD ]------------------------------------
+#
+, u.user_gallery
+
+#
+#-----[ FIND ]------------------------------------
+#
+$aim_img = ( $postrow[$i]['user_aim'] ) ? '&lt;a href="aim:goim?screenname=' . $postrow[$i]['user_aim'] . '&amp;message=Hello+Are+you+there?"&gt;&lt;img src="' . $images['icon_aim'] . '" alt="' . $lang['AIM'] . '" title="' . $lang['AIM'] . '" border="0" /&gt;&lt;/a&gt;' : '';
+
+#
+#-----[ BEFORE, ADD ]------------------------------------
+#
+if ( !empty($postrow[$i]['user_gallery']) )
+{
+  $gallery_uri = append_sid("gallery2.$phpEx?g2_view=core.ShowItem&g2_itemId=" . $postrow[$i]['user_gallery']);
+  $gallery_img = '&lt;a href="' . $gallery_uri . '"&gt;&lt;img src="' . $images['icon_gallery'] . '" alt="' . $lang['Gallery'] . '" title="' . $lang['Gallery'] . '" border="0" /&gt;&lt;/a&gt;';
+}
+else
+{
+  $gallery_img = "";
+}
+
+#
+#-----[ FIND ]------------------------------------
+#
+$icq = '';
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+$gallery_img = '';
+
+#
+#-----[ FIND ]------------------------------------
+#
+'ICQ' =&gt; $icq,
+
+#
+#-----[ AFTER, ADD ]------------------------------------
+#
+'GALLERY_IMG' =&gt; $gallery_img,
+
+#
+#-----[ OPEN ]------------------------------------
+#
+privmsg.php
+
+#
+#-----[ FIND ]------------------------------------
+#
+$sql = "SELECT u.username AS username_1, u.user_id AS user_id_1, u2.username AS username_2, u2.user_id AS user_id_2, u.user_sig_bbcode_uid, u.user_posts, u.user_from, u.user_website, u.user_email, u.user_icq, u.user_aim, u.user_yim, u.user_regdate, u.user_msnm, u.user_viewemail, u.user_rank, u.user_sig, u.user_avatar, pm.*, pmt.privmsgs_bbcode_uid, pmt.privmsgs_text
+
+#
+#-----[ IN-LINE FIND ]------------------------------------
+#
+u.user_avatar,
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------
+#
+u.user_gallery,
+
+#
+#-----[ FIND ]------------------------------------
+#
+$aim_img = ( $privmsg['user_aim'] ) ? '&lt;a href="aim:goim?screenname=' . $privmsg['user_aim'] . '&amp;message=Hello+Are+you+there?"&gt;&lt;img src="' . $images['icon_aim'] . '" alt="' . $lang['AIM'] . '" title="' . $lang['AIM'] . '" border="0" /&gt;&lt;/a&gt;' : '';
+
+#
+#-----[ BEFORE, ADD ]------------------------------------
+#
+if ( !empty($privmsg['user_gallery']) )
+{
+  $gallery_uri = append_sid("gallery2.$phpEx?g2_view=core.ShowItem&g2_itemId=" . $privmsg['user_gallery']);
+  $gallery_img = '&lt;a href="' . $gallery_uri . '"&gt;&lt;img src="' . $images['icon_gallery'] . '" alt="' . $lang['Gallery'] . '" title="' . $lang['Gallery'] . '" border="0" /&gt;&lt;/a&gt;';
+}
+else
+{
+  $gallery_img = "";
+}
+
+#
+#-----[ FIND ]------------------------------------
+#
+'ICQ' =&gt; $icq,
+
+#
+#----[ AFTER, ADD ]------------------------------------
+#
+'GALLERY_IMG' =&gt; $gallery_img,
 
 #
 #-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
