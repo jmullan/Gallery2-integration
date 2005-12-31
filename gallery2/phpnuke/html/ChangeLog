@@ -1,3 +1,8 @@
+2005-12-31  Dariush Molavi  <dari@nukedgallery.net> 0.4.3
+	* Fix: Modified index.php file to detect when using Nuke Evolution.  This 
+	  fixes the "blank screen" issues that most Evo users experience.
+	* Change: Updated Russian language files to UTF-8 (thanks Lexaero).
+
 2005-12-12  Dariush Molavi  <dari@nukedgallery.net> 0.4.2
 	* Fix: Variable name in block files.
 	* Fix: Removed obsolete references in Readme.

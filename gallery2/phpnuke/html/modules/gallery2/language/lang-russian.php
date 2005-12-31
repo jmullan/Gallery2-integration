@@ -22,9 +22,10 @@
  * Gallery 2 language file for PHPNuke.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
+ * @translator Aleksey Chibyshev <Lexaero@yandex.ru>
  */
 
 define("_G2_EMBED_PHP_FILE","embed.php");
-define("_G2_CONFIGURATION_NOT_DONE","Модуль еще не настроен");
+define("_G2_CONFIGURATION_NOT_DONE","РњРѕРґСѓР»СЊ РµС‰Рµ РЅРµ РЅР°СЃС‚СЂРѕРµРЅ");
 
 ?>
