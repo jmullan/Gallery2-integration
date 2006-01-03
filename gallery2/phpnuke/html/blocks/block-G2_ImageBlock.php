@@ -58,6 +58,12 @@
 /* none    : Don't show anything, just the thumbnail						*/
 /*																			*/
    $display = "title|heading";
+ 
+/*	3. What size image do you want displayed? If you want the default		*/
+/*     thumbnail, leave this empty, otherwise, enter the max pixel size.	*/
+/*     IF YOU SPECIFY A SIZE LARGER THAN THE DEFAULT THUMBNAIL SIZE, YOU	*/  
+/*     MUST ALSO ADD "fullSize" TO THE $display VARIABLE ABOVE.				*/ 
+	$maxSize='';
 /*																			*/  
 /****************************************************************************/
 
@@ -108,7 +114,12 @@ if ($showSidebar) {
 }
    
 $g2moddata = GalleryEmbed::handleRequest();
-list($ret,$html, $head) = GalleryEmbed::getImageBlock(array('blocks'=>$blockType, 'show'=>$display,'itemFrame'=>'solid','albumFrame'=>'solid'));
+if(intval($maxSize) > 0) {
+	list($ret,$html, $head) = GalleryEmbed::getImageBlock(array('blocks'=>$blockType, 'show'=>$display,'itemFrame'=>'solid','albumFrame'=>'solid','maxSize' => $maxSize));
+}
+else {
+	list($ret,$html, $head) = GalleryEmbed::getImageBlock(array('blocks'=>$blockType, 'show'=>$display,'itemFrame'=>'solid','albumFrame'=>'solid'));
+}
 
 if (!isset($g2moddata['isDone'])) {
   echo 'isDone is not defined, something very bad must have happened.';

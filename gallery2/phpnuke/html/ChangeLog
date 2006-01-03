@@ -1,3 +1,6 @@
+2006-01-03  Dariush Molavi  <dari@nukedgallery.net> 
+	* Fix: Changed ImageBlock file to include image size parameter. No version bump.
+
 2005-12-31  Dariush Molavi  <dari@nukedgallery.net> 0.4.3
 	* Fix: Modified index.php file to detect when using Nuke Evolution.  This 
 	  fixes the "blank screen" issues that most Evo users experience.
