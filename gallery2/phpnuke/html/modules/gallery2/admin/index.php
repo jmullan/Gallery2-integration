@@ -28,7 +28,7 @@
 
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
 
-$embedVersion = "0.4.3";
+$embedVersion = "0.4.4";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -268,6 +268,7 @@ function DisplayMainPage() {
 			else {
 				$version_text .= '<p style="color:red">Your integration package is <b>not</b> up to date.';
 				$version_text .= '<br />Latest version available is <b>' . $latest_version . '</b>.  Your installed version is <b>' . $embedVersion . '</b><br />';
+	            $version_text .= 'To see what has changed, read the ChangeLog here: <a href="http://www.nukedgallery.net/postp10252.html#10252">http://www.nukedgallery.net/postp10252.html#10252</a>.<br />';
 				$version_text .= 'You can download the latest integration package from <a href="http://www.nukedgallery.net/downloads-cat11.html">http://www.nukedgallery.net/downloads-cat11.html</a>.</p></center>';
 			}
 		}

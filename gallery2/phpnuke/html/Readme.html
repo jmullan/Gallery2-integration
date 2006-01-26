@@ -318,7 +318,7 @@
 		If you are using a version of PHPNuke <b>older than</b> version 7.5, you must delete the following files from the integration package:<br />
 		html/modules/gallery2/admin/case.php<br />
 		html/modules/gallery2/admin/links.php<br /><br />
-		If you are using a version of PHPNuke <b>newer than</b> version 7.5, you must delete the following files from the integration package:<br />
+		If you are using a version of PHPNuke <b>equal to or newer than</b> version 7.5, you must delete the following files from the integration package:<br />
 		html/admin/case/case.gallery2.php<br />
 		html/admin/links/links.gallery2.php
 		</p></div>
@@ -424,17 +424,9 @@ function g2_init() {
 		<p>
 		By default, the Gallery 2 installation will be installed in html/modules/gallery2/. 
 		If you decide to change the name of your Gallery 2 directory (ie, to just "Gallery"), then 
-		you must make the following changes:<br />
+		you must make the following change:<br />
 		<div class="instructions">
-			<h3>In html/modules/gallery2/admin/language/lang-xxxxx.php</h3>
-			<p>
-			You will need to update the following line:<br />
-			<font class="code">define("MOD_NAME","gallery2");</font><br />
-			Change "gallery2" to whatever you renamed your Gallery 2 installation directory to.
-			</p>
-		</div>
-		<div class="instructions">
-			<h3>In html/admin/case/case.gallery2.php and html/modules/gallery2/admin/case.php</h3>
+			<h3>In html/admin/case/case.gallery2.php (if you are using this file)</h3>
 			<p>
 			You will need to update the following line:<br />
 			<font class="code">$module_name = "gallery2";</font><br />

@@ -27,7 +27,7 @@
  */
 
 
-define("MOD_NAME","gallery2");
+define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
 
 define("_PHPEMBEDFILE","Path completo della directory di Gallery2");
 define("_EMBEDURI","URL della tua embedded Gallery");
