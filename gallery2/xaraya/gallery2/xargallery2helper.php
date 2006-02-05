@@ -119,7 +119,7 @@ class xarGallery2Helper
     if(!$ignoreConfiguration && !xarGallery2Helper::isConfigured()) {
       return false;
     }
-    require_once(xarModGetVar('gallery2','g2.includepath') . 'embed.php');
+    require_once(xarModGetVar('gallery2','g2.includepath'));
     
     $g2LangCode = null; $uid = null;
     // only do the whole uid / language stuff if told so
@@ -149,14 +149,14 @@ class xarGallery2Helper
     }
 
     // initiate G2 
-    $ret = GalleryEmbed::init(array('embedUri' => xarModGetVar('gallery2','g2.basefile'),
-				    'embedPath' => xargallery2helper::xarServerGetBaseURI(),
-				    'relativeG2Path' => xarModGetVar('gallery2','g2.relativeurl'),
+    $ret = GalleryEmbed::init(array('embedUri' => xarModGetVar('gallery2','embedUri'),
+				    'g2Uri' => xarModGetVar('gallery2','g2Uri'),
 				    'loginRedirect' => xarModGetVar('gallery2','g2.loginredirect'),
 				    'activeUserId' => $uid, 'activeLanguage' => $g2LangCode,
-				    'fullInit' => $fullInit));
+				    'fullInit' => $fullInit,
+				    'apiVersion' => unserialize(xarModGetVar('gallery2','embedApiVersion'))));
 
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('G2 did not return a success status upon an init request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       return false;
@@ -191,7 +191,7 @@ class xarGallery2Helper
       return true;
     }
     $ret = GalleryEmbed::done();
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('Could not complete the G2 transaction. Here is the error message from G2: <br /> [#(1)]', 
 		   $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
@@ -224,7 +224,7 @@ class xarGallery2Helper
     // 1. create G2 user
     $args = xarGallery2Helper::translateXarUserAttributesToG2($uid, $args);		
     $ret = GalleryEmbed::createUser($uid, $args);
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('Failed to create G2 user with extId [#(1)]. Here is the error message from G2: <br /> [#(2)]', $uid,$ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));	
       return false;
@@ -236,7 +236,7 @@ class xarGallery2Helper
       return false;
     }	
     $ret = GalleryCoreApi::removeUserFromAllGroups($g2User->getId());
-    if ($ret->isError()) {
+    if ($ret) {
       $msg = xarML('Failed to remove user from all G2 groups. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       return false;
@@ -266,7 +266,7 @@ class xarGallery2Helper
     // Finally create the memberships in G2
     foreach ($xarGroups as $xarGroup) {			
       $ret = GalleryEmbed::addUserToGroup($uid, $xarGroup['uid']);
-      if ($ret->isError()) {
+      if ($ret) {
 	$msg = xarML('Failed to add g2 user  with extid [#(1)] to g2 group with extid [#(2)], uname [#(3)]. In total, we tried to add
 						the user to [#(4)] groups. Here is the error message from G2: <br /> [#(5)]',
 		     $uid,  $xarGroup['uid'], $xarGroup['uname'], count($xarGroups), $ret->getAsHtml());
@@ -349,7 +349,7 @@ class xarGallery2Helper
     }
     $args = xarGallery2Helper::translateXarUserAttributesToG2($uid, $args, true);
     $ret = GalleryEmbed::updateUser($uid, $args);
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('Failed to update G2 user with extId [#(1)]. Here is the error message from G2: <br /> [#(2)]', $uid, $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));	
       return false;
@@ -378,7 +378,7 @@ class xarGallery2Helper
     }
     $name = isset($args['name']) ? $args['name'] : $args['uname'];
     $ret = GalleryEmbed::createGroup($uid, $name);
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('Failed to create G2 group with extId [#(1)]. Here is the error message from G2: <br /> [#(2)]', $uid,$ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));	
       return false;
@@ -412,7 +412,7 @@ class xarGallery2Helper
     }
     $newname = isset($args['name']) ? $args['name'] : $args['uname'];
     $ret = GalleryEmbed::updateGroup($uid, array('groupname' => $newname));
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('Failed to update G2 group with extId [#(1)]. Here is the error message from G2: <br /> [#(2)]', $uid,$ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));	
       return false;
@@ -439,7 +439,7 @@ class xarGallery2Helper
       return false;
     }
     $ret = GalleryEmbed::login($uid);
-    if ($ret->isError()) {
+    if ($ret) {
       $msg = xarML('Could not login user with extId [#(1)] in G2. Here is the error message from G2: <br /> [#(2)]', $uid,$ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       return false;
@@ -465,7 +465,7 @@ class xarGallery2Helper
       return false;
     }
     $ret = GalleryEmbed::logout();
-    if ($ret->isError()) {
+    if ($ret) {
       $msg = xarML('Failed to logout from G2 after sync process. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
       xarErrorSet(XAR_USER_EXCEPTION, 'FUNCTION_FAILED', new DefaultUserException($msg));
       return false;
@@ -503,7 +503,7 @@ class xarGallery2Helper
       // got to update the parameter
       $pluginParameter = 'default.language';
       $ret = GalleryCoreApi::setPluginParameter('module', 'core', $pluginParameter, $g2languageCode);
-      if ($ret->isError()) {
+      if ($ret) {
 	$msg = xarML('Failed to update G2 site default language parameter [#(1)] to new value [#(2)]. Here is the error message from G2: <br /> [#(3)]',
 		     $pluginParameter, $g2languageCode,$ret->getAsHtml());
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
@@ -556,7 +556,7 @@ class xarGallery2Helper
     }
     
     list ($ret, $g2role) = GalleryCoreApi::loadEntityByExternalId($externalId, $entityType);
-    if ($ret->isError()) {
+    if ($ret) {
       if ($raiseError) {
 	$msg = xarML('Failed to load G2 user/group by extId [#(1)] and entityType [#(2)].'.
 		   'Here is the error message from G2: <br /> [#(3)]', $externalId, $entityType, $ret->getAsHtml());
@@ -591,7 +591,7 @@ class xarGallery2Helper
     }
     $ret = GalleryEmbed::addExternalIdMapEntry($externalId, $entityId, $entityType);
 
-    if ($ret->isError()) {
+    if ($ret) {
       $msg = xarML('Failed to create a extmap entry for role uid [#(1)] and entityId [#(2)], entityType [#(3)]. Here is the error message from G2: <br />
 				[#(4)]',$externalId, $entityId, $entityType, $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
@@ -623,7 +623,7 @@ class xarGallery2Helper
 		WHERE [ExternalIdMap::externalId] = ?';
     
     list ($ret, $results) = $gallery->search($query, array($externalId));
-    if ($ret->isError()) {
+    if ($ret) {
       if ($raiseError) {
 	$msg = xarML('Failed to fetch the entityType for extId [#(1)]. Here is the error message from G2: <br /> [#(2)]',$externalId, $ret->getAsHtml());
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
@@ -663,7 +663,7 @@ class xarGallery2Helper
     }		
     
     list($ret, $map) = GalleryEmbed::getExternalIdMap($key);
-    if ($ret->isError()) {
+    if ($ret) {
       $msg = xarML('Failed to fetch a list of all extId maps fromG2. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       return array(false, null); 
@@ -671,91 +671,7 @@ class xarGallery2Helper
     
     return array(true, $map);	
   }
-  
-  /**
-   * g2getPendingUsers: get a list of all G2 pending users
-   *
-   * returns a list of all G2 pending users, caches the list
-   *
-   * @author Andy Staudacher
-   * @access public
-   * @param none
-   * @return array(bool true on success, else false, array(entityId => data))
-   * @throws Systemexception if it failed
-   */
-  function g2getPendingUsers()
-  {	
-    static $g2PendingUsers;
-    
-    // init G2 transaction, if not already done so
-    if (!xarGallery2Helper::init(true)) {
-      return array(false, null);
-    }
-    
-    if (!isset($g2PendingUsers)) {
-      // check if G2 register module is active:
-      list($ret, $plugins) = GalleryCoreApi::fetchPluginStatus('module'); 
-      if ($ret->isError()) {
-	$msg = xarML('Failed to fetch a list of all G2 plugins. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return array(false, null);
-      }
-      // FIXME: does $plugins['register']['active'] exist?
-      if (!isset($plugins['register']) || !isset($plugins['register']['active']) ||
-	  !$plugins['register']['active']) {
-	// G2 register module is not active, good
-	return array(true, array());
-      }
       
-      // there may be some pending users
-      require_once(xarModGetVar('gallery2','g2.includepath') . 'modules/register/classes/GalleryPendingUserHelper.class');
-      list($ret, $pendingUsers) = GalleryPendingUserHelper::fetchUserData();
-      if ($ret->isError()) {
-	$msg = xarML('Failed to fetch a list of all G2 pending users. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return array(false, null);
-      }
-      $g2PendingUsers = $pendingUsers;
-    }
-    return array(true, $g2PendingUsers);
-  }
-  
-  /**
-   * g2deletePendingUsers: delete all G2 pending users
-   *
-   * We could import these G2 pending users, but then, 
-   * we had to email them their new validation code.
-   * For now, just delete them.
-   * TODO: maybe import G2 pending users
-   *
-   * @author Andy Staudacher
-   * @access public
-   * @param none
-   * @return bool true on success, else false
-   * @throws Systemexception if it failed
-   */			
-  function g2deletePendingUsers()
-  {	
-    list($ret, $g2pendingusers) = xarGallery2Helper::g2getPendingUsers();
-    if (!$ret) { return false; }
-    
-    // init G2 transaction, if not already done so
-    if (!xarGallery2Helper::init(true)) {
-      return false;
-    }
-    
-    // delete the pending users from G2
-    foreach (array_keys($g2pendingusers) as $g2pendinguserId) {
-      $ret = GalleryCoreApi::deleteEntityById($g2pendinguserId);
-      if ($ret->isError()) {
-	$msg = xarML('Failed to delete G2 pending user. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }					
-    }
-    return true;
-  }
-  
   /**
    * verifyConfig: verify the configuration
    *
@@ -768,192 +684,27 @@ class xarGallery2Helper
    *             we return the error value.
    * @param bool if true, we set the configuration
    *             if it was verified successfully.
-   * @param string [optional] the relative path from the xaraya url to the G2 url
-   * @param string [optional] the path from to the G2 folder
+   * @param string [optional] the g2Uri (see GalleryEmbed::init() for docs)
+   * @param string [optional] the embedUri (URL to embedded G2), specify to override the auto-detection
+   * @param string [optional] the absolute filesystem path to the G2 folder
    * @return array(bool true on success, error message)
    * @throws Systemexception if it failed
    */
-  function verifyConfig($raiseexceptions = false, $setifcorrect = false, 
-			$g2RelativeUrl = null, $g2IncludePath = null )
-  {
-      /*
-       * Verify the dependency on a compatible xaraya version (roles module changes, event system
-       * changes)
-       * Don't use xarConfigGetVar('System.Core.VersionNumber'); as it doesn't follow the version
-       * dot subversion format pattern in snapshot versions.
-       */
+  function verifyConfig($raiseexceptions=false, $setifcorrect=false, $g2Uri=null, $embedUri=null, $g2IncludePath=null) {
+    require_once(dirname(__FILE__) . '/xargallery2helper_advanced.php');
+    return xarGallery2Helper_Advanced::verifyConfig($raiseexceptions, $setifcorrect, $g2Uri, $embedUri, $g2IncludePath);
+  }
 
-      $xarVersionString =  xarConfigGetVar('System.Core.VersionNumber');
-      /* e.g. 1.0.0-rc2, split of anything after the 1.0.0 */
-      $xarVersionArray = split('-', $xarVersionString);
-      $xarVersion = $xarVersionArray[0];
-      $minXarVersion = xarModGetVar('gallery2', 'xar.minCoreVersion');
-      if (version_compare($minXarVersion, $xarVersion) > 0) {
-      $msg = xarML('Your xaraya version is not compatible with this module. Your version is [#(1)], the minimum
-            version number required is [#(2)]. Please upgrade your xaraya installation.', $xarVersion, $minXarVersion);
-      if ($raiseexceptions) {
-	xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
-      }
-      return array(false, $msg);
-    }
-    
-    // Verify that we find a G2 installation
-    // the filesystem include path
-    if (!isset($g2IncludePath) || empty($g2IncludePath)) {
-      if (isset($g2RelativeUrl)) {
-	  /* from path/xaraya/modules/gallery2/ to path/xaraya/$g2RelativeUrl which is often path/gallery2/ */
-	  $g2IncludePath = realpath(dirname(dirname(dirname(__FILE__))) . '/' . $g2RelativeUrl) . '/';
-      } else {
-	  $g2IncludePath = xarModGetVar('gallery2','g2.includepath');
-      }
-    } 
-    // else = different paths for url and filesystem
-   
-    // the relative url
-    if (!isset($g2RelativeUrl)) {
-      $g2RelativeUrl = xarModGetVar('gallery2','g2.relativeurl');
-    }
-   
-    if ($setifcorrect) {
-	/* Get the name of the xaraya entry point file (usually index.php) */
-	$scriptName = xarCore_getSystemVar('BaseModURL', true);
-	if (!isset($scriptName)) {
-	    $scriptName  = 'index.php';
-	}
-      
-      //  short urls enabled in xaraya?
-      $shortUrlActive = xarConfigGetVar('Site.Core.EnableShortURLsSupport');
-      /* Do we support short urls? */
-      $thisModuleShortUrls =  xarModGetVar('gallery2','SupportShortURLs');
-      if (isset($shortUrlActive) && $shortUrlActive && isset($thisModuleShortUrls) && $thisModuleShortUrls) {
-	$g2basefile = $scriptName .'/gallery2';
-      } else {			
-	$g2basefile = $scriptName .'?module=gallery2';
-      }
-      $xarayaPath = xarGallery2Helper::xarServerGetBaseURI();
-      $g2loginredirect = $xarayaPath . $scriptName .'?module=roles&func=register';
-    } else {
-      $g2loginredirect = xarModGetVar('gallery2','g2.loginredirect');
-      $g2basefile = xarModGetVar('gallery2','g2.basefile');
-    }
-   
-    // return if the path is wrong or G2 is not installed
-    if (!file_exists($g2IncludePath . 'embed.php')) {
-      $msg = xarML('I could not find a G2 installation at "[#(1)]"! Please correct the path!', $g2IncludePath);
-      if ($raiseexceptions) {
-	xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
-      }
-      return array(false, $msg);
-    }
-
-    require_once($g2IncludePath . 'embed.php');
-    $ret = GalleryEmbed::init( array('embedUri' => $g2basefile,
-				     'embedPath' => xarGallery2Helper::xarServerGetBaseURI(),
-				     'relativeG2Path' => $g2RelativeUrl,
-				     'loginRedirect' => $g2loginredirect));
-    if (!$ret->isSuccess()) {
-      $msg = xarML('G2 did not return a success status upon an init request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-      if ($raiseexceptions) {
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      }
-      return array(false, $msg);
-    }
-    
-    xarGallery2Helper::isInitiated(true);
-
-    // ok, G2 is installed, the path is correct, now check if G2 is in embedded mode
-    global $gallery;
-
-    /* Get the current G2 core version */
-    list ($ret, $g2Version) = GalleryCoreApi::getPluginParameter('module', 'core', '_version');
-    if ($ret->isError()) {
-      $msg = xarML('G2 returned an error: [#(1)]', $ret->getAsHtml());
-      if ($raiseexceptions) {
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      }
-      return array(false, $msg);
-    }
-
-    $minG2Version = xarModGetVar('gallery2', 'g2.minCoreVersion');
-    if (version_compare($minG2Version, $g2Version) > 0) {
-      $msg = xarML('Your G2 version is not compatible with this module. Your version is [#(1)], the minimum
-            version number required is #(2). Please upgrade your G2 installation.', $g2Version, $minG2Version);
-      if ($raiseexceptions) {
-	xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
-      }
-      return array(false, $msg);
-    }
-    
-    if ($setifcorrect) {
-      // set the paths
-      // relative url from CMS root dir to G2 root dir
-      xarModSetVar('gallery2','g2.relativeurl', $g2RelativeUrl);
-      // absolute include path to /some/path/Gallery/
-      xarModSetVar('gallery2','g2.includepath', $g2IncludePath);
-      // the login redirect url
-      xarModSetVar('gallery2','g2.loginredirect',$g2loginredirect);
-      // the g2/xaraya basefile
-      xarModSetVar('gallery2','g2.basefile',$g2basefile);
-
- /*
-  G2 short url support changed from PathInfo (compatible) to mod_rewrite.
-  For now, G2 short urls can not be supported in G2 embedded. We have to
-  Figure out a way to bring back short urls to embedded G2.
-     
-      // set short urls in G2 on/off
-      if (isset($shortUrlActive) && (is_bool($shortUrlActive) || is_int($shortUrlActive))) {
-	$pluginParameter = 'misc.useShortUrls';
-	$shortUrlActive = $shortUrlActive ? 'true' : 'false';
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', $pluginParameter, $shortUrlActive);
-	if ($ret->isError()) {
-	  $msg = xarML('Failed to update plugin parameter [#(1)] to new value [#(2)]. Here is the error message from G2: <br /> [#(3)]',
-		       $pluginParameter, $shortUrlActive,$ret->getAsHtml());
-	  if ($raiseexceptions) {
-	    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  } 
-	  return array(false, $msg);
-	}
-      }
-*/      
-      // Enable gallery2 hooks for roles
-      if (xarModIsAvailable('roles')) {
-	xarModAPIFunc('modules','admin','enablehooks',
-		      array('callerModName' => 'roles', 'hookModName' => 'gallery2'));
-      } else {
-	$msg = xarML('roles module is not active.');
-	if ($raiseexceptions) {
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	}
-	return array(false, $msg);
-      }
-    } else {
-      // check if the roles module calls our hooks
-      $moduleList = xarModAPIFunc('modules','admin','gethookedmodules',
-				  array('hookModName' => 'gallery2'));
-      if (!isset($moduleList['roles'])) {
-	// try to reactivate the hooks for the roles module before returning the error
-	$msg = xarML('roles module is not hooked to our gallery2 module.');
-	if (xarModIsAvailable('roles')) {
-	  $ret = xarModAPIFunc('modules','admin','enablehooks',
-			       array('callerModName' => 'roles', 'hookModName' => 'gallery2'));
-	  if (isset($ret) && $ret) {
-	    $msg = xarML('roles module was not hooked to our gallery2 module, but that is fixed now.');
-	  }
-	} else {
-	  $msg = xarML('roles module is not active.');
-	  if ($raiseexceptions) {
-	    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  }
-	  return array(false, $msg);
-	}
-	if ($raiseexceptions) {
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	}
-	return array(false, $msg);
-      }
-    }
-    
-    return array(true, null);	
+  /**
+   * detectEmbedUri: auto-detect the embedUri (URL to embedded G2)
+   *
+   * @author Andy Staudacher
+   * @access public
+   * @return string embedUri
+   */
+  function getDetectedEmbedUri() {
+    require_once(dirname(__FILE__) . '/xargallery2helper_advanced.php');
+    return xarGallery2Helper_Advanced::getDetectedEmbedUri();
   }
   
   /**
@@ -1073,7 +824,26 @@ class xarGallery2Helper
   }
   
   /**
-   * g2updateSpecialRole: update the special roles
+   * xarServerGetBaseURI() wrapper for G2 embedPath compatibility
+   *
+   * xarServerGetBaseURI() can be empty, in this case set it to /
+   *
+   * @author Andy Staudacher
+   * @access public
+   * @return string fixed xarServerGetBaseURI()
+   */
+  function xarServerGetBaseURI()
+  {
+    $path = xarServerGetBaseURI();
+    $length = strlen($path);
+    if ($length == 0 || $path{$length-1} != '/') {
+	$path .= '/';
+    }
+    return $path;
+  }
+  
+  /**
+   * g2updateSpecialRoles: update the special roles
    *
    * Call this method to synchronize the special roles
    * i.e. to set the userName/groupName in g2 to the 
@@ -1093,145 +863,10 @@ class xarGallery2Helper
    * @param none
    * @return bool true on success, else false
    */
-  function g2updateSpecialRoles() 
+  function g2updateSpecialRoles()
   {
-    // init if not already done so
-    if (!xarGallery2Helper::init(true)) {
-      return false;
-    }
-    $defaultgroupname = xarModGetVar('roles', 'defaultgroup');
-    foreach(array(array('Everybody', 'id.everybodyGroup'), array('Administrators', 'id.adminGroup'),
-		  array($defaultgroupname, 'id.allUserGroup'),
-		  array('anonymous', 'id.anonymousUser')) as $specialRole) {
-      $pluginParameter = $specialRole[1];
-      $xarName = $specialRole[0];
-      
-      // the xaraya defaultGroup can be any group, including everybody and adminstrators
-      // per default, it's a third group, but you can configure it to be Everybody or Administrators
-      if ($pluginParameter == 'id.allUserGroup' && !xarGallery2Helper::xarIsDefaultGroupAThirdGroup())  {
-	continue; // we already sync this group
-	// -> "All Users" group in G2 isn't any special group anymore			
-      }
-      
-      // get G2 entity id for this group/user
-      list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', $pluginParameter);
-      if ($ret->isError()) {
-	$msg = xarML('Failed to get plugin parameter for special G2 user/group. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      
-      // switch user / group
-      if ($pluginParameter != 'id.anonymousUser') {
-	$roleData = xarModAPIFunc('roles','user','get', array('name' => $xarName, 'type' => 1));
-	$entityType = 'GalleryGroup';
-      } else {
-	$roleData = xarModAPIFunc('roles','user','get', array('uid' => _XAR_ID_UNREGISTERED, 'type' => 0));
-	$entityType = 'GalleryUser';
-      } 
-      
-      // The group with the groupName = defaultGroup could already exist in G2. 
-      // Xaraya calls it's all users group "Users" by default. But you can choose other groups
-      // as the default group in xaraya. In this case, check if a group with such a name exists in G2
-      // and map it to it, else, create a new G2 group. and update the G2 all users config param.
-      if ($pluginParameter == 'id.allUserGroup' && $defaultgroupname != 'Users') {
-	list($ret, $g2role) = GalleryCoreApi::fetchGroupByGroupName($defaultgroupname);
-	if ($ret->isError()) {
-	  if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) { 
-	    // a real error, not good
-	    $msg = xarML('Failed to fetch group by groupname [#(1)] from G2 in g2updateSpecialRoles!', $defaultgroupname);
-	    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	    return false;
-	  }
-	}
-	if (!is_object($g2role)) { 
-	  // ok, a group with this name doesn't exist in G2, good, let's create it now
-	  if (!xarGallery2Helper::g2createGroup($roleData['uid'], $roleData)) {
-	    return false;
-	  } // this creates the ext id map too
-	  // load new G2 group
-	  list($ret, $g2role) = xarGallery2Helper::g2loadEntityByExternalId($roleData['uid'], $entityType);
-	  if (!$ret) {
-	    return false;
-	  }
-	} 
-	// update G2 plugin parameter allusergroup
-	$newParameterValue = $g2role->getId();
-	if ($id != $newParameterValue) {
-	  // got to update the parameter
-	  $ret = GalleryCoreApi::setPluginParameter('module', 'core', $pluginParameter, $newParameterValue);
-	  if ($ret->isError()) {
-	    $msg = xarML('Failed to update plugin parameter [#(1)] for special G2 user/group [#(2)] for xaraya group [#(3)]. Old value [#(4)], new value [#(5)]. Here is the error message from G2: <br /> [#(6)]',
-			 $pluginParameter, $g2role->getgroupName(),$xarName, $id,$newParameterValue,$ret->getAsHtml());
-	    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	    return false;
-	  }
-	  $id = $newParameterValue;
-	} 
-      } // end if ($pluginParameter == 'id.allUserGroup')
-      
-      $ret = null; $g2role = null;
-      // create extId, entityId map entry if not already existent 
-      list($ret, $g2role) = GalleryCoreApi::loadEntityByExternalId($roleData['uid'], $entityType);
-      if ($ret->isError()) {
-	if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) { 
-	  // a real error, not good
-	  $msg = xarML('Failed to fetch special group/user by extId [#(1)] from G2 in g2updateSpecialRoles! Here is the error message from G2: <br /> [#(6)]',$roleData['uid'],$ret->getAsHtml());
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  return false;
-	}
-	// ok, we didn't map this role to G2 groups/users yet, let's do it now
-	// create map entry
-	$ret = xarGallery2Helper::g2addexternalMapEntry($roleData['uid'], $id, $entityType);
-	if (!$ret) {
-	  return false;
-	}
-      }
-      
-      // update user/group data: switch user / group
-      if ($pluginParameter != 'id.anonymousUser') { // group
-	if (!xarGallery2Helper::g2updateGroup($roleData['uid'], $roleData)) {
-	  $msg = xarML('Failed to update special G2 group by extId [#(1)].', $roleData['uid']);
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  return false;
-	}
-      } else { // user (anonymous user)
-	$msg = "muh";
-	if (!xarGallery2Helper::g2updateUser($roleData['uid'], $roleData)) {
-	  $msg = xarML('Failed to update special G2 user by extId [#(1)].',$roleData['uid']);
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  return false;
-	}
-      }	
-    } // end foreach
-
-    return true;
-  }
-  
-  /**
-   * xarIsDefaultGroupAThirdGroup: checks if defaultGroup is a third group
-   *
-   * The Xaraya defaultGroup is per default "Users". But you can configure
-   * it to be "Everybody" group or "Administrators" group (or any other group).
-   * If this group is either Everybody or Administrators, we don't have to
-   * map it additionally, because we already map these groups with G2.
-   * If this is the case, the "All Users" group of G2 loses its meaning as a 
-   * special group.
-   *
-   * @author Andy Staudacher
-   * @access public
-   * @param none
-   * @return bool true or false
-   */
-  function xarIsDefaultGroupAThirdGroup()
-  {
-    $defaultGroupName = xarModGetVar('roles', 'defaultgroup');
-    if (strtoupper($defaultGroupName) == strtoupper('Everybody')
-	|| strtoupper($defaultGroupName) == strtoupper('Administrators'))  {
-      return false; // we already sync this group
-      // -> "All Users" group in G2 isn't any special group anymore		
-    }
-    return true;
+    require_once(dirname(__FILE__) . '/xargallery2helper_advanced.php');
+    return xarGallery2Helper_Advanced::g2updateSpecialRoles();
   }
   
   /**
@@ -1251,475 +886,8 @@ class xarGallery2Helper
    */
   function g2xarUserGroupImportExport()
   {
-    // First disable the xaraya hooks to prevent synchronization loops
-    $ret = xarModAPIFunc('modules','admin','disablehooks',
-			 array('callerModName' => 'roles', 'hookModName' => 'gallery2'));
-    if (!isset($ret) || !$ret) {
-      $msg = xarML('Could not disable the hooks to the roles module.');
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return false;
-    }
-    
-    // init G2 transaction, load G2 API, if not already done so
-    if (!xarGallery2Helper::init(true)) {
-      return false;
-    }					
-    
-    // set the module = not configured during synchronization process
-    $configValueBackup = xarGallery2Helper::isConfigured();
-    xarGallery2Helper::isConfigured(false);
-
-    // Flush the G2 filesystem cache
-    global $gallery;
-    $platform = $gallery->getPlatform();
-    
-    $dirs = array();
-    foreach (array('data.gallery.cache') as $param) {
-      $dir = $gallery->getConfig($param);
-      if (!empty($dir)) {
-	$dirs[] = $dir;
-      }
-    }
-
-    foreach ($dirs as $dir) {
-      
-      if (empty($dir)) {
-	$ret = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
-	$msg = xarML('Error during synchronization. Error during Flush G2 filesystem cache. Here is the rror from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      
-      if ($platform->file_exists($dir)) {
-	$ret = $platform->recursiveRmdir($dir);
-	if (!$ret) {
-	  $ret = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
-	  $msg = xarML('Error during synchronization. Error during Flush G2 filesystem cache. Here is the rror from G2: <br /> [#(1)]', $ret->getAsHtml());
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  return false;
-	}
-      }
-      
-      $ret = $platform->mkdir($dir);
-      if (!$ret) {
-	$ret = GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
-	$msg = xarML('Error during synchronization. Error during Flush G2 filesystem cache. Here is the rror from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-    }
-    
-
-    /*
-     * First Synchronize the special groups and the anonymous user
-     * That means: update the groupName / userName / display Name in G2
-     */
-    if(!xarGallery2Helper::g2updateSpecialRoles()) {
-      return false;
-    }
-    
-    /*
-     * Load the current state of G2 and xaraya, get a list of all users and groups
-     *
-     * If we load most stuff before we actually change something, we minimize the 
-     * probability that something goes wrong in between the import/export process and
-     * that we end up with a corrupted state.
-     */
-    
-    // Load a list of all xaraya groups and a list of all groupNames
-    if (!xarModAPILoad('roles', 'user')) { return false; }
-    $xarGroups = xarGallery2Helper::xargetAllGroups();
-    // Load a list of all xaraya users
-    $xarUsers = xarGallery2Helper::xargetAllUsers();
-
-    // fetch the xaraya Everybody and the default group
-    $xarEverybodyGroup = xarModAPIFunc('roles','user','get', array('uname' => 'Everybody', 'type' => 1));
-    $xarDefaultGroup = xarModAPIFunc('roles','user','get'
-				     , array('name' => xarModGetVar('roles', 'defaultgroup'), 'type' => 1));
-    if (!isset($xarEverybodyGroup['uid']) || !$xarEverybodyGroup['uid']
-	|| !isset($xarDefaultGroup['uid']) || !$xarDefaultGroup['uid']) {
-      $msg = xarML('Could not fetch the xaraya everybody/default groups.');
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return false;
-    }
-    
-    // Load the list of all G2 groupNames
-    list($ret, $g2GroupNames) = GalleryCoreApi::fetchGroupNames();
-    if (!$ret->isSuccess()) {
-      $msg = xarML('Could not fetch G2 group names. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return false;
-    }
-    
-    // we need the entityId of the groups
-    $g2Groups = array();
-    foreach ($g2GroupNames as $g2GroupName) {
-      // Load the object Object
-      list($ret, $g2Group) = GalleryCoreApi::fetchGroupByGroupName($g2GroupName);
-      if (!$ret->isSuccess()) {
-	$msg = xarML('Could not fetch a G2 group object. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      $g2Groups[strtolower($g2GroupName)] = $g2Group;
-    }
-    
-    // Load a list of all G2 userNames
-    list($ret, $g2UserNames) = GalleryCoreApi::fetchUsernames();
-    if (!$ret->isSuccess()) {
-      $msg = xarML('Could not fetch G2 user names. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return false;
-    }
-    
-    // We will need the existing group memberships for all G2 users
-    // and for G2 users that don't exist in xaraya, we need the userdata
-    // load the G2 user object
-    $g2Users = array(); // array('user' => $g2UserObject, 'memberships' => array(groupId => grouName))
-    foreach ($g2UserNames as $g2UserName) {
-      // Load the user Object
-      list($ret, $g2User) = GalleryCoreApi::fetchUserByUserName($g2UserName);
-      if (!$ret->isSuccess()) {
-	$msg = xarML('Could not fetch a G2 user object. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      // load the existing group memberships
-      list($ret, $g2MemberShips) = GalleryCoreApi::fetchGroupsForUser($g2User->getId());
-      if (!$ret->isSuccess()) {
-	$msg = xarML('Could not fetch G2 groups for G2 user. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      $g2Users[strtolower($g2UserName)] = array('user' => $g2User, 'memberships' => $g2MemberShips);
-    }
-
-    // Load a list of all G2 pending users
-    /*
-     * deactivate pending user stuff. it doesn't work in multisite + embedded g2.
-
-    list($ret, $g2pendingusers) = xarGallery2Helper::g2getPendingUsers();
-    if (!$ret) {
-      return false;
-    }
-    */
-    
-    // Load all existing xaraya <-> G2 mappings
-    list($ret, $mapsbyentityid) = xarGallery2Helper::g2getallexternalIdmappings('entityId');
-    if (!$ret) {
-      return false;
-    }
-    
-    
-    /**********************************************************************************/
-    
-    /*
-     * 1. import G2 groups to xaraya
-     */
-    foreach ($g2Groups as $g2Group) {
-      // check if we already mapped this group
-      if (isset($mapsbyentityid[$g2Group->getId()])) {
-	continue; // already mapped
-      }
-      // check if a group with this name already exists in xaraya
-      if (xarGallery2Helper::in_array_cin($g2Group->getGroupName(), array_keys($xarGroups))) {
-	if (!xarGallery2Helper::g2addexternalMapEntry($xarGroups[strtolower($g2Group->getGroupName())]['uid'],	$g2Group->getId(), 1)) {
-	  return false;
-	}
-	continue;
-      }
-      // else: add this group to xaraya: gname and name, because there's a change from 0.9.11 to 0.9.12
-      $ret = xarmodapifunc('roles','admin','addgroup', array('gname' => $g2Group->getgroupname(), 'name' => $g2Group->getgroupname(),));
-      if (!isset($ret) || !$ret) {
-	$msg = xarML("Could not create a xar role for a G2 group [#(1)].", $g2Group->getgroupname());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      // add the group to the Everybody group 
-      $newRole = xarModAPIFunc('roles','user','get', array('name' => $g2Group->getgroupname(), 'type' => 1));
-      if (!isset($newRole['uid'])) {
-	$msg = xarML("Could not retrieve the role for the newly created/imported G2 group [#(1)]", $g2Group->getgroupname());
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      $ret = xarmodapifunc('roles','admin','addmember', array('gid' => $xarEverybodyGroup['uid'], 'uid' => $newRole['uid']));				
-      if (!isset($ret) || !$ret) {
-	$msg = xarML("Could not add the imported G2 group [#(1)] with uid [#(2)] to the Everybody group with uid [#(3)] in xaraya.",
-		     $g2GroupName, $newRole['uid'], $xarEverybodyGroup['uid']);
-	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	return false;
-      }
-      // add the map entry to the G2 externalId, entityId table
-      if (!xarGallery2Helper::g2addexternalMapEntry($newRole['uid'], $g2Group->getId(), 1)) {
-	return false;
-      }
-    }
-    
-    // update map caches:
-    list($ret, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings('externalId');
-    if (!$ret) {
-      return false;
-    }
-    
-    /* 
-     * 2. export xaraya roles of type 1 = groups to G2
-     */
-    foreach ($xarGroups as $xarGroup) {
-      // if it's already in the map table, the groupName may be out of sync
-      if (isset($mapsbyexternalid[$xarGroup['uid']])) {
-	if (!xarGallery2Helper::g2updateGroup($xarGroup['uid'], $xarGroup)) {
-	  return false;
-	}
-	continue;
-      }			
-      
-      // if the group already exists in G2, but we don't have a mapping yet, create the map 
-      if (xarGallery2Helper::in_array_cin($xarGroup['name'], $g2GroupNames)) {
-	if (!xarGallery2Helper::g2addexternalMapEntry($xarGroup['uid'], $g2Groups[strtolower($xarGroup['name'])]->getId(), 1)) {
-	  return false;
-	}
-	// there's no group data to update, the names are already the same
-	continue;
-      }
-      
-      // else create group
-      if(!xarGallery2Helper::g2createGroup($xarGroup['uid'], $xarGroup)) { 
-	return false;
-      } // this creates the extId map too
-    }
-    
-    // update map caches:
-    list($ret, $mapsbyentityid) = xarGallery2Helper::g2getallexternalIdmappings('entityId');
-    if (!$ret) {
-      return false;
-    }
-    
-    
-    /*
-     * 3. import G2 users to xaraya
-     */
-
-    // First disable "each user has a unique email" in xaraya, because G2 has not this requirement
-    xarModSetVar('roles','uniqueemail',0);
-    // Foreach user: a) create if nonexistent, b) add group memberships
-    foreach ($g2UserNames as $g2UserName) {
-      $g2User = $g2Users[strtolower($g2UserName)]['user'];
-      // check if we already mapped this user
-      if (!isset($mapsbyentityid[$g2User->getId()])) {
-	// check if a user with this name already exists
-	if (!xarGallery2Helper::in_array_cin($g2UserName, array_keys($xarUsers))) {
-	  // add user to xaraya if there wasn't such a user
-	  // create xar user
-	  // if the G2 user has no email, generate a dummy email
-	  $userEmail = $g2User->getemail();
-	  $userEmail =  empty($userEmail) ? 'dummyEmail@G2Integration.xyz' : $userEmail;
-	  /* xaraya doesn't accept empty full names */
-	  $userFullName = $g2User->getfullName();
-	  $userFullName = empty($userFullName) ? $g2UserName : $userFullName;
-	  $uid = xarmodapifunc('roles','admin','create',
-			       array('uname' => $g2UserName,
-				     'realname' => $userFullName, 'email' => $userEmail,
-				     'cryptpass' => $g2User->gethashedPassword(), 'date' => $g2User->getcreationTimestamp(),
-				     'state' => ROLES_STATE_ACTIVE, 'valcode' => xarModAPIFunc('roles', 'user', 'makepass')));
-	  if (!isset($uid) || !is_int(intval($uid)) || intval($uid) <= 1) {
-	    $msg = xarML("Could not create a xar role for a G2 user '$g2UserName'.");
-	    xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	    return false;
-	  }
-	  $uid = intval($uid);
-	} else {
-	  // get the $uid of the existing xar role
-	  $uid = $xarUsers[strtolower($g2UserName)]['uid'];
-	}
-	
-	// and add the map entry 
-	if (!xarGallery2Helper::g2addexternalMapEntry($uid, $g2User->getId(), 0)) {
-	  return false;
-	}
-      } else {
-	$uid = $mapsbyentityid[$g2User->getId()]['externalId'];
-      }
-      
-      // add the user to groups he was member of in G2
-      // luckily he must have been member of Everybody and All Users group, nothing to add
-      $g2MemberShips = array_keys($g2Users[strtolower($g2UserName)]['memberships']);
-      
-      // old xaraya users just need the new memberships from G2
-      if (isset($mapsbyentityid[$g2User->getId()]) || xarGallery2Helper::in_array_cin($g2UserName, array_keys($xarUsers))) {
-	list ($oldxarUser, $existingMemberships) = xarGallery2Helper::xarGetAncestors(array('uid' => $uid));
-	if ($oldxarUser == null) {
-	  return false;
-	}
-      } else {
-	$existingMemberships = array();
-      }
-      // filter only new memberships and translate entityIds to externalIds = uids
-      $newg2MemberShips = array();
-      foreach ($g2MemberShips as $g2GroupId) {
-	if (isset($mapsbyentityid[$g2GroupId])) { // get uid from the map
-	  $newgroupuid = $mapsbyentityid[$g2GroupId]['externalId'];
-	} else {
-	  $msg = xarML('Could not get extId for g2groupid [#(1)].', $g2GroupId);
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  return false;
-	}
-	if (!in_array($newgroupuid, array_keys($existingMemberships))) {
-	  $newg2MemberShips[$newgroupuid] = $newgroupuid;
-	}
-      }
-      $g2MemberShips = $newg2MemberShips;
-      
-      // check if this xaraya user is in the xaraya admin group
-      list($thisRole, $thisRolesMemberships) = xarGallery2Helper::xarGetAncestors(array('uid' => $uid));
-      $xarIsAdmin = 0;
-      foreach ($thisRolesMemberships as $xarMembership) {
-	if ($xarMembership['name'] == 'Administrators') {
-	  $xarIsAdmin = 1;
-	  break;
-	}
-      }
-
-      // add the user to some groups
-      foreach ($g2MemberShips as $membershipuid) {
-	// don't add the user directly to the Everybodygroup, as he's a member of that group
-	// through recursion
-	if (count($g2MemberShips) > 1 && $membershipuid == $xarEverybodyGroup['uid']) {
-	  continue;
-	} 
-	// don't add admin user in xaraya to defaultGroup	
-	if ($xarIsAdmin == 1 and $membershipuid == $xarDefaultGroup['uid']) {
-	  continue;
-	}
-	// add user to group
-	$ret = xarmodapifunc('roles','admin','addmember',
-			     array('gid' => $membershipuid, 'uid' => $uid));
-	if (!isset($ret) ||!$ret) {
-	  $msg = xarML('Could not add the new xar role [#(1)] to a xar group [#(2)].', $uid, $membershipuid);
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  return false;
-	}
-      } 
-    } // end for each G2 user
-    
-    
-    // update map caches:
-    list($ret, $mapsbyexternalid) = xarGallery2Helper::g2getallexternalIdmappings('externalId');
-    if (!$ret) {
-      return false;
-    }
-    
-    /*  
-     * 4. export xaraya roles of type 0 = users to G2 or update G2 users
-     */
-    foreach ($xarUsers as $xarUser) {
-      // if the map exists, just update the user data
-      if (isset($mapsbyexternalid[$xarUser['uid']])) {
-	if (!xarGallery2Helper::g2updateUser($xarUser['uid'], $xarUser)) {
-	  return false;
-	}
-      } else {
-	// if the user already exists in G2, create a mapping and update the data
-	if (xarGallery2Helper::in_array_cin($xarUser['uname'], $g2UserNames)) {
-	  $g2User = $g2Users[strtolower($xarUser['uname'])]['user'];
-	  
-	  // and add the map entry 
-	  if (!xarGallery2Helper::g2addexternalMapEntry($xarUser['uid'], $g2User->getId(), 0)) {
-	    return false;
-	  }
-	  // update the user data
-	  if (!xarGallery2Helper::g2updateUser($xarUser['uid'], $xarUser)) {
-	    return false;
-	  }
-	} else { // create user in G2
-	  if (!xarGallery2Helper::g2createUser($xarUser['uid'], $xarUser)) {
-	    return false;
-	  }
-	}
-      }
-      // Add xaraya group memberships in G2
-      list($unused, $xarMemberships) = xarGallery2Helper::xarGetAncestors(array('uid' => $xarUser['uid']));
-      foreach ($xarMemberships as $xarGroup) {			
-	// no need to add it to everybody/default group, already member of these groups
-	if ($xarGroup['uid'] == $xarEverybodyGroup['uid'] || $xarGroup['uid'] ==  $xarDefaultGroup['uid']) {
-	  continue;
-	}
-	$ret = GalleryEmbed::addUserToGroup($xarUser['uid'], $xarGroup['uid']);
-	if ($ret->isError()) {
-	  $msg = xarML('Failed to add g2 user  with extid [#(1)] to g2 group with extid [#(2)], uname [#(3)]. In import/export step 4. Here is the error message from G2: <br /> [#(4)]',
-		       $xarUser['uid'],  $xarGroup['uid'], $xarGroup['uname'], $ret->getAsHtml());
-	  xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-	  return false;
-	}
-      }
-    }
-    /*
-     * 5. delete G2 pending users
-     */
-    /*
-     * doesn't work in multisite + embedded g2. therefore remove it from the xaraya integration
-     * we should add it again in the centralized g2 user synchronization
-
-    if (!xarGallery2Helper::g2deletePendingUsers()) {
-      return false;
-    }
-    */
-    
-    // The import/export was successful
-    // Enable gallery2 hooks for roles again
-    $ret = xarModAPIFunc('modules','admin','enablehooks',
-			 array('callerModName' => 'roles', 'hookModName' => 'gallery2'));
-    if (!isset($ret) || !$ret) {
-      $msg = xarML('Could not re enable the hooks to the roles module.');
-      xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
-      return false;
-    }
-    
-    // restore config value
-    xarGallery2Helper::isConfigured($configValueBackup);
-    return true;
-  }
-  
-  /**
-   * in_array_cin: case-insensitive in_array
-   *
-   * case-insensitive version of php function in_array()
-   * returns true if param 1 is in array param 2
-   *
-   * @author Andy Staudacher
-   * @access public
-   * @param var the search argument
-   * @param array of vars to search in
-   * @return bool success status
-   */
-  function in_array_cin($strItem, $arItems)
-  {
-    foreach ($arItems as $strValue)
-      {
-	if (strtoupper($strItem) == strtoupper($strValue))
-	  {
-	    return true;
-	  }
-      }
-    return false;
-  }
-
-  /**
-   * xarServerGetBaseURI() wrapper for G2 embedPath compatibility
-   *
-   * xarServerGetBaseURI() can be empty, in this case set it to /
-   *
-   * @author Andy Staudacher
-   * @access public
-   * @return string fixed xarServerGetBaseURI()
-   */
-  function xarServerGetBaseURI()
-  {
-    $path = xarServerGetBaseURI();
-    $length = strlen($path);
-    if ($length == 0 || $path{$length-1} != '/') {
-	$path .= '/';
-    }
-    return $path;
+    require_once(dirname(__FILE__) . '/xargallery2helper_advanced.php');
+    return xarGallery2Helper_Advanced::g2xarUserGroupImportExport();
   }
 }
 

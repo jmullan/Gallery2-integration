@@ -30,7 +30,12 @@ function gallery2_admin_modifyconfig()
 	
 	switch($data['tab']) {
 	case 'setup': 
-		$data['path']['g2-relative-url']      = xarModGetVar('gallery2', 'g2.relativeurl');
+		$data['path']['g2Uri']      = xarModGetVar('gallery2', 'g2Uri');
+		$data['path']['embedUri']    = xarModGetVar('gallery2', 'embedUri');
+		/* Auto-detect the embedUri if necessary */
+		if (empty($data['path']['embedUri'])) {
+		    $data['path']['embedUri'] = xargallery2helper::getDetectedEmbedUri();
+		}
 		$data['path']['g2-include-path'] = xarModGetVar('gallery2','g2.includepath');
 		$data['sidebarInside'] = xarModGetVar('gallery2', 'g2.sidebarInside');
 		list($ret, $error) = xarGallery2Helper::verifyConfig(false);

@@ -134,7 +134,7 @@ function gallery2_imageblock_display($blockinfo)
 
   // render and get the imageblock html
   list ($ret, $blockinfo['content']) = GalleryEmbed::getImageBlock($params);
-  if (!$ret->isSuccess()) {
+  if (!empty($ret)) {
     $msg = xarML('G2 did not return a success status upon an imageblock request. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
     xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
     return;

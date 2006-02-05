@@ -165,7 +165,7 @@ function _gallery2_adminapi_addmemberhook($args)
       // this group is back, recalled. 
       // other CMS shouldn't care i guess, just a strange and rare issue
       list($ret, $g2Group) = GalleryCoreApi::loadEntityByExternalId($parent['uid'], 'GalleryGroup');
-      if ($ret->isError()) {
+      if ($ret) {
 	if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) { 
 	  // ok, we need to create this group first
 	  if (!xarGallery2Helper::g2createGroup($parent['uid'], $parent)) {
@@ -181,7 +181,7 @@ function _gallery2_adminapi_addmemberhook($args)
       
       // add user to group
       $ret = GalleryEmbed::addUserToGroup($child['uid'], $parent['uid']);
-      if ($ret->isError()) {
+      if ($ret) {
 	$msg = xarML('Failed to add g2 user to g2 group!');
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
 	return $args['extrainfo'];

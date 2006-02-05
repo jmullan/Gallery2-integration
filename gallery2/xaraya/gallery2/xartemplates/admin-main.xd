@@ -124,12 +124,13 @@
         </div>
         <br />
 		<div class="xar-mod-title xar-norm-outline" style="margin-top: 1em; margin-left: 1em; margin-right: 1em; width: auto; border-style: none none dotted none;">
-            <xar:mlstring>Known Bugs</xar:mlstring>
+            <xar:mlstring>Known Issues</xar:mlstring>
 		</div>
 		<br />
         <div style="margin-left: 1em; margin-right: 1em; text-align:left;">
             <ul>
                 <li><xar:mlstring>Since the xaraya RC candidates, you cannot use G2 URL rewrite with xaraya. Deactivate the G2 URL rewrite module when using it embedded in xaraya</xar:mlstring></li>
+                <li><xar:mlstring>Users that have been imported from g2 into Xaraya all need to request a new password since their password could not be imported into Xaraya. The password hash methods between Xaraya and Gallery2 are incompatible.</xar:mlstring></li>
             </ul>
         </div>
         <br />

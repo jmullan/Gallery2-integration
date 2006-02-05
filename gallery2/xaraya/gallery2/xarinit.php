@@ -32,23 +32,25 @@ function gallery2_init()
    * -> there's no overhead in using multiple module variables and checking them
    *    in each request.
    */
-  // relative url from CMS root dir to G2 root dir
-  xarModSetVar('gallery2','g2.relativeurl','');
+  // g2Uri, (URL path of Gallery 2 codebase)
+  xarModSetVar('gallery2','g2Uri','');
   // absolute include path to /some/path/Gallery/
   xarModSetVar('gallery2','g2.includepath','');
   // the login redirect url
   xarModSetVar('gallery2','g2.loginredirect','');
   // the G2 basefile
-  xarModSetVar('gallery2','g2.basefile','');
+  xarModSetVar('gallery2','embedUri','');
   // if true everything is configured and ready for production
   xarModSetVar('gallery2','configured',0);
   // short url support (disabled for now)
   xarModSetVar('gallery2', 'SupportShortURLs', 0);
 
-  /* min g2 version */
-  xarModSetVar('gallery2', 'g2.minCoreVersion', '0.9.25');
+  /* compatible g2 core api version */
+  xarModSetVar('gallery2', 'coreApiVersion', serialize(array(7, 0)));
   /* min xar version */
   xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0');
+  // G2 embed API version requirement
+  xarModSetVar('gallery2', 'embedApiVersion', serialize(array(1, 0)));
   
   // whether to display the sidebar menu within the module html 
   // (else, instantiate a sidebar block)
@@ -174,6 +176,30 @@ function gallery2_upgrade($oldversion)
     case '0.6.11':
 	/* changed 1.0.0 to 1.0 */
 	xarModSetVar('gallery2', 'xar.minCoreVersion', '1.0');
+	
+    case '0.6.12':
+    	/* Replace relativeG2Uri and embedPath with g2Uri and embedUri */
+    	$relativeG2Path = xarModGetVar('gallery2','g2.relativeurl');
+    	if (substr($relativeG2Path, 0, 2) == './') {
+    	    $relativeG2Path = substr($relativeG2Path, 2);
+    	}
+    	$embedPath = xargallery2helper::xarServerGetBaseURI();
+    	$pathParts = explode('/', $embedPath);
+    	while (substr($relativeG2Path, 0, 3) == '../' && !empty($pathParts)) {
+    	    array_pop($pathParts);
+    	    $relativeG2Path = substr($relativeG2Path, 3);
+    	}
+    	$g2Uri = implode('/', $pathParts) . '/' . $relativeG2Path;
+    	
+    	xarModSetVar('gallery2', 'g2Uri', $g2Uri);
+    	$embedUri = xargallery2helper::xarServerGetBaseURI() . xarModDelVar('gallery2','g2.basefile');
+    	xarModSetVar('gallery2', 'embedUri', $embedUri); 
+	xarModDelVar('gallery2','g2.basefile');
+        xarModDelVar('gallery2','g2.relativeurl');
+        xarModSetVar('gallery2', 'g2.minCoreVersion', '1.0.26');
+  	xarModSetVar('gallery2', 'embedApiVersion', serialize(array(1, 0)));
+  	xarModSetVar('gallery2', 'coreApiVersion', serialize(array(7, 0)));
+  	xarmodDelVar('gallery2', 'xar.minCoreVersion');
 	break;
 	
     default:
@@ -255,13 +281,13 @@ function gallery2_delete()
   }
 	
   // Remove module variables	
-  xarModDelVar('gallery2','g2.relativeurl');
   xarModDelVar('gallery2','g2.includepath');
+  xarModDelVar('gallery2','g2Uri');
+  xarModDelVar('gallery2','embedUri');
   xarModDelVar('gallery2','g2.loginredirect');
-  xarModDelVar('gallery2','g2.basefile');
   xarModDelVar('gallery2','configured');
   xarModDelVar('gallery2','SupportShortURLs');
-  xarmodDelVar('gallery2', 'g2.minCoreVersion');
+  xarModDelVar('gallery2', 'coreApiVersion');
   xarmodDelVar('gallery2', 'xar.minCoreVersion');
   xarModDelVar('gallery2','g2.sidebarInside');
   // Remove Masks and Instances

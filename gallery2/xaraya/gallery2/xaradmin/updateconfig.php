@@ -15,6 +15,7 @@
 
 // Load the xarGallery2Helper class
 include_once(dirname(__FILE__) .'/../xargallery2helper.php');
+require_once(dirname(__FILE__) . '/../xargallery2helper_advanced.php');
 
 /**
  * update the config of the gallery2 module
@@ -41,34 +42,72 @@ function gallery2_admin_updateconfig()
 
 		$sidebarInside = $sidebarInside ? 1 : 0;
 		xarModSetVar('gallery2', 'g2.sidebarInside', $sidebarInside);
-		if (!isset($path) || !is_array($path) || !isset($path['g2-relative-url'])) {
+		if (!isset($path) || !is_array($path) || !isset($path['g2Uri']) || !isset($path['embedUri'])) {
 			$msg = xarML('Bad parameters for uploads_admin_updateconfig!');
 			xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
 			return;
 		}
-		// the relative URL
-		// first replace all '\' by '/'
-		$g2RelativeUrl = trim(str_replace("\\", "/", $path['g2-relative-url']));
-		// then remove any trailing '/' if there is one and add a '/'
-		$g2RelativeUrl = preg_replace('|/$|', '', $g2RelativeUrl);
-		$g2RelativeUrl = $g2RelativeUrl . '/';
-		// remove './' from the beginning
-		$g2RelativeUrl = preg_replace('|^\./|', '', $g2RelativeUrl);
-		// if the path is absolute, don't accept it.
-		if (preg_match('|^/|', $g2RelativeUrl)) {
-		  $msg = xarML('The relative G2 url path "[#(1)]" is not relative, it starts with a "/"! Please make it relative!', $g2RelativeUrl);
-		  xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
-		  return;
+
+		/* Task: find embedUri / normalize it */
+		$embedUri = $path['embedUri'];
+		$xarayaPathPart = '';
+		if (empty($embedUri)) {
+		    $embedUri = xargallery2helper::getDetectedEmbedUri();
+		} else {
+		    $embedUri = G2EmbedDiscoveryUtilities::normalizeEmbedUri($embedUri);
+		    list ($protocol, $host, $xarayaPathPart, $file) = G2EmbedDiscoveryUtilities::parseUri($embedUri);
+		    if (empty($xarayaPathPart)) {
+			/* The path cannot be empty */
+			$msg = xarML('The URL to embedded G2 cannot have an empty path part.');
+			xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
+			return;
+		    }
 		}
 
-		$g2IncludePath = null;
-		// the absolute include path
-		if (isset($path['g2-include-path']) && !empty($path['g2-include-path'])) {
-		  $g2IncludePath = $path['g2-include-path'];
+		$g2Uri = $path['g2Uri'];
+		$g2PathPart = '';
+		if (empty($g2Uri)) {
+		    $msg = xarML('The URL to the Gallery 2 installation cannot be empty.');
+		    xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
+		    return;
+		} else {
+		    $g2Uri = G2EmbedDiscoveryUtilities::normalizeG2Uri($g2Uri);
+		    list ($protocol, $host, $g2PathPart, $file) = G2EmbedDiscoveryUtilities::parseUri($g2Uri);
+		    if (empty($g2PathPart)) {
+			/* The path cannot be empty */
+			$msg = xarML('The URL to your Gallery 2 installatoin cannot have an empty path part.');
+			xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
+			return;
+		    }
+		}
+		
+		/* Task: find includePath for G2's embed.php */
+		$includePath = '';
+		if (!isset($path['g2-include-path']) || empty($path['g2-include-path'])) {
+		    $xarayaBasePath = dirname(dirname(dirname(dirname(__FILE__))));
+		    /* A embedUri that is certainly not a short-url, something that we can work with */
+		    $pseudoEmbedUri = xargallery2helper::xarServerGetBaseURI() . 'index.php';
+		    list ($ok, $embedPhpPath, $errorString) = 
+		          G2EmbedDiscoveryUtilities::getG2EmbedPathByG2UriEmbedUriAndLocation($g2Uri, $pseudoEmbedUri, $xarayaBasePath);
+		    if (!$ok) {
+		    	$msg = xarML('There was an error during the detection of the embed.php path. Details: [#(1)]', $errorString);
+		        xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
+		        return;
+		    }
+		    $includePath = $embedPhpPath;
+		} else {
+		    $includePath = $path['g2-include-path'];
+		}
+		    
+		/* Check if the directory exists */
+		if (!file_exists($includePath)) {
+		    $msg = xarML('The file or directory "[#(1)]" does not exist!', $includePath);
+		    xarErrorSet(XAR_USER_EXCEPTION, 'BAD_PARAM', new DefaultUserException($msg));
+		    return;
 		}
 			
 		// the path seems to be ok, verify that we find a G2 installation and that it is configured
-		list($ret, $error) = xarGallery2Helper::verifyConfig(true, true, $g2RelativeUrl, $g2IncludePath);
+		list($ret, $error) = xarGallery2Helper::verifyConfig(true, true, $g2Uri, $embedUri, $includePath);
 		if (!$ret) {
 		  return;
 		}

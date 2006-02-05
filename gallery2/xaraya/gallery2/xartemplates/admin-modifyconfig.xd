@@ -53,19 +53,31 @@
 		
 			<div style="clear: both; padding-top: 10px;">
 				<span style="float: left; width: 20%; text-align: right;">
-					<span class="help" title="#xarML('The relative url from http://yoursite.com/path/xaraya/ to http://yoursite.com/path/to/G2/.')#"><label for="path[g2-relative-url]"><xar:mlstring>Relative Url to G2</xar:mlstring></label>:</span>
+					<span class="help" title="#xarML('The URL to your Gallery 2 installation, e.g. http://yoursite.com/gallery2/.')#"><label for="path[g2Uri]"><xar:mlstring>URL to Gallery 2</xar:mlstring></label>:</span>
 				</span>
 				<span style="float: right; width: 78%; text-align: left;">
-					<input type="text" name="path[g2-relative-url]" value="#$path['g2-relative-url']#" size="40" />
+					<input type="text" name="path[g2Uri]" value="#$path['g2Uri']#" size="40" />
 					<br />
 					<xar:mlstring>
-						This is the relative url path from xaraya url to the G2 url. Relative means the relative path from the directory where the index.php of xaraya is installed to the directory where the main.php of G2 is installed.
+						This is the URL to your Gallery 2 installation (not the URL of embedded Gallery within your xaraya installation). Examples:
 						<ul>
-						  <li>Example: xaraya is in Document Root: www.domain.com/index.php. G2 is installed in www.domain.com/gallery/main.php. The relative path would be "gallery/" or "./gallery/"</li>
-						  <li>Example: xaraya is in Document Root: www.domain.com/index.php. G2 is installed in www.domain.com/modules/gallery2/g2/main.php. The relative path is "modules/gallery2/g2/".</li>
-						  <li>Example: xaraya is in www.domain.com/xaraya/index.php. G2 is installed in www.domain.com/photos/main.php. The relative path is "../photos/".</li>
+						  <li>http://www.example.com/gallery2/</li>
+						  <li>http://photos.example.com/main.php</li>
+						  <li>http://gallery.example.com/</li>
+						  <li>/gallery2/ (best don't specify the host (domain) if not necessary, since it's stored in database)</li>
 						</ul>
 					</xar:mlstring>
+				</span>
+			</div>
+                        <div style="clear: both; padding-top: 10px;">
+				<span style="float: left; width: 20%; text-align: right;">
+					<span class="help" title="#xarML('URL location of embedded G2 e.g. http://yoursite.com/index.php?module=gallery2.')#"><label for="path[embedUri]"><xar:mlstring>Embedded G2 URL</xar:mlstring></label>:</span>
+				</span>
+				<span style="float: right; width: 78%; text-align: left;">
+					<input type="text" name="path[embedUri]" value="#$path['embedUri']#" size="40" />
+					<br />
+					<xar:mlstring>
+						This is the URL of Gallery 2 embedded in xaraya. No need to modify it since we can automatically detect it.</xar:mlstring>
 				</span>
 			</div>
 			<div style="clear: both; padding-top: 10px;">

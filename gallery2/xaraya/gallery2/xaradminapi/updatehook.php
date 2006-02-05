@@ -92,7 +92,7 @@ function gallery2_adminapi_updatehook($args)
     
     // delete G2 user
     $ret = GalleryEmbed::deleteUser($role['uid']);
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('Failed to delete G2 user with extId [#(1)]! Here is the error message from G2: <br
 				/>[#(2)]', $role['uid'],$ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
@@ -114,7 +114,7 @@ function gallery2_adminapi_updatehook($args)
     // role was a group, is now a user 
     // delete G2 group
     $ret = GalleryEmbed::deleteGroup($role['uid']);
-    if (!$ret->isSuccess()) {
+    if (!empty($ret)) {
       $msg = xarML('Failed to delete G2 group with extId [#(1)]! Here is the error message from G2: <br
 			/>[#(2)]', $role['uid'],$ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));

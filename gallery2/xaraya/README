@@ -105,7 +105,7 @@ Language Settings:
 Known Bugs
 ----------
     * Since the xaraya RC candidates, you cannot use G2 URL rewrite with xaraya. Deactivate the G2 URL rewrite module when using it embedded in xaraya
-
+    * Users that have been imported from Gallery 2 into Xaraya all need to request a new password since their password could not be imported into Xaraya. The password hash methods between Xaraya and Gallery2 are incompatible.
 TODO List
 ---------
 

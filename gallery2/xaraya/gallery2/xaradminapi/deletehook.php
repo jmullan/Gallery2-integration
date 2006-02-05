@@ -97,7 +97,7 @@ function _gallery2_adminapi_deleterolehook($args)
     // remove the user from G2
     $ret = GalleryEmbed::deleteUser($itemid);
   }
-  if (!$ret->isSuccess()) {
+  if (!empty($ret)) {
     $msg = xarML('Failed to delete G2 user/group with extId [#(1)]! Here is the error message from G2: <br /> [#(2)',
 		 $itemid, $ret->getAsHtml());
     xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
@@ -200,7 +200,7 @@ function _gallery2_adminapi_removememberhook($args)
       // this group is back, recalled. 
       // other CMS shouldn't care i guess, just a strange and rare issue
       list($ret, $g2Group) = GalleryCoreApi::loadEntityByExternalId($group['uid'], 'GalleryGroup');
-      if ($ret->isError()) {
+      if ($ret) {
 	if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) { 
 	  // ok, we need to create this group first
 	  if (!xarGallery2Helper::g2createGroup($group['uid'], $group)) {
@@ -216,7 +216,7 @@ function _gallery2_adminapi_removememberhook($args)
 
       // remove user from group
       $ret = GalleryEmbed::removeUserFromGroup($child['uid'], $group['uid']);
-      if ($ret->isError()) {
+      if ($ret) {
 	$msg = xarML('Failed to remove g2 user [#(1)] with extId [#(2)] from g2 group [#(3)]! Here is the
 					error from G2: <br />', $child['uname'], $child['uid'], $group['name'], $ret->getAsHtml());
 	xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));

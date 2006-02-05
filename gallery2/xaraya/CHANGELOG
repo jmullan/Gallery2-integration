@@ -1,3 +1,7 @@
+Version 0.6.13 - 2006/02/05
+----------------------------------
+Changes for Gallery 2.1 (GalleryEmbed::init and Core API 7,0 changes)
+
 Version 0.6.12 - 2005/10/06
 ----------------------------------
 CSS works now again. xaraya still doesn't offer what we need, but I'm "hacking" xaraya
