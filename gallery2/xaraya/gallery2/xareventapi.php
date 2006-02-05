@@ -28,19 +28,21 @@ include_once(dirname(__FILE__) .'/xargallery2helper.php');
  * @returns bool
  */
 /*
-function gallery2_eventapi_OnUserLogin($value) {
+function gallery2_eventapi_onUserLogin($value) {
     // $value contains the userid in this event
     // first check if the module has been configured
-	if(!xarGallery2Helper::isConfigured()) {
-		return true;
+    if(!xarGallery2Helper::isConfigured() || empty($value)) {
+        return true;
     }
-    $user = xarModAPIFunc('roles','user','get',
-                          array('uid' => $value));
-    if (empty($user['uname'])) { return false; }
-	// Start G2 transaction
-	if(xarGallery2Helper::init()) {
-		$ret = GalleryEmbed::login($user['uname']);
-		//???
+    
+    // init g2
+    if(xarGallery2Helper::init()) {
+        $ret = GalleryEmbed::login($value);
+        if ($ret) return false;
+        $ok = xarGallery2Helper::done();
+        if (!$ok) return false;
+    } else {
+    	return false;
     }
     return true;
 }
@@ -50,17 +52,10 @@ function gallery2_eventapi_OnUserLogin($value) {
  * Logout the authenticated user from Gallery2
  * 
  * @author Alan Harder <alan.harder@sun.com>
+ * @author Andy Staudacher <ast@gmx.ch>
  * @returns bool
  */
-function gallery2_eventapi_OnUserLogout($value) {
-    // $value contains the userid in this event
-    // first check if the module has been configured
-	if(!xarGallery2Helper::isConfigured()) {
-		return true;
-    }
-    require_once(xarModGetVar('gallery2','g2.includepath') . 'embed.php');
-    $ret = GalleryEmbed::logout(array('embedPath' => xarGallery2Helper::xarServerGetBaseURI()));
-    return true;
+function gallery2_eventapi_onUserLogout($value) {
+    return xarGallery2Helper::g2logout();
 }
-
 ?>

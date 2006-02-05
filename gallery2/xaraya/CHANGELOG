@@ -1,6 +1,10 @@
 Version 0.6.13 - 2006/02/05
 ----------------------------------
-Changes for Gallery 2.1 (GalleryEmbed::init and Core API 7,0 changes)
+- Changes for Gallery 2.1 (GalleryEmbed::init and Core API 7,0 changes)
+- The Login event handler works again. If you need to login users in G2
+  when they login in xaraya e.g. because you show non-public G2 images
+  in your xaraya articles, but don't use the image block for this purpose,
+  then just uncomment the onUserLogin handler in xareventapi.php.
 
 Version 0.6.12 - 2005/10/06
 ----------------------------------

@@ -191,7 +191,7 @@ class xarGallery2Helper
       return true;
     }
     $ret = GalleryEmbed::done();
-    if (!empty($ret)) {
+    if ($ret) {
       $msg = xarML('Could not complete the G2 transaction. Here is the error message from G2: <br /> [#(1)]', 
 		   $ret->getAsHtml());
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
@@ -444,7 +444,7 @@ class xarGallery2Helper
       xarErrorSet(XAR_SYSTEM_EXCEPTION, 'FUNCTION_FAILED', new SystemException($msg));
       return false;
     }
-    return true;
+    return xarGallery2Helper::done();
   }
   
   /**
@@ -460,11 +460,11 @@ class xarGallery2Helper
    */
   function g2logout()
   {
-    // init if not already done so
-    if (!xarGallery2Helper::init()) {
-      return false;
+    if(!xarGallery2Helper::isConfigured()) {
+        return true;
     }
-    $ret = GalleryEmbed::logout();
+    require_once(xarModGetVar('gallery2','g2.includepath'));
+    $ret = GalleryEmbed::logout(array('embedUri' => xarGallery2Helper::xarServerGetBaseURI()));
     if ($ret) {
       $msg = xarML('Failed to logout from G2 after sync process. Here is the error message from G2: <br /> [#(1)]', $ret->getAsHtml());
       xarErrorSet(XAR_USER_EXCEPTION, 'FUNCTION_FAILED', new DefaultUserException($msg));
