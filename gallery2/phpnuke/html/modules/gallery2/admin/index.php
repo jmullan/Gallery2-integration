@@ -28,7 +28,7 @@
 
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
 
-$embedVersion = "0.4.4";
+$embedVersion = "0.5.0";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -88,20 +88,19 @@ function init($var) {
 	} 	 
 
 	extract($var);
-	require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE); 	 
+	require_once ($g2embedparams['g2Uri']._G2_EMBED_PHP_FILE); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
 	$ret = GalleryEmbed :: init(array ( 	 
-			'embedPath' => $g2embedparams['embedPath'], 	 
 			'embedUri' => $g2embedparams['embedUri'], 	 
-			'relativeG2Path' => $g2embedparams['relativeG2Path'], 	 
+			'g2Uri' => $g2embedparams['g2Uri'], 	 
 			'loginRedirect' => $g2embedparams['loginRedirect'], 	 
-			'activeUserId' => '', 	 
+			'activeUserId' => $g2embedparams['activeUserId'], 	 
 			'activeLanguage' => $g2currentlang, 	 
 			'fullInit' => $fullInit)); 	 
 
-	if (!$ret->isSuccess()) { 	 
+	if ($ret) { 	 
 		g2_message('G2 did not return a success status upon an init request. Here is the error message from G2: <br /> [#(1)]'.$ret->getAsHtml()); 	 
 		return false; 	 
 	} 	 
@@ -148,17 +147,16 @@ function SaveG2Config($var, $installed) {
 	if (!$g2mainparams) {
 		$g2mainparams = array ();
 	}
-
+	
 	if($installed) {
-		$sql = "UPDATE ".$prefix."_g2config SET embedphpfile = '".$g2embedparams['embedphpfile']."', embedUri = '".$g2embedparams['embedUri']."', relativeG2Path = '".$g2embedparams['relativeG2Path']."', loginRedirect = '".$g2embedparams['loginRedirect']."', activeUserId = ".$g2embedparams['activeUserId'].", embedPath = '".$g2embedparams['embedPath']."', cookiepath = '".$g2embedparams['cookiepath']."', embedVersion = '".$embedVersion."'";
+		$sql = "UPDATE ".$prefix."_g2config SET embedUri = '".$g2embedparams['embedUri']."', g2Uri = '".$g2embedparams['g2Uri']."', loginRedirect = '".$g2embedparams['loginRedirect']."', activeUserId = ".$g2embedparams['activeUserId'].", cookiepath = '".$g2embedparams['cookiepath']."', embedVersion = '".$embedVersion."'";
 		$result = $db->sql_query($sql);
 	}
 	else {
-		$sql = "INSERT INTO ".$prefix."_g2config VALUES ('".$g2embedparams['embedphpfile']."', '".$g2embedparams['embedUri']."', '".$g2embedparams['relativeG2Path']."', '".$g2embedparams['loginRedirect']."', ".$g2embedparams['activeUserId'].", '".$g2embedparams['embedPath']."', '".$g2embedparams['cookiepath']."',0,0,'".$embedVersion."')";
+		$sql = "INSERT INTO ".$prefix."_g2config VALUES ('".$g2embedparams['embedUri']."', '".$g2embedparams['g2Uri']."', '".$g2embedparams['loginRedirect']."', ".$g2embedparams['activeUserId'].", '".$g2embedparams['cookiepath']."',0,0,'".$embedVersion."')";
 		$result = $db->sql_query($sql) or die(mysql_error());
 	}
-
-	require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
+	require_once ($g2embedparams['g2Uri']._G2_EMBED_PHP_FILE);
 	init($var);
 	$cookiepath = $g2embedparams['cookiepath'];
 	$ret = GalleryCoreApi::setPluginParameter('module','core','cookie.path',$cookiepath);
@@ -173,15 +171,14 @@ function check_g2configerror($embedphpfile, $vars=NULL)
 {
 	if (isset($vars)) {
 		extract($vars);
-		require_once ($g2embedparams['embedphpfile']."/"._G2_EMBED_PHP_FILE);
+		require_once ($g2embedparams['g2Uri']._G2_EMBED_PHP_FILE);
 		$ret = GalleryEmbed::init(array(
-			'embedPath' => $g2embedparams['embedPath'],
 			'embedUri' => $g2embedparams['embedUri'],
-			'relativeG2Path' => $g2embedparams['relativeG2Path'],
+			'g2Uri' => $g2embedparams['g2Uri'],
 			'loginRedirect' => $g2embedparams['loginRedirect'],
 			'activeUserId' => "$uid",
 			'activeLanguage' =>$g2currentlang));
-		if($ret->isError()) {
+		if($ret) {
 			g2_message("<b>Error</b><br/>Either your Gallery2 installation has not been successfully completed or the values you specified in your integration settings are incorrect.");
 		}
 	}
@@ -210,12 +207,10 @@ function DisplayMainPage() {
 	if($db->sql_numrows($exist_result) == 0) {
 		$installed = 0;
 		$setup_sql = "CREATE TABLE ".$prefix."_g2config (
-					embedphpfile VARCHAR( 255 ) NOT NULL ,
 					embedUri VARCHAR( 255 ) NOT NULL ,
-					relativeG2Path VARCHAR( 255 ) NOT NULL ,
+					g2Uri VARCHAR( 255 ) NOT NULL ,
 					loginRedirect VARCHAR( 255 ) NOT NULL ,
 					activeUserId INT( 10 ) NOT NULL ,
-					embedPath VARCHAR( 255 ) NOT NULL ,
 					cookiepath VARCHAR( 255 ) NOT NULL ,
 					showSidebar TINYINT( 1 ) NOT NULL ,
 					g2configurationDone TINYINT( 1 ) NOT NULL ,
@@ -268,7 +263,6 @@ function DisplayMainPage() {
 			else {
 				$version_text .= '<p style="color:red">Your integration package is <b>not</b> up to date.';
 				$version_text .= '<br />Latest version available is <b>' . $latest_version . '</b>.  Your installed version is <b>' . $embedVersion . '</b><br />';
-	            $version_text .= 'To see what has changed, read the ChangeLog here: <a href="http://www.nukedgallery.net/postp10252.html#10252">http://www.nukedgallery.net/postp10252.html#10252</a>.<br />';
 				$version_text .= 'You can download the latest integration package from <a href="http://www.nukedgallery.net/downloads-cat11.html">http://www.nukedgallery.net/downloads-cat11.html</a>.</p></center>';
 			}
 		}
@@ -289,25 +283,8 @@ function DisplayMainPage() {
 	// Display integration settings
 	OpenTable();
     if($installed == 0) {
-		$path  = $_SERVER['SCRIPT_NAME'];
-		$path = preg_replace('/[#\?].*/', '', $path);
-		$path = preg_replace('/\.php\/.*$/', '', $path);
-		if (substr($path, -1, 1) == '/') {
-			$path .= 'dummy';
-		}
-		$path = dirname($path);
-		//FIXME: This is VERY slow!!
-		if (preg_match('!^[/\\\]*$!', $path)) {
-			$path = '/';
-		}
-		
-		$embedPath = $path;
-        $t_embedphpfile = dirname(__FILE__);
-        $a_embedphpfile = explode("/",$t_embedphpfile);
-        $dummy = array_pop($a_embedphpfile);
-        $embedphpfile = implode("/",$a_embedphpfile)."/";
-        $embedUri = "modules.php?name=".$module_name;
-        $relativeG2Path = "modules/".$module_name."/";
+        $embedUri = "/modules.php?name=".$module_name;
+        $g2Uri = "modules/".$module_name."/";
         $loginRedirect = 'modules.php?name=Your_Account';
         $activeUserId = 0;
 
@@ -318,20 +295,20 @@ function DisplayMainPage() {
 	else {
 		$config_sql = "SELECT * FROM ".$prefix."_g2config";
 		$config_result = $db->sql_query($config_sql);
-		list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
+		list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
 	}
 
 
-	echo "<center><font class=\"option\"><b>Gallery 2 Integration Settings</b></font></center><br/><center><font color=\"red\"><b>We have done our best to fill these values in for you.  However, you should double check them for correctness.</b></font></center><br/>"
-		."<form action=\"".$admin_file.".php\" method=\"post\">"
-		."<table border=\"0\"><tr><td>"._PHPEMBEDFILE.":</td>"
-		."<td><input type=\"text\" name=\"embedphpfile\" size=\"60\" value=\"".$embedphpfile."\" maxlength=\"90\"></td></tr>"
+	echo "<center><font class=\"option\"><b>Gallery 2 Integration Settings</b></font></center><br/>";
+	if($installed == 0) {
+		echo "<center><font color=\"red\"><b>We have done our best to fill these values in for you.  However, you should double check them for correctness.</b></font></center><br/>";
+	}
+		echo"<form action=\"".$admin_file.".php\" method=\"post\">"
+		."<table border=\"0\">"
 		."<tr><td>"._EMBEDURI.":</td>"
 		."<td><input type=\"text\" name=\"embedUri\" size=\"60\" value=\"".$embedUri."\" maxlength=\"90\"></td></tr>"
-		."<tr><td>URL path from document root to embedURI:</td>"
-		."<td><input type=\"text\" name=\"embedPath\" size=\"60\" value=\"".$embedPath."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._RELATIVEG2PATH.":</td>"
-		."<td><input type=\"text\" name=\"relativeG2Path\" size=\"60\" value=\"".$relativeG2Path."\" maxlength=\"90\"></td></tr>"
+		."<td><input type=\"text\" name=\"g2Uri\" size=\"60\" value=\"".$g2Uri."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._LOGINREDIRECT.":</td>"
 		."<td><input type=\"text\" name=\"loginRedirect\" size=\"60\" value=\"".$loginRedirect."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._ACTIVEUSERID.":</td>"
@@ -375,17 +352,15 @@ function DisplayMainPage() {
 function form_g2UpdateEmbedSettings() {
 	$g2embedparams = array ();
 
-	$g2embedparams['embedphpfile'] = $_POST['embedphpfile'];
 	$g2embedparams['embedUri'] = $_POST['embedUri'];
-	$g2embedparams['relativeG2Path'] = $_POST['relativeG2Path'];
+	$g2embedparams['g2Uri'] = $_POST['g2Uri'];
 	$g2embedparams['loginRedirect'] = $_POST['loginRedirect'];
 	$g2embedparams['activeUserId'] = $_POST['activeUserId'];
-	$g2embedparams['embedPath'] = $_POST['embedPath'];
 	$g2embedparams['cookiepath'] = $_POST['cookiepath'];
 
 	$vars = compact("g2embedparams");
 	$installed = $_POST['installed'];
-	check_g2configerror($g2embedparams['embedphpfile'], $vars);
+	check_g2configerror($g2embedparams['g2Uri'], $vars);
 	SaveG2Config($vars, $installed);
 	g2_message(_CFG_UPDATED."<br><br>If this is your first time configuring Gallery2, you must export your PHPNuke users to Gallery2 before your configuration is complete.");
 }

@@ -28,7 +28,7 @@
  */
 
 
-define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
+define("MOD_NAME","gallery2");
 
 define("_PHPEMBEDFILE","Ruta completa de acceso a la carpeta de Gallery2");
 define("_EMBEDURI","URL de anidación de Gallery");

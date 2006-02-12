@@ -26,8 +26,6 @@
  * @author Dariush Molavi <dari@nukedgallery.net> 
  */ 
 
-define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
-
 define("_PHPEMBEDFILE","Caminho Completo para o directorio do Gallery2"); 
 define("_EMBEDURI","URL para a tua embedded Gallery"); 
 define("_RELATIVEG2PATH","O caminho relativo para o directorio da tua Gallery2"); 

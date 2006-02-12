@@ -28,7 +28,7 @@
  */
 
 
-define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
+define("MOD_NAME","Галерея");
 
 define("_PHPEMBEDFILE","Полный путь к каталагу галереи");
 define("_EMBEDURI","Путь к встроенной галерее");

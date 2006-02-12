@@ -102,22 +102,21 @@ function init($var) {
 		return true; 	 
 	} 	 
 
-	require_once ($var['embedphpfile']."/"._G2_EMBED_PHP_FILE); 	 
+	require_once ($var['g2Uri']._G2_EMBED_PHP_FILE); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
 	$ret = GalleryEmbed :: init(array ( 	 
-			'embedPath' => $var['embedPath'], 	 
 			'embedUri' => $var['embedUri'], 	 
-			'relativeG2Path' => $var['relativeG2Path'], 	 
+			'relativeG2Path' => $var['g2Uri'], 	 
 			'loginRedirect' => $var['loginRedirect'], 	 
-			'activeUserId' => '', 	 
+			'activeUserId' => $var['activeUserId'], 	 
 			'activeLanguage' => $g2currentlang, 	 
 			'fullInit' => 1)); 	 
 
 	$gallery->guaranteeTimeLimit(300);
 
-	if (!$ret->isSuccess()) {
+	if ($ret) {
 		message_die(CRITICAL_ERROR,'G2 did not return a success status upon an init request. Here is the error message from G2: <br /> [#(1)]'.$ret->getAsHtml());
 		return false;
 	}
@@ -133,26 +132,25 @@ function userExport() {
 
 	$sql = "SELECT * FROM ".$prefix."_g2config";
 	$result = $db->sql_query($sql);
-	list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($result);
+	list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($result);
 
-	require_once ($embedphpfile."/embed.php");
-	require_once ($embedphpfile."/modules/core/classes/ExternalIdMap.class");
+	require_once ($g2Uri."embed.php");
 
 	// init G2 transaction, load G2 API, if not already done so
-	$vars = array('embedphpfile' => $embedphpfile, 'embedUri' => $embedUri, 'relativeG2Path' => $relativeG2Path, 'loginRedirect' => $loginRedirect, 'activeUserId' => $activeUserId, 'embedPath' => $embedPath, 'cookiepath' => $cookiepath, 'showSidebar' => $showSidebar, 'g2configurationDone' => $g2configurationDone, 'embedVersion' => $embedVersion);
+	$vars = array('embedUri' => $embedUri, 'g2Uri' => $g2Uri, 'loginRedirect' => $loginRedirect, 'activeUserId' => $activeUserId, 'cookiepath' => $cookiepath, 'showSidebar' => $showSidebar, 'g2configurationDone' => $g2configurationDone, 'embedVersion' => $embedVersion);
 	if (!init($vars)) {
 		return false;
 	}
 
 	// Load all existing phpnuke <-> G2 mappings
 	list ($ret, $mapsByExternalId) = GalleryEmbed::getExternalIdMap('externalId');
-	if ($ret->isError()) {
+	if ($ret) {
 		return false;
 	}
 
 	// Map the ExternalMapId "admin" to the last phpnuke admin account found
 	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
+	if ($ret) {
 		ob_flush();
 		flush();
 		g2_message('Unable to fetch the admin group. Here is the error message from G2: <br />'.$ret->getAsHtml());
@@ -161,7 +159,7 @@ function userExport() {
 
 	// Grab all the existing G2 admins
 	list ($ret, $adminList) = GalleryCoreApi::fetchUsersForGroup($adminGroupId);
-	if ($ret->isError()) {
+	if ($ret) {
 		ob_flush();
 		flush();
 		g2_message('Unable to fetch a member in the admin group. Here is the error message from G2: <br />'.$ret->getAsHtml());
@@ -172,8 +170,9 @@ function userExport() {
 	$adminId = key($adminList);
 
 	if (!isset ($mapsByExternalId["admin"])) {
-		$ret = ExternalIdMap::addMapEntry(array('externalId'=>"admin", 'entityType'=>'GalleryUser', 'entityId'=>$adminId));
-		if ($ret->isError()) {
+		$ret = GalleryEmbed::addExternalIdMapEntry("admin", $adminId, 'GalleryUser');
+		if ($ret) {
+			echo $ret->getAsHtml();
 			ob_flush();
 			flush();
 			return false;
@@ -211,17 +210,17 @@ function userExport() {
 			// if the user exists, just update the user data
 			if (isset ($mapsByExternalId[$user_id])) {
 				$ret = GalleryEmbed::updateUser($user_id, $args);
-				if (!$ret->isSuccess()) {
+				if ($ret) {
 					$failures[] = $user_id;
 				}
 			}
 			else { //  else we create the user
 				$ret = GalleryEmbed::createUser($user_id, $args);
-				if($ret->isError() && ($ret->getErrorCode() & ERROR_COLLISION)) {
+				if($ret && ($ret->getErrorCode() & ERROR_COLLISION)) {
 					list($ret,$user) = GalleryCoreApi::fetchUserByUsername($row['username']);
 					$g2userId = $user->getId();
 					$ret = GalleryEmbed::addExternalIdMapEntry($row['user_id'],$g2userId,"GalleryUser");
-					if($ret->isError()) {
+					if($ret) {
 						g2_message($ret->getAsHtml());
 					}
 				}

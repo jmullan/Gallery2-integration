@@ -78,14 +78,14 @@ define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
 
 $g2result = $db->sql_query("SELECT * FROM ".$prefix."_g2config");
-list($embedphpfile, $embedUri, $relativeG2Path, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
+list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
 
 if ($g2configurationDone != 1) {
 	$content = _G2_CONFIGURATION_NOT_DONE; 
 	return;
 }
 
-require_once($embedphpfile."/"._G2_EMBED_PHP_FILE);
+require_once($g2Uri._G2_EMBED_PHP_FILE);
 
 if (is_admin($admin)) {
 	$uid='admin';
@@ -101,9 +101,8 @@ else {
 }
 
 $ret = GalleryEmbed::init(array(
-	'embedPath' => $embedPath,
 	'embedUri' => $embedUri,
-	'relativeG2Path' => $relativeG2Path,
+	'g2Uri' => "/".$g2Uri,
 	'loginRedirect' => $loginRedirect,
 	'activeUserId' => "$uid",
 	'fullInit' => true));
