@@ -1,3 +1,7 @@
+2006-02-20  Dariush Molavi  <dari@nukedgallery.net> 0.5.1
+	* Fix: Added language file check. If the user's language file isn't in 
+	  the integration package, simply use English, instead of dying.
+
 2006-02-12  Dariush Molavi  <dari@nukedgallery.net> 0.5.0
 	* Merged EMBED_API_DEV into HEAD.
 

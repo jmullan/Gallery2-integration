@@ -34,8 +34,13 @@ if(!isset($admin_file)) {
 
 if (!eregi("".$admin_file.".php", $_SERVER['PHP_SELF'])) { die ("Access Denied"); }
 $module_name = "gallery2";
-include_once("modules/$module_name/admin/language/lang-".$currentlang.".php");
 
+if(file_exists("modules/$module_name/admin/language/lang-".$currentlang.".php")) {
+	include_once("modules/$module_name/admin/language/lang-".$currentlang.".php");
+}
+else {
+	include_once("modules/$module_name/admin/language/lang-english.php");
+}
 
 switch($op) {
 
