@@ -28,7 +28,7 @@
 
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
 
-$embedVersion = "0.5.0";
+$embedVersion = "0.5.2";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -88,7 +88,7 @@ function init($var) {
 	} 	 
 
 	extract($var);
-	require_once ($g2embedparams['g2Uri']._G2_EMBED_PHP_FILE); 	 
+	require_once (substr($g2embedparams['g2Uri'],1)._G2_EMBED_PHP_FILE); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
@@ -156,7 +156,7 @@ function SaveG2Config($var, $installed) {
 		$sql = "INSERT INTO ".$prefix."_g2config VALUES ('".$g2embedparams['embedUri']."', '".$g2embedparams['g2Uri']."', '".$g2embedparams['loginRedirect']."', ".$g2embedparams['activeUserId'].", '".$g2embedparams['cookiepath']."',0,0,'".$embedVersion."')";
 		$result = $db->sql_query($sql) or die(mysql_error());
 	}
-	require_once ($g2embedparams['g2Uri']._G2_EMBED_PHP_FILE);
+	require_once (substr($g2embedparams['g2Uri'],1)._G2_EMBED_PHP_FILE);
 	init($var);
 	$cookiepath = $g2embedparams['cookiepath'];
 	$ret = GalleryCoreApi::setPluginParameter('module','core','cookie.path',$cookiepath);
@@ -171,7 +171,7 @@ function check_g2configerror($embedphpfile, $vars=NULL)
 {
 	if (isset($vars)) {
 		extract($vars);
-		require_once ($g2embedparams['g2Uri']._G2_EMBED_PHP_FILE);
+		require_once (substr($embedphpfile,1)._G2_EMBED_PHP_FILE);
 		$ret = GalleryEmbed::init(array(
 			'embedUri' => $g2embedparams['embedUri'],
 			'g2Uri' => $g2embedparams['g2Uri'],
@@ -284,8 +284,8 @@ function DisplayMainPage() {
 	OpenTable();
     if($installed == 0) {
         $embedUri = "/modules.php?name=".$module_name;
-        $g2Uri = "modules/".$module_name."/";
-        $loginRedirect = 'modules.php?name=Your_Account';
+        $g2Uri = "/modules/".$module_name."/";
+        $loginRedirect = '/modules.php?name=Your_Account';
         $activeUserId = 0;
 
 		$c_result = $db->sql_query("SELECT config_value FROM ".$prefix."_bbconfig WHERE config_name='cookie_path'");

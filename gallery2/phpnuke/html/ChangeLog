@@ -1,3 +1,6 @@
+2006-02-20  Dariush Molavi  <dari@nukedgallery.net> 0.5.2
+	* Fix: Proper URL input enforced.
+
 2006-02-20  Dariush Molavi  <dari@nukedgallery.net> 0.5.1
 	* Fix: Added language file check. If the user's language file isn't in 
 	  the integration package, simply use English, instead of dying.

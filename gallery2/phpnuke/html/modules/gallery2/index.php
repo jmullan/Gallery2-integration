@@ -164,11 +164,11 @@ if ($g2bodyHtml==null) {
             return;
     }
 
-    require_once($g2Uri._G2_EMBED_PHP_FILE);
+    require_once(_G2_EMBED_PHP_FILE);
                 
     $g2currentlang = $phpnuke2G2Lang[$currentlang];
                 
-    $ret = GalleryEmbed::init(array('embedUri' => $embedUri,'g2Uri' => '/'.$g2Uri,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
+    $ret = GalleryEmbed::init(array('embedUri' => $embedUri,'g2Uri' => $g2Uri,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
 
     if ($ret) {
         if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -195,7 +195,7 @@ if ($g2bodyHtml==null) {
                 }
                                    
                 // Full G2 reinit with the new created user
-                $ret = GalleryEmbed :: init(array ('embedUri' => $embedUri, 'g2Uri' => '/'.$g2Uri,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
+                $ret = GalleryEmbed :: init(array ('embedUri' => $embedUri, 'g2Uri' => $g2Uri,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
             }
             else {
                 echo 'G2 did not return a success status. Here is the error message from G2: <br />'.$ret->getAsHtml();
