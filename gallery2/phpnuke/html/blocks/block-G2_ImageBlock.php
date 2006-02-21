@@ -78,7 +78,7 @@ define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
 
 $g2result = $db->sql_query("SELECT * FROM ".$prefix."_g2config");
-list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $embedPath, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
+list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($g2result);
 
 if ($g2configurationDone != 1) {
 	$content = _G2_CONFIGURATION_NOT_DONE; 

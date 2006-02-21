@@ -1,3 +1,8 @@
+2006-02-21  Dariush Molavi  <dari@nukedgallery.net> 0.5.4
+	* New: Admin CP now detects if this is an upgrade from a pre-2.1 version, 
+	  and prompts the user to upgrade accordingly.
+	* Fix: Fixed bad sql query in block files (thanks kungfoo).
+
 2006-02-21  Dariush Molavi  <dari@nukedgallery.net> 0.5.3
 	* Fix: Reintroduce changes lost in merge.
 	* Fix: Block files now use proper URLs.

@@ -60,7 +60,9 @@ switch($op) {
     include("modules/$module_name/admin/export.php");
     break;
     
-
+	case "gallery2_update_database":
+    include("modules/$module_name/admin/index.php");
+    break;
 }
 
 ?>

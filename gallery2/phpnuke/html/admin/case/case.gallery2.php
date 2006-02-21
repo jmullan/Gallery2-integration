@@ -59,6 +59,11 @@ switch($op) {
     case "gallery2_user_export":
     include("modules/$module_name/admin/export.php");
     break;
+
+	case "gallery2_update_database":
+    include("modules/$module_name/admin/index.php");
+    break;
+
 }
 
 ?>
