@@ -28,7 +28,7 @@
  */
 
 
-define("MOD_NAME","gallery2");
+define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
 
 define("_PHPEMBEDFILE","Absoluter, vollständiger Pfad zu embed.php im Gallery2 Verzeichnis");
 define("_EMBEDURI","URL zur Gallery 2");

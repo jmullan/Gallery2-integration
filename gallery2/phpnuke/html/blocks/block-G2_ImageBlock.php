@@ -85,7 +85,7 @@ if ($g2configurationDone != 1) {
 	return;
 }
 
-require_once($g2Uri._G2_EMBED_PHP_FILE);
+require_once(substr($g2Uri,1)._G2_EMBED_PHP_FILE);
 
 if (is_admin($admin)) {
 	$uid='admin';
@@ -102,7 +102,7 @@ else {
 
 $ret = GalleryEmbed::init(array(
 	'embedUri' => $embedUri,
-	'g2Uri' => "/".$g2Uri,
+	'g2Uri' => $g2Uri,
 	'loginRedirect' => $loginRedirect,
 	'activeUserId' => "$uid",
 	'fullInit' => true));

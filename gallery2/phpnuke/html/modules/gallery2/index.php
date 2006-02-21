@@ -98,6 +98,7 @@ function checkVersion() {
         else {
             $version_text = '<center><p style="color:red">Your integration package is <b>not</b> up to date.';
             $version_text .= '<br />Latest version available is <b>' . $latest_version . '</b>.  Your installed version is <b>' . $embedVersion . '</b><br />';
+			$version_text .= 'To see what has changed, read the ChangeLog here: <a href="http://www.nukedgallery.net/postp10252.html#10252">http://www.nukedgallery.net/postp10252.html#10252</a>.<br />';
             $version_text .= 'You can download the latest integration package from <a href="http://www.nukedgallery.net/downloads-cat11.html">http://www.nukedgallery.net/downloads-cat11.html</a>.</p></center>';
         }
     }
@@ -236,8 +237,8 @@ if ($g2bodyHtml==null) {
             $line = fgets($fd, 1024);
             $line = str_replace('<?php', '', $line);
             $line = str_replace(' ?>', '', $line);
-            $line = str_replace('include("includes/javascript.php");', '',$line);
-            if(defined('NUKE_EVO')) {
+			$line = preg_replace('/(@?)include\("includes\/javascript.php"\)\;/','',$line);
+			if(defined('NUKE_EVO')) {
                 $evo_version = explode('.',NUKE_EVO);
                 if(intval($evo_version[0]) >= 1) {
                     $line = str_replace("require_once(dirname(__FILE__).'/mainfile.php');","require_once('mainfile.php');",$line);

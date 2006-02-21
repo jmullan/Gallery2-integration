@@ -27,7 +27,7 @@
  */
 
 
-define("MOD_NAME","gallery2");
+define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
 
 define("_EMBEDURI","URL to your embedded Gallery");
 define("_RELATIVEG2PATH","URL to your standalone Gallery");

@@ -1,3 +1,7 @@
+2006-02-21  Dariush Molavi  <dari@nukedgallery.net> 0.5.3
+	* Fix: Reintroduce changes lost in merge.
+	* Fix: Block files now use proper URLs.
+
 2006-02-20  Dariush Molavi  <dari@nukedgallery.net> 0.5.2
 	* Fix: Proper URL input enforced.
 
@@ -14,7 +18,16 @@
 2006-01-10  Dariush Molavi  <dari@nukedgallery.net> 0.5.0-b1
 	* Change: Modified all code to work with new EmbedAPI. Still need to add
 	  API version checking, etc.
-	
+
+2006-01-26  Dariush Molavi  <dari@nukedgallery.net> 0.4.4
+	* Fix: Fixed the missing "@" bug in index.php.
+	* Change: New method for retrieving G2 module name in the 
+	  admin cp. 
+	* Fix: If G2 admin cp lang file isn't found, default to English.
+	* Change: New method for detecting MOD_NAME in language files.
+	* Change: New message for outdated integration package directing 
+	  to the ChangeLog.
+	  
 2006-01-03  Dariush Molavi  <dari@nukedgallery.net> 
 	* Fix: Changed ImageBlock file to include image size parameter. No version bump.
 
