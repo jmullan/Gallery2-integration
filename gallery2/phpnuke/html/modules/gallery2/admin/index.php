@@ -382,12 +382,11 @@ function DisplayMainPage() {
 	CloseTable();
 
 	// Export Users
-	if($installed == 0) {
 		OpenTable();
 		echo "<center><font class=\"option\"><b>Export Users to Gallery 2</b></font></center><br/>";
 		echo "<form action=\"".$admin_file.".php\" method=\"post\"><input type=\"submit\" $update_needed value=\"Export Users\" onclick=\"window.open('','myWin',config='height=500, width=500, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no'); this.form.target='myWin';this.form.action='".$admin_file.".php'\"><input type=\"hidden\" name=\"op\" value=\"gallery2_user_export\"></form>";
 		CloseTable();
-	}
+	
 
 	include ("footer.php");
 
