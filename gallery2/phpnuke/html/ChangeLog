@@ -1,3 +1,9 @@
+2006-03-01  Dariush Molavi  <dari@nukedgallery.net> 0.5.6
+	* Fix: Fixed the require_once statements that include the embed.php 
+	  file. The existing statement didn't take into account http:// 
+	  type of entries for g2Uri and embedUri.  Thanks to kungfoo for the 
+	  new code.
+
 2006-02-22  Dariush Molavi  <dari@nukedgallery.net> 0.5.5
 	* Fix: Revert change that disabled export user functionality after 
 	  initial configuration.

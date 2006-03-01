@@ -27,7 +27,7 @@
  */
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
 
-$embedVersion = "0.5.5";
+$embedVersion = "0.5.6";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -78,6 +78,7 @@ function isInitiated($newvalue = null) {
 /* Init G2 API                                           */ 	 
 /*********************************************************/ 	 
 function init($var) { 	 
+	global $module_name;
 
 	// only init if not already done so 	 
 	if (isInitiated()) { 	 
@@ -85,7 +86,7 @@ function init($var) {
 	} 	 
 
 	extract($var);
-	require_once (substr($g2embedparams['g2Uri'],1)._G2_EMBED_PHP_FILE); 	 
+	require_once ('modules/$module_name/'._G2_EMBED_PHP_FILE); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
@@ -152,7 +153,7 @@ function SaveG2Config($var, $installed) {
 		$sql = "INSERT INTO ".$prefix."_g2config VALUES ('".$g2embedparams['embedUri']."', '".$g2embedparams['g2Uri']."', '".$g2embedparams['loginRedirect']."', ".$g2embedparams['activeUserId'].", '".$g2embedparams['cookiepath']."',0,0,'".$embedVersion."')";
 		$result = $db->sql_query($sql) or die(mysql_error());	
 	}	
-	require_once (substr($g2embedparams['g2Uri'],1)._G2_EMBED_PHP_FILE);
+	require_once ('modules/$module_name/'._G2_EMBED_PHP_FILE); 	 
 	init($var);
 	$cookiepath = $g2embedparams['cookiepath'];
 	$ret = GalleryCoreApi::setPluginParameter('module','core','cookie.path',$cookiepath);
@@ -165,9 +166,11 @@ function SaveG2Config($var, $installed) {
 
 function check_g2configerror($embedphpfile, $vars=NULL)
 {
+	global $module_name;
+
 	if (isset($vars)) {
 		extract($vars);
-		require_once (substr($embedphpfile,1)._G2_EMBED_PHP_FILE);
+		require_once ('modules/$module_name/'._G2_EMBED_PHP_FILE); 	 
 		$ret = GalleryEmbed::init(array(
 			'embedUri' => $g2embedparams['embedUri'],
 			'g2Uri' => $g2embedparams['g2Uri'],
@@ -227,7 +230,7 @@ function update_database() {
 /*********************************************************/
 
 function DisplayMainPage() {
-	global $admin, $prefix, $db, $currentlang, $admin_file, $module_name, $dbname, $embedVersion;
+	global $admin, $prefix, $db, $currentlang, $admin_file, $module_name, $dbname, $embedVersion, $module_name;
 
 	include ("header.php");
 

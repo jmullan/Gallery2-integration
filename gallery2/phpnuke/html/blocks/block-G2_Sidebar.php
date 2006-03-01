@@ -44,7 +44,8 @@ if ($g2configurationDone != 1) {
 	return;
 }
 
-require_once(substr($g2Uri,1)._G2_EMBED_PHP_FILE);
+preg_match("/^(.*)?(modules\/.*)/i", $g2Uri, $matches); 
+require_once($matches[2]._G2_EMBED_PHP_FILE); 
 
 if (is_admin($admin)) {
 	$uid='admin';

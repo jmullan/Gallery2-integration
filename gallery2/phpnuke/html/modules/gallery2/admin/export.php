@@ -96,13 +96,13 @@ function isInitiated($newvalue = null) {
 /* Init G2 API                                           */
 /*********************************************************/
 function init($var) {
-	global $currentlang, $gallery;
+	global $currentlang, $gallery, $module_name;
 	// only init if not already done so 	 
 	if (isInitiated()) { 	 
 		return true; 	 
 	} 	 
 
-	require_once (substr($var['g2Uri'],1)._G2_EMBED_PHP_FILE); 	 
+	require_once ('modules/$module_name/'._G2_EMBED_PHP_FILE); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
@@ -128,13 +128,13 @@ function init($var) {
 /* Export PHPNuke Users to Gallery 2                     */
 /*********************************************************/
 function userExport() {
-	global $db, $gallery, $failures, $prefix;
+	global $db, $gallery, $failures, $prefix,$module_name;
 
 	$sql = "SELECT * FROM ".$prefix."_g2config";
 	$result = $db->sql_query($sql);
 	list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($result);
 
-	require_once (substr($g2Uri,1)."embed.php");
+	require_once ('modules/$module_name/'._G2_EMBED_PHP_FILE); 	 
 
 	// init G2 transaction, load G2 API, if not already done so
 	$vars = array('embedUri' => $embedUri, 'g2Uri' => $g2Uri, 'loginRedirect' => $loginRedirect, 'activeUserId' => $activeUserId, 'cookiepath' => $cookiepath, 'showSidebar' => $showSidebar, 'g2configurationDone' => $g2configurationDone, 'embedVersion' => $embedVersion);
