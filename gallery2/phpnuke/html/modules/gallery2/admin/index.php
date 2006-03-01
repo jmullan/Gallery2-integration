@@ -27,7 +27,7 @@
  */
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
 
-$embedVersion = "0.5.7";
+$embedVersion = "0.5.8";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";

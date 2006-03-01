@@ -1,3 +1,6 @@
+2006-03-01  Dariush Molavi  <dari@nukedgallery.net> 0.5.8
+	* Update: Removed Your_Account hack from Readme.
+
 2006-03-01  Dariush Molavi  <dari@nukedgallery.net> 0.5.7
 	* Fix: Oops, forgot to properly escape some quotes.
 
