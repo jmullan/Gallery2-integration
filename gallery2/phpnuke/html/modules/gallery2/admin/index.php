@@ -27,7 +27,7 @@
  */
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
 
-$embedVersion = "0.5.8";
+$embedVersion = "0.5.9";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -135,7 +135,7 @@ function g2_message($mess) {
 
 function SaveG2Config($var, $installed) {
 	
-	global $db, $prefix, $embedVersion;
+	global $db, $prefix, $embedVersion, $module_name;
 	extract($var);
 
 	if (!$g2embedparams) {
