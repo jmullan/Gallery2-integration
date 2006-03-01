@@ -1,3 +1,6 @@
+2006-03-01  Dariush Molavi  <dari@nukedgallery.net> 0.5.7
+	* Fix: Oops, forgot to properly escape some quotes.
+
 2006-03-01  Dariush Molavi  <dari@nukedgallery.net> 0.5.6
 	* Fix: Fixed the require_once statements that include the embed.php 
 	  file. The existing statement didn't take into account http:// 

@@ -102,7 +102,7 @@ function init($var) {
 		return true; 	 
 	} 	 
 
-	require_once ('modules/$module_name/'._G2_EMBED_PHP_FILE); 	 
+	require_once ('modules/'.$module_name.'/'._G2_EMBED_PHP_FILE); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
@@ -134,7 +134,7 @@ function userExport() {
 	$result = $db->sql_query($sql);
 	list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($result);
 
-	require_once ('modules/$module_name/'._G2_EMBED_PHP_FILE); 	 
+	require_once ('modules/'.$module_name.'/'._G2_EMBED_PHP_FILE); 	 
 
 	// init G2 transaction, load G2 API, if not already done so
 	$vars = array('embedUri' => $embedUri, 'g2Uri' => $g2Uri, 'loginRedirect' => $loginRedirect, 'activeUserId' => $activeUserId, 'cookiepath' => $cookiepath, 'showSidebar' => $showSidebar, 'g2configurationDone' => $g2configurationDone, 'embedVersion' => $embedVersion);
