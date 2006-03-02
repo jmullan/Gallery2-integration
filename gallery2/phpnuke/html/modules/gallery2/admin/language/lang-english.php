@@ -29,21 +29,12 @@
 
 define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
 
-define("_EMBEDURI","URL to your embedded Gallery");
-define("_RELATIVEG2PATH","URL to your standalone Gallery");
-define("_LOGINREDIRECT","URL for user login");
 define("_ACTIVEUSERID","Active User ID");
 define("_UPDATEEMBEDSETTINGSG2","Verify Gallery2 installation and\nupdate integration settings");
 define("_UPDATEMAINSETTINGSG2","Update Main settings");
-define("_G2USEREXPORT","Export phpNuke Users to Gallery 2");
-define("_G2_ERROR","Error");
 define("_CFG_UPDATED","Database updated");
-define("_USER_EXPORT_UPDATED","Users are now Synchronized");
-define("_USER_EXPORT_FAILED","Users Export Failed...");
-define("_USER_EXPORT_COMPLETED","Users Export fully completed");
 define("_SHOWSIDEBAR","Show sidebar (uncheck if you use the G2 Sidebar block)");
 
-define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
 
 ?>

@@ -28,25 +28,11 @@
 
 define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
 
-define("_PHPEMBEDFILE","Caminho Completo para o directorio do Gallery2"); 
-define("_EMBEDURI","URL para a tua embedded Gallery"); 
-define("_RELATIVEG2PATH","O caminho relativo para o directorio da tua Gallery2"); 
-define("_LOGINREDIRECT","URL de login"); 
 define("_ACTIVEUSERID","Activar User ID"); 
 define("_UPDATEEMBEDSETTINGSG2","Verificar as settings da instalação ou update da tua Gallery2 "); 
 define("_UPDATEMAINSETTINGSG2","Actualizar settings principais"); 
-define("_G2USEREXPORT","Exportar os utilizadores PhpNuke para a Gallery 2"); 
-define("_G2_ERROR","Erro"); 
-define("_NOTWRITABLE","Não permite a escrita"); 
 define("_CFG_UPDATED","Ficheiro de configuração actualizado "); 
-define("_USER_EXPORT_UPDATED","Utilizadores estão sincronizados"); 
-define("_USER_EXPORT_FAILED","Falhou o export dos utilziadores ..."); 
-define("_USER_EXPORT_COMPLETED","Export de utilizadores completo"); 
-define("_G2_NEXT_PAGE","Continua para a paginar seguinte"); 
-define("_PHPEMBEDFILE_ERROR","Precisas de instalar e configurar a G2 primeiro. Depois disso, este campo precisa de apontar para a root do Gallery2."); 
 define("_SHOWSIDEBAR","Mostrar barra lateriar (Não selecionar se estiveres a usar o block lateral do Gallery2)"); 
-
-define("_G2_EMBED_PHP_FILE","embed.php"); 
 define("_G2_CONFIGURATION_NOT_DONE","Este modulo ainda não foi configurado.");
 
 ?>

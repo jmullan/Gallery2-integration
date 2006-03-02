@@ -1,3 +1,16 @@
+2006-03-02  Dariush Molavi  <dari@nukedgallery.net> 0.5.10
+	* Update: Cleaned up language files, removed unused 
+	  entries.
+	* Fix: Added $nukeurl to $g2Uri and $embedUri defaults. 
+	  Should be foolproof now. Updated Readme with new 
+	  examples.
+	* Change: Removed $loginRedirect, since we don't show 
+	  the login link anywhere. Updated config DB table, 
+	  and added updater.
+	* Fix: Update require statement for embed.php in blocks. 
+	* Update: Added check to block-G2_ImageBlock to verify 
+	  that the imageblock module is available in G2.
+
 2006-03-01  Dariush Molavi  <dari@nukedgallery.net> 0.5.9
 	* Fix: Forgot to declare $module_name.
 

@@ -25,9 +25,9 @@
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
  */
-global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name;
+global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name,$nukeurl;
 
-$embedVersion = "0.5.9";
+$embedVersion = "0.5.10";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -86,14 +86,13 @@ function init($var) {
 	} 	 
 
 	extract($var);
-	require_once ('modules/'.$module_name.'/'._G2_EMBED_PHP_FILE); 	 
+	require_once ('modules/'.$module_name.'/embed.php'); 	 
 
 	$g2currentlang = $phpnuke2G2Lang[$currentlang]; 	 
 
 	$ret = GalleryEmbed :: init(array ( 	 
 			'embedUri' => $g2embedparams['embedUri'], 	 
 			'g2Uri' => $g2embedparams['g2Uri'], 	 
-			'loginRedirect' => $g2embedparams['loginRedirect'], 	 
 			'activeUserId' => $g2embedparams['activeUserId'], 	 
 			'activeLanguage' => $g2currentlang, 	 
 			'fullInit' => $fullInit)); 	 
@@ -146,14 +145,14 @@ function SaveG2Config($var, $installed) {
 	}
 
 	if($installed) {
-		$sql = "UPDATE ".$prefix."_g2config SET embedUri = '".$g2embedparams['embedUri']."', g2Uri = '".$g2embedparams['g2Uri']."', loginRedirect = '".$g2embedparams['loginRedirect']."', activeUserId = ".$g2embedparams['activeUserId'].", cookiepath = '".$g2embedparams['cookiepath']."', embedVersion = '".$embedVersion."'";
+		$sql = "UPDATE ".$prefix."_g2config SET embedUri = '".$g2embedparams['embedUri']."', g2Uri = '".$g2embedparams['g2Uri']."', activeUserId = ".$g2embedparams['activeUserId'].", cookiepath = '".$g2embedparams['cookiepath']."', embedVersion = '".$embedVersion."'";
 		$result = $db->sql_query($sql);
 	}
 	else {	
-		$sql = "INSERT INTO ".$prefix."_g2config VALUES ('".$g2embedparams['embedUri']."', '".$g2embedparams['g2Uri']."', '".$g2embedparams['loginRedirect']."', ".$g2embedparams['activeUserId'].", '".$g2embedparams['cookiepath']."',0,0,'".$embedVersion."')";
+		$sql = "INSERT INTO ".$prefix."_g2config VALUES ('".$g2embedparams['embedUri']."', '".$g2embedparams['g2Uri']."', ".$g2embedparams['activeUserId'].", '".$g2embedparams['cookiepath']."',0,0,'".$embedVersion."')";
 		$result = $db->sql_query($sql) or die(mysql_error());	
 	}	
-	require_once ('modules/'.$module_name.'/'._G2_EMBED_PHP_FILE); 	 
+	require_once ('modules/'.$module_name.'/embed.php'); 	 
 	init($var);
 	$cookiepath = $g2embedparams['cookiepath'];
 	$ret = GalleryCoreApi::setPluginParameter('module','core','cookie.path',$cookiepath);
@@ -170,11 +169,10 @@ function check_g2configerror($embedphpfile, $vars=NULL)
 
 	if (isset($vars)) {
 		extract($vars);
-		require_once ('modules/'.$module_name.'/'._G2_EMBED_PHP_FILE); 	 
+		require_once ('modules/'.$module_name.'/embed.php'); 	 
 		$ret = GalleryEmbed::init(array(
 			'embedUri' => $g2embedparams['embedUri'],
 			'g2Uri' => $g2embedparams['g2Uri'],
-			'loginRedirect' => $g2embedparams['loginRedirect'],
 			'activeUserId' => "$uid",
 			'activeLanguage' =>$g2currentlang));
 		if($ret) {
@@ -187,42 +185,60 @@ function check_g2configerror($embedphpfile, $vars=NULL)
 /* Update config db for new integration package			 */
 /*********************************************************/
 function update_database() {
-	global $prefix, $db, $dbname,$embedVersion;
-
-	$current_config = "SELECT * FROM ".$prefix."_g2config";
-	$current_config_result = $db->sql_query($current_config);
+	global $prefix, $db, $dbname, $embedVersion, $nukeurl;
 	
-	$row = $db->sql_fetchrow($current_config_result);
+	$version = (int) $_POST['version'];
 
-	$g2embedparams = array();
+	switch($version) {
+		case(4):
+			$current_config = "SELECT * FROM ".$prefix."_g2config";
+			$current_config_result = $db->sql_query($current_config);
+			
+			$row = $db->sql_fetchrow($current_config_result);
 
-	$g2embedparams['g2Uri'] = "/".$row['relativeG2Path'];
-	$g2embedparams['embedUri'] = "/".$row['embedUri'];
-	$g2embedparams['loginRedirect'] = "/".$row['loginRedirect'];
-	$g2embedparams['activeUserId'] = $row['activeUserId'];
-	$g2embedparams['cookiepath'] = $row['cookiepath'];
+			$g2embedparams = array();
 
-	$vars = compact("g2embedparams");
-	$delete_sql = "DROP TABLE ".$prefix."_g2config";
-	$delete_res = $db->sql_query($delete_sql);
+			$g2embedparams['g2Uri'] = $nukeurl."/".$row['relativeG2Path'];
+			$g2embedparams['embedUri'] = $nukeurl."/".$row['embedUri'];
+			$g2embedparams['activeUserId'] = $row['activeUserId'];
+			$g2embedparams['cookiepath'] = $row['cookiepath'];
 
-	$setup_sql = "CREATE TABLE ".$prefix."_g2config (
-				embedUri VARCHAR( 255 ) NOT NULL ,
-				g2Uri VARCHAR( 255 ) NOT NULL ,
-				loginRedirect VARCHAR( 255 ) NOT NULL ,
-				activeUserId INT( 10 ) NOT NULL ,
-				cookiepath VARCHAR( 255 ) NOT NULL ,
-				showSidebar TINYINT( 1 ) NOT NULL ,
-				g2configurationDone TINYINT( 1 ) NOT NULL ,
-				embedVersion VARCHAR( 255 ) NOT NULL
-				)";
-	$setup_result = $db->sql_query($setup_sql);
+			$vars = compact("g2embedparams");
+			$delete_sql = "DROP TABLE ".$prefix."_g2config";
+			$delete_res = $db->sql_query($delete_sql);
 
-	check_g2configerror($g2embedparams['g2Uri'], $vars);
-	SaveG2Config($vars, 0);
-	$misc_sql = "UPDATE ".$prefix."_g2config SET g2configurationDone = 1";
-	$db->sql_query($misc_sql);
-	g2_message(_CFG_UPDATED."<br><br>Structure updated.");
+			$setup_sql = "CREATE TABLE ".$prefix."_g2config (
+						embedUri VARCHAR( 255 ) NOT NULL ,
+						g2Uri VARCHAR( 255 ) NOT NULL ,
+						activeUserId INT( 10 ) NOT NULL ,
+						cookiepath VARCHAR( 255 ) NOT NULL ,
+						showSidebar TINYINT( 1 ) NOT NULL ,
+						g2configurationDone TINYINT( 1 ) NOT NULL ,
+						embedVersion VARCHAR( 255 ) NOT NULL
+						)";
+			$setup_result = $db->sql_query($setup_sql);
+
+			check_g2configerror($g2embedparams['g2Uri'], $vars);
+			SaveG2Config($vars, 0);
+			$misc_sql = "UPDATE ".$prefix."_g2config SET g2configurationDone = 1";
+			$db->sql_query($misc_sql);
+			g2_message(_CFG_UPDATED."<br><br>Structure updated.");
+			break;
+		case(5):
+			$sql = "ALTER TABLE ".$prefix."_g2config DROP `loginRedirect`";
+			$db->sql_query($sql) or die(mysql_error());
+
+			$sql = "SELECT * FROM ".$prefix."_g2config";
+			$result = $db->sql_query($sql);
+			$row = $db->sql_fetchrow($result);
+			$new_g2Uri = $nukeurl.$row['g2Uri'];
+			$new_embedUri = $nukeurl.$row['embedUri'];
+			$upd_sql = "UPDATE ".$prefix."_g2config SET embedUri = '".$new_embedUri."', g2Uri = '".$new_g2Uri."', embedVersion = '".$embedVersion."'";
+			$db->sql_query($upd_sql);
+
+			g2_message(_CFG_UPDATED."<br><br>Structure updated.");
+			break;
+	}
 }
 
 /*********************************************************/
@@ -230,7 +246,7 @@ function update_database() {
 /*********************************************************/
 
 function DisplayMainPage() {
-	global $admin, $prefix, $db, $currentlang, $admin_file, $module_name, $dbname, $embedVersion, $module_name;
+	global $admin, $prefix, $db, $currentlang, $admin_file, $module_name, $dbname, $embedVersion, $module_name,$nukeurl;
 
 	include ("header.php");
 
@@ -251,7 +267,6 @@ function DisplayMainPage() {
 		$setup_sql = "CREATE TABLE ".$prefix."_g2config (
 					embedUri VARCHAR( 255 ) NOT NULL ,
 					g2Uri VARCHAR( 255 ) NOT NULL ,
-					loginRedirect VARCHAR( 255 ) NOT NULL ,
 					activeUserId INT( 10 ) NOT NULL ,
 					cookiepath VARCHAR( 255 ) NOT NULL ,
 					showSidebar TINYINT( 1 ) NOT NULL ,
@@ -269,18 +284,31 @@ function DisplayMainPage() {
 		list($currentEmbedVersion) = $db->sql_fetchrow($config_result);
 
 		$current_version = explode('.', $currentEmbedVersion);
-
-		$embedVersion_array = explode('.', $embedVersion);
-
-		if( (int)$current_version[1] < (int) $embedVersion_array[1] ) {
-			$update_button = "<p><center>This version (<b>".$embedVersion."</b>) of the integration package requires that you update your configuration database structure.  Click the button below to perform this operation.<br>Further configuration is disabled until you update your database structure.<br><b><font color=\"red\">This version of the integration package is only compatible with Gallery 2.1 and greater.</font></b><br>";
-			$update_button .= "<form action=\"".$admin_file.".php\" method=\"post\">\n";
-			$update_button .= "<input type=\"hidden\" name=\"op\" value=\"gallery2_update_database\">";
-			$update_button .= "<input type=\"submit\" value=\"Update Database\"></form></center></p>";
-			$update_needed = "disabled=\"true\"";
-		}
-
 		$minor_revision = (int) $current_version[2];
+
+		switch( (int)$current_version[1] ) {
+			case(4):
+				$update_button = "<p><center>This version (<b>".$embedVersion."</b>) of the integration package requires that you update your configuration database structure.  Click the button below to perform this operation.<br>Further configuration is disabled until you update your database structure.<br><b><font color=\"red\">This version of the integration package is only compatible with Gallery 2.1 and greater.</font></b><br>";
+				$update_button .= "<form action=\"".$admin_file.".php\" method=\"post\">\n";
+				$update_button .= "<input type=\"hidden\" name=\"op\" value=\"gallery2_update_database\">";
+				$update_button .= "<input type=\"submit\" value=\"Update Database\"></form></center></p>";
+				$update_needed = "disabled=\"true\"";
+				break;
+			case(5):
+				switch($minor_revision) {
+					case($minor_revision <= 9):
+						$update_button = "<p><center>This version (<b>".$embedVersion."</b>) of the integration package requires that we make a minor change to your configuration database structure.  Click the button below to perform this operation.<br>Further configuration is disabled until you update your database structure.<br><b><font color=\"red\">This version of the integration package is only compatible with Gallery 2.1 and greater.</font></b><br>";
+						$update_button .= "<form action=\"".$admin_file.".php\" method=\"post\">\n";
+						$update_button .= "<input type=\"hidden\" name=\"op\" value=\"gallery2_update_database\">";
+						$update_button .= "<input type=\"hidden\" name=\"version\" value=\"5\">";
+						$update_button .= "<input type=\"submit\" value=\"Update Database\"></form></center></p>";
+						$update_needed = "disabled=\"true\"";
+						break;
+					default:
+						break;
+				}
+				break;
+		}
 
 		$errno = 0;
 		$errstr = $version_info = '';
@@ -339,9 +367,8 @@ function DisplayMainPage() {
 	// Display integration settings
 	OpenTable();
     if($installed == 0) {
-        $embedUri = "/modules.php?name=".$module_name;
-        $g2Uri = "/modules/".$module_name."/";
-        $loginRedirect = '/modules.php?name=Your_Account';
+        $embedUri = $nukeurl."/modules.php?name=".$module_name;
+        $g2Uri = $nukeurl."/modules/".$module_name."/";
         $activeUserId = 0;
 
 		$c_result = $db->sql_query("SELECT config_value FROM ".$prefix."_bbconfig WHERE config_name='cookie_path'");
@@ -351,7 +378,7 @@ function DisplayMainPage() {
 	else {
 		$config_sql = "SELECT * FROM ".$prefix."_g2config";
 		$config_result = $db->sql_query($config_sql);
-		list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
+		list($embedUri, $g2Uri, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
 	}
 
 
@@ -361,12 +388,10 @@ function DisplayMainPage() {
 	}
 		echo"<form action=\"".$admin_file.".php\" method=\"post\">"
 		."<table border=\"0\">"
-		."<tr><td>URL to your embedded Gallery:</td>"
+		."<tr><td>Full URL to your embedded Gallery:</td>"
 		."<td><input type=\"text\" $update_needed name=\"embedUri\" size=\"60\" value=\"".$embedUri."\" maxlength=\"90\"></td></tr>"
-		."<tr><td>URL to your standalone Gallery:</td>"
+		."<tr><td>Full URL to your standalone Gallery:</td>"
 		."<td><input type=\"text\" $update_needed name=\"g2Uri\" size=\"60\" value=\"".$g2Uri."\" maxlength=\"90\"></td></tr>"
-		."<tr><td>"._LOGINREDIRECT.":</td>"
-		."<td><input type=\"text\" $update_needed name=\"loginRedirect\" size=\"60\" value=\"".$loginRedirect."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>"._ACTIVEUSERID.":</td>"
 		."<td><input type=\"text\" $update_needed name=\"activeUserId\" size=\"60\" value=\"".$activeUserId."\" maxlength=\"90\"></td></tr>"
 		."<tr><td>Cookie Path:</td><td><input type=\"text\" $update_needed name=\"cookiepath\" size=\"60\" value=\"".$cookiepath."\"></td></tr>";
@@ -411,7 +436,6 @@ function form_g2UpdateEmbedSettings() {
 
 	$g2embedparams['embedUri'] = $_POST['embedUri'];
 	$g2embedparams['g2Uri'] = $_POST['g2Uri'];
-	$g2embedparams['loginRedirect'] = $_POST['loginRedirect'];
 	$g2embedparams['activeUserId'] = $_POST['activeUserId'];
 	$g2embedparams['cookiepath'] = $_POST['cookiepath'];
 

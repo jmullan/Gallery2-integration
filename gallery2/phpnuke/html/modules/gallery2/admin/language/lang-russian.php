@@ -30,25 +30,11 @@
 
 define("MOD_NAME", basename(dirname(dirname(dirname(__FILE__)))));
 
-define("_PHPEMBEDFILE","Полный путь к каталагу галереи");
-define("_EMBEDURI","Путь к встроенной галерее");
-define("_RELATIVEG2PATH","Относительный путь к каталогу галереи");
-define("_LOGINREDIRECT","URL для регистрации пользователя");
 define("_ACTIVEUSERID","ID активного пользователя");
 define("_UPDATEEMBEDSETTINGSG2","Проверить инсталляцию галереи\nобновить установки интеграции");
 define("_UPDATEMAINSETTINGSG2","Обновить основные установки");
-define("_G2USEREXPORT","Экспорт пользователей nuke в галерею");
-define("_G2_ERROR","Ошибка");
-define("_NOTWRITABLE","Только для чтения");
 define("_CFG_UPDATED","Файл конфигурации обновлен");
-define("_USER_EXPORT_UPDATED","Пользователи синхронизированы");
-define("_USER_EXPORT_FAILED","Ошибка экспорта пользователей...");
-define("_USER_EXPORT_COMPLETED","Экспорт пользователей завершен");
-define("_G2_NEXT_PAGE","На следующую страницу");
-define("_PHPEMBEDFILE_ERROR","Сначала необходимо установить и настроить галерею. Затем эти поля должны указывать на каталог галереи");
 define("_SHOWSIDEBAR","Показывать боковую панель (убрать при использовании блока боковой панели G2)");
-
-define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","Модуль не настроен.");
 
 ?>

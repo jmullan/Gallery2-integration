@@ -154,7 +154,7 @@ else {
 if ($g2bodyHtml==null) {
     $config_sql = "SELECT * FROM ".$prefix."_g2config";
     $config_result = $db->sql_query($config_sql);
-    list($embedUri, $g2Uri, $loginRedirect, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
+    list($embedUri, $g2Uri, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
     
     if ($g2configurationDone == 0){
             include "header.php";
@@ -165,11 +165,11 @@ if ($g2bodyHtml==null) {
             return;
     }
 
-    require_once(_G2_EMBED_PHP_FILE);
+    require_once('embed.php');
                 
     $g2currentlang = $phpnuke2G2Lang[$currentlang];
                 
-    $ret = GalleryEmbed::init(array('embedUri' => $embedUri,'g2Uri' => $g2Uri,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
+    $ret = GalleryEmbed::init(array('embedUri' => $embedUri,'g2Uri' => $g2Uri, 'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
 
     if ($ret) {
         if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -196,7 +196,7 @@ if ($g2bodyHtml==null) {
                 }
                                    
                 // Full G2 reinit with the new created user
-                $ret = GalleryEmbed :: init(array ('embedUri' => $embedUri, 'g2Uri' => $g2Uri,'loginRedirect' => $loginRedirect,'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
+                $ret = GalleryEmbed :: init(array ('embedUri' => $embedUri, 'g2Uri' => $g2Uri, 'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
             }
             else {
                 echo 'G2 did not return a success status. Here is the error message from G2: <br />'.$ret->getAsHtml();
