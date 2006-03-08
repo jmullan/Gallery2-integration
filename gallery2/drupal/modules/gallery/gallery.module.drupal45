@@ -1,0 +1,378 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_help
+ */
+function gallery_help($section) {
+  switch($section) {
+  case 'admin/modules#description':
+    return t('Integration with Gallery2 (%gallery_url)', array('%gallery_url' => 'http://gallery.menalto.com/'));
+  }
+}
+
+/**
+ * Implementation of hook_menu
+ */
+function gallery_menu($may_cache) {
+  $items = array();
+
+  if ($may_cache) {
+    $items[] = array('path' => 'gallery',
+                     'callback' => 'gallery_page',
+                     'access' => user_access('access content'),
+                     'type' => MENU_SUGGESTED_ITEM);
+  }
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_settings
+ */
+function gallery_settings() {
+  $output = '';
+  $output.= form_textfield(t('URL Location of Gallery2'), 'g2Uri', variable_get('g2Uri', '/gallery2/'), 64, 250, t('URL to your standalone Gallery\'s location. Please include a trailing slash ("/"). ex: http://www.example.com/gallery2/ or /gallery2/'));
+  $output.= form_textfield(t('Physical Location of Gallery2'), 'gallery_dir', variable_get('gallery_dir', dirname(dirname(__FILE__)) . '/gallery2/'), 64, 250, t('Full path to your Gallery installation. Please include a trailing slash ("/"). ex: /path/to/drupal/gallery2/'));
+  $output .= form_checkboxes(t('Error logging'), 'gallery_error_mode',
+			     variable_get('gallery_error_mode', array(1)),
+			     array(1 => t('Watchdog'),
+				   2 => t('Output to the browser')),
+			     t('Choose where errors are displayed'));
+  return $output;
+}
+
+/**
+ * Implementation of hook_user
+ */
+function gallery_user($op, &$edit, &$user, $category = NULL) {
+  switch ($op) {
+  case 'login':
+    /* _gallery_init() will try to create the user, if necessary */
+    list ($success, $ret) = _gallery_init();
+    if (!$success) {
+      gallery_error(t('Unable to log in to Gallery'), $ret);
+      return;
+    }
+    break;
+
+  case 'insert':
+    list ($success, $ret) = _gallery_init();
+    if (!$success) {
+      gallery_error(t('Unable to initialize embedded Gallery'), $ret);
+      return;
+    }
+
+    $ret = GalleryEmbed::createUser($user->uid,
+				    array('username' => $user->name,
+					  'email' => $user->mail,
+					  'fullname' => $user->name,
+					  'language' => $user->language,
+					  'hashedpassword' => $user->pass,
+					  'hashmethod' => 'md5'
+					  ));
+    if ($ret) {
+      gallery_error(t('Error creating Gallery user'), $ret);
+      return;
+    }
+    GalleryEmbed::done();
+    break;
+
+  case 'update':
+    list ($success, $ret) = _gallery_init();
+    if (!$success) {
+      gallery_error(t('Unable to initialize embedded Gallery'), $ret);
+      return;
+    }
+
+    // on update we can't be sure how much info $edit will contain.
+    $name = ($edit['name']) ? $edit['name'] : $user->name;
+    $language = ($edit['language']) ? $edit['language'] : $user->language;
+    $pass = ($edit['pass']) ? md5($edit['pass']) : $user->pass;
+    $email = ($edit['email']) ? $edit['mail'] : $user->mail;
+    $ret = GalleryEmbed::updateUser($user->uid,
+				    array('username' => $name,
+                                          'fullname' => $name,
+					  'email' => $mail,
+                                          'language' => $language,
+                                          'hashedpassword' => $pass,
+                                          'hashmethod' => 'md5'));
+    if ($ret) {
+      // try to create user then.
+      $ret = GalleryEmbed::createUser($user->uid,
+				      array('username' => $name,
+                                            'fullname' => $name,
+					    'email' => $mail,
+					    'language' => $language,
+                                            'hashedpassword' => $pass,
+                                            'hashmethod' => 'md5'
+					    ));
+      if ($ret) {
+	gallery_error(t('Error updating Gallery user'), $ret);
+	return;
+      }
+    }
+    GalleryEmbed::done();
+    break;
+
+  case 'delete':
+    list ($success, $ret) = _gallery_init();
+    if (!$success) {
+      gallery_error(t('Unable to initialize embedded Gallery'), $ret);
+      return;
+    }
+
+    $ret = GalleryEmbed::deleteUser($user->uid);
+    if ($ret) {
+      gallery_error(t('Error deleting Gallery user'), $ret);
+    }
+    GalleryEmbed::done();
+    break;
+  }
+}
+
+/**
+ * Implementation of hook_block
+ *
+ * - gallery navigation block (recommended)
+ * - gallery imageblock (random, most viewed, etc)
+ */
+function gallery_block($op = 'list', $delta = 0, $edit = array()) {
+  $typeMap = array('randomImage' => t('Random image'),
+		   'recentImage' => t('Recent image'),
+		   'viewedImage' => t('Viewed image'),
+		   'randomAlbum' => t('Random album'),
+		   'recentAlbum' => t('Recent album'),
+		   'viewedAlbum' => t('Viewed album'),
+		   'dailyImage' => t('Daily image'),
+		   'weeklyImage' => t('Weekly image'),
+		   'monthlyImage' => t('Monthly image'),
+		   'dailyAlbum' => t('Daily album'),
+		   'weeklyAlbum' => t('Weekly album'),
+		   'monthlyAlbum' => t('Monthly album'));
+
+  switch ($op) {
+  case 'list':
+    $blocks[0]['info'] = t('Gallery Block');
+    return $blocks;
+
+  case 'configure':
+    $output = form_select(t('Image type'),
+			  'gallery_block_block' . $delta,
+			  variable_get('gallery_block_block_' . $delta, 'randomImage'),
+			  $typeMap,
+			  t('Pick the type of image you\'d like to see'));
+    $output .= form_checkboxes(
+      t('Image data'),
+      'gallery_block_show_' . $delta,
+      variable_get('gallery_block_show_' . $delta, array('title', 'heading')),
+      array('title' => 'Title',
+	    'date' => 'Date',
+	    'views' => 'View Count',
+	    'owner' => 'Item owner',
+	    'heading' => 'Heading',
+	    'fullSize' => 'Full Size'),
+      t('Choose the item metadata you\'d like to display'));
+    return $output;
+
+  case 'save':
+    variable_set('gallery_block_block_' . $delta, $edit['gallery_block_block_' . $delta]);
+    variable_set('gallery_block_show_' . $delta, $edit['gallery_block_show_' . $delta]);
+    break;
+
+  case 'view':
+    list ($success, $ret) = _gallery_init(true);
+    if (!$success) {
+      gallery_error(t('Unable to initialize embedded Gallery'), $ret);
+      return;
+    }
+
+    $params['block'] = variable_get('gallery_block_block_' . $delta, 'randomImage');
+    $params['show'] = implode('|', variable_get('gallery_block_show_' . $delta, array()));
+
+    // TODO: parameterize this
+    $params['maxSize'] = 160;
+
+    $block = array();
+    list($ret, $content) = GalleryEmbed::getImageBlock($params);
+    if ($ret) {
+      gallery_error(t('Unable to get Gallery image block'), $ret);
+      return;
+    } else {
+      if ($content) {
+	$block['subject'] = $typeMap[$params['block']];
+	$block['content'] = '<center>' . $content . '</center>';
+      }
+    }
+
+    $ret = GalleryEmbed::done();
+    if ($ret) {
+      gallery_error(t('Unable to complete Gallery request'), $ret);
+      return;
+    }
+    return $block;
+  }
+}
+
+/**
+ * implementation of hook_search
+ */
+function gallery_search($op = 'search', $keys = null) {
+  switch ($op) {
+  case 'name':
+    return t('gallery');
+  case 'search':
+    $find = array();
+
+    list ($success, $ret) = _gallery_init(true);
+    if (!$success) {
+      gallery_error(t('Unable to initialize embedded Gallery'), $ret);
+      return;
+    }
+
+    list ($ret, $results) = GalleryEmbed::searchScan($keys, 20);
+    if (!$ret) {
+      $urlGenerator =& $GLOBALS['gallery']->getUrlGenerator();
+      foreach ($results as $name => $module) {
+	if (count($module['results']) > 0) {
+	  foreach ($module['results'] as $result) {
+	    $excerpt = array();
+	    foreach ($result['fields'] as $field) {
+	      $words = search_keywords_split($keys);
+	      foreach ($words as $word) {
+		if (preg_match("/$word/", $field['value'])) {
+		  $excerpt[] = $field['key'] .': '.search_excerpt($keys, $field['value']);
+		}
+	      }
+	    }
+	    $find[] = array('title' => $result['fields'][0]['value'],
+			    'link'  => $urlGenerator->generateUrl(array('itemId' => $result['itemId'])),
+			    'type'  => $module['name'],
+			    'snippet' => implode('<br />', $excerpt));
+	  }
+	}
+      }
+    }
+    return $find;
+  }
+}
+
+/**
+ * Main gallery display page
+ */
+function gallery_page() {
+  list ($success, $ret) = _gallery_init(true);
+  if (!$success) {
+    gallery_error(t('Unable to initialize embedded Gallery'), $ret);
+    print theme('page', 'You need to <a href="/admin/settings/gallery">configure your embedded Gallery</a>');
+    return;
+  }
+
+  $result = GalleryEmbed::handleRequest();
+  if (!$result['isDone']) {
+    list($title, $css, $javascript) = GalleryEmbed::parseHead($result['headHtml']);
+    if (!empty($javascript)) {
+      drupal_set_html_head(implode("\n",$javascript));
+    }
+    drupal_set_html_head(implode("\n",$css));
+    drupal_set_title($title);
+    print theme('page', $result['bodyHtml']);
+  }
+}
+
+/**
+ * fetch a galleryEmbed object
+ */
+function _gallery_init($full = false) {
+  global $user, $base_url;
+
+  $g2Uri = variable_get('g2Uri', '/gallery2/');
+  $galleryDir = variable_get('gallery_dir', dirname(dirname(__FILE__)) . '/gallery2/'),
+                    
+  $embedPath = $galleryDir . 'embed.php';
+  if (!is_readable($embedPath)) {
+    return array(false, null);
+  }               
+        
+  include_once($embedPath);
+
+  $params = array('embedUri' => $embedUri,
+                  'g2Uri' => $g2Uri,
+                  'loginRedirect' => url('user/login'),
+                  'activeUserId' => $user->uid,
+                  'activeLanguage' => $user->language,
+                  'fullInit' => $full);
+  $ret = GalleryEmbed::init($params);
+  if ($ret && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+    // Our user mapping is missing.  Make a mapping, or create a new user.
+    $g2_user = null;
+
+    // Get the G2 user that matches the Drupal username
+    list ($ret, $g2_user) = GalleryCoreApi::fetchUserByUsername($user->name);
+    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+      return array(false, $ret);
+    }
+
+    if (!isset($g2_user)) {
+      // No G2 user with a matching username.  If this is the admin user, we're going to
+      // try a little harder and match it to the oldest admin in G2.
+      if ($user->uid == 1) {
+	list ($ret, $admin_group_id) =
+	  GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret) {
+	  return array(false, $ret);
+	}
+
+	list ($ret, $g2_users) = GalleryCoreApi::fetchUsersForGroup($admin_group_id);
+	if ($ret) {
+	  return array(false, $ret);
+	}
+
+	$keys = array_keys($g2_users);
+	$g2_user_name = $users[$keys[0]];
+	list ($ret, $g2_user) = GalleryCoreApi::fetchUserByUsername($g2_user_name);
+	if ($ret) {
+	  return array(false, $ret);
+	}
+      }
+    }
+
+    if (isset($g2_user)) {
+      $ret = GalleryEmbed::addExternalIdMapEntry($user->uid, $g2_user->getId(), 'GalleryUser');
+      if ($ret) {
+	return array(false, $ret);
+      }
+    } else {
+      // No matching G2 user found -- create one.
+      $ret = GalleryEmbed::createUser($user->uid, array('username' => $user->name,
+							'email' => $user->mail,
+							'fullname' => $user->name,
+							'language' => $user->language,
+							'hashedpassword' => $user->pass,
+							'hashmethod' => 'md5'));
+      if ($ret) {
+	return array(false, $ret);
+      }
+    }
+  }
+
+  return array(true, null);
+}
+
+function gallery_error($message, $ret) {
+  $error_mode = variable_get('gallery_error_mode', array());
+  if (in_array(2, $error_mode)) {
+    drupal_set_message($message);
+  }
+
+  if (isset($ret)) {
+    $full_message = $message . '<br/>' . $ret->getAsHtml();
+  } else {
+    $full_message = $message;
+  }
+
+  if (in_array(1, $error_mode)) {
+    watchdog('gallery', $full_message, WATCHDOG_ERROR);
+  }
+}
+?>

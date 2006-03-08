@@ -13,41 +13,69 @@ Installation Instructions
    FAQ:
      http://codex.gallery2.org/index.php/Gallery2:FAQ#How_can_I_move_my_gallery_installation_from_one_folder_to_another.3F
 
-2. Copy gallery.module to your drupal modules/ directory.
+2. Copy the appropriate gallery.module file for your drupal version to your
+   drupal modules/ directory and name it "gallery.module"
+
+   gallery.module          -> Drupal 4.5, 4.6 using Gallery 2.0 (unsupported, deprecated)
+   gallery.module.drupal45 -> Drupal 4.5, 4.6 using Gallery 2.1
+   gallery.module.drupal47 -> Drupal 4.7      using Gallery 2.1
 
 3. Enable the gallery module in administer -> modules in your drupal
    installation.
 
-4. Go to administer -> settings -> gallery and enter the path to your
-   gallery2 installation.  So if your Drupal is installed at:
-     /var/www/www.drupal.site
+4. Go to administer -> settings -> gallery and enter the paths to your
+   gallery2 installation.
 
-   And your gallery2 is at:
-     /var/www/drupal.site/gallery2
+   Standalone URL Location:
+     This is where your standalone (not embedded) Gallery2 install is located.  Since
+     Gallery2 uses the standalone location to serve some files, this is required.
+     Trailing slash required.
 
-   Then your Gallery2 path would be:
+     Examples:
+       http://www.example.com/gallery2/
+       /gallery2/
+
+   Physical Location:
+     Embedding requires portions of Gallery2 to be loaded by Drupal, so we need
+     to know where those are found.  The full physical path is recommended, but a
+     relative path may work.  (If relative doesn't work, use full)
+     Trailing slash required.
+
+   Example:
+     /var/www/drupal.site/gallery2/
      gallery2/
 
   Your gallery should now be available at:
 
      http://your.site/gallery
 
-5.  Enable the "Gallery Block" in administer -> blocks
+5. (Optional) Enable the "Gallery Block" in administer -> blocks
 
-Note: the default themes don't work so well with Drupal yet.  You'll get best
+
+6. (Optional) Enable Gallery Rewrite
+   Install the Rewrite Module inside Gallery2 from the Site Admin -> Modules page
+   Configure Rewrite from the Site Admin -> Rewrite page
+   On the Setup tab of the Rewrite page
+
+     Htaccess Path:  This should be set to the webroot for Drupal (ex: /var/www/drupal.site/)
+     Public Path: This should be set to the URL root for Drupal (ex: / or /drupal/)
+
+   Press Save
+
+   Select the Rules tab and configure the rules for your purposes
+
+   Then when you browse to http://your.site/gallery you should see short urls
+   inside drupal.
+
+NOTE: the default themes don't work so well with Drupal yet.  You'll get best
 results if you edit the default theme and move all the blocks out of the sidebar
 and into the album and photo pages.  There's a drupal specific theme on the way,
-stay tuned.
+stay tuned.  Other embedding-specific themes such as WPG2
+(http://wpg2.ozgreg.com/forums/viewforum.php?f=12) work well with
+Drupal.
 
-Note: To get the rewrite module working, you need to first configure and
-use it with the standalone Gallery2 install.  Once it's working there disable
-all the rules except for the 'Show Item' rule and set its URL pattern to:
-    gallery/%path%
-
-Then when you browse to http://your.site/gallery you should see short urls
-inside drupal.
-
-NOTE: this is beta software, so it might not always work. If you have
+DISCLAIMER: this is beta software, so it might not always work. If you have
 questions or problems contact:
 
 James Walker <walkah@walkah.net>
+Jay Rossiter <signe@cothlamadh.net>
