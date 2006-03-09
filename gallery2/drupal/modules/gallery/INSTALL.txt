@@ -49,10 +49,16 @@ Installation Instructions
 
      http://your.site/gallery
 
-5. (Optional) Enable the "Gallery Block" in administer -> blocks
+5. (Optional) Enable the Gallery menu item
+   From administer -> menus
+   Locate 'gallery'
+   Click 'enable'
+   Fill in title and description and click save
+
+6. (Optional) Enable the "Gallery Block" in administer -> blocks
 
 
-6. (Optional) Enable Gallery Rewrite
+7. (Optional) Enable Gallery Rewrite
    Install the Rewrite Module inside Gallery2 from the Site Admin -> Modules page
    Configure Rewrite from the Site Admin -> Rewrite page
    On the Setup tab of the Rewrite page
