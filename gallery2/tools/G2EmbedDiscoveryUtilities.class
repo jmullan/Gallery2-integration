@@ -89,7 +89,7 @@ class G2EmbedDiscoveryUtilities {
      *     embed.php, since it does that already internally
      *
      *   1. $g2Uri = G2EmbedDiscoveryUtilities::normalizeG2Uri($g2Uri);
-     *   2. $embedUri = G2EmbedDiscoveryUtilities::normalizeG2Uri($embedUri);
+     *   2. $embedUri = G2EmbedDiscoveryUtilities::normalizeEmbedUri($embedUri);
      */
 
     /**
@@ -139,7 +139,7 @@ class G2EmbedDiscoveryUtilities {
     function getG2EmbedPathByG2Uri($g2Uri) {
 	$g2Uri = trim($g2Uri);
 	if (empty($g2Uri)) {
-	    return array (false, null, "Bad parameter: the proved g2Uri is empty");
+	    return array (false, null, "Bad parameter: the provided g2Uri is empty");
 	}
 
 	$g2Uri = G2EmbedDiscoveryUtilities::normalizeG2Uri($g2Uri);
@@ -176,7 +176,7 @@ class G2EmbedDiscoveryUtilities {
 				  $components['host']));
 	if (!$ok) {
 	    /* Zero bytes written or false was returned */
-	    $errorStr = "Verificatoin of Gallery 2 location failed. fwrite call failed for $g2Uri";
+	    $errorStr = "Verification of Gallery 2 location failed. fwrite call failed for $g2Uri";
 	    if ($ok === false) {
 		$errorStr .= "\nreturn value was false";
 	    }
@@ -186,7 +186,7 @@ class G2EmbedDiscoveryUtilities {
 	if (!$ok) {
 	    if (version_compare(phpversion(), '4.2.0', '>=')) {
 		/* Ignore false returned from fflush on PHP 4.1 */
-		return array(false, null, "Verificatoin of Gallery 2 location failed. " .
+		return array(false, null, "Verification of Gallery 2 location failed. " .
 			     "fflush call failed for $g2Uri");
 	    }
 	}
@@ -222,7 +222,7 @@ class G2EmbedDiscoveryUtilities {
 	} else {
 	    return array(false, null, "Either your server does not support the automated " .
 			 "verification of the Gallery 2 location or the supplied g2Uri " .
-			 "points to a incompativle Gallery 2 version (older than 2.1)");
+			 "points to a incompatible Gallery 2 version (older than 2.1)");
 	}
 	
 	if (empty($embedPhpPath)) {
