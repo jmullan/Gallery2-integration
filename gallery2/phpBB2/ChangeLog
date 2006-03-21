@@ -1,3 +1,9 @@
+2006-03-21  Dariush Molavi  <dari@nukedgallery.net>
+	* Update: Major update for Gallery 2.1.  From this point 
+	  forward, this integration will only support Gallery 2.1 
+	  or greater.  Thanks to Scott Gregory for all his work in 
+	  getting this together.
+
 2005-12-20  Dariush Molavi  <dari@nukedgallery.net> 
 	* New: Added user profile MODification (Thanks PilotSpike).
 

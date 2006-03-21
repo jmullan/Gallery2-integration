@@ -23,15 +23,19 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
+ * @author Scott Gregory
  */
  -->
-
 <h1>{L_SYNC_TITLE}</h1>
 
 <P>{L_SYNC_EXPLAIN}</P>
 
 <center>
-<form>
-	<input type="button" OnClick="window.open('{S_G2_ACTION}', 'newwindow', config='height=500, width=500, toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no')" value="{L_SYNC}">
+<form action="{S_G2_ACTION}" method="post">
+	{L_SYNC_USER_LIST}
+	<p>&nbsp;</p>
+	<p><input type="radio" name="export" value="now" />Export Users Now&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="export" value="later" checked="checked" />Export User At Gallery 2 Access</p>
+	<p>&nbsp;</p>
+	<input type="submit" value="{L_SYNC}" />
 </form>
 </center>

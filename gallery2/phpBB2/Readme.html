@@ -228,7 +228,7 @@
 		<img alt="Gallery 2" src="images/g2Logo.gif" />
 		</div>
 		<p>
-		Welcome to Gallery 2.0. This integration package is part of the 
+		Welcome to Gallery 2.1. This integration package is part of the 
 		ongoing effort to seamlessly integrate Gallery 2 in phpBB2.  
 		Please read through this document carefully
 		before integrating Gallery 2 and before asking for help.  We have
@@ -265,7 +265,7 @@
 		</p>
 		<ol>
 			<li>Creates an administration link/page in the phpBB2 administration page.</li>
-			<li>Allows you to export your existing phpBB2 users to Gallery 2.</li>
+			<li>Allows you to export your existing phpBB2 users and groups to Gallery 2.</li>
 		</ol>
 		<p>
 		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
@@ -285,8 +285,8 @@
 		<h3>NOTICE</h3>
 		<p>
 		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
-		proceed with this integration, you <b>must</b> install and configure Gallery 2.  It is highly recommended that Gallery 2 
-		be installed within your phpBB2 directory.
+		proceed with this integration, you <b>must</b> install and configure Gallery 2.  <b>Gallery 2 must
+		be installed within your phpBB2 directory.</b>
 		</p></div>
 		<br />
 		<div class="important">
@@ -296,29 +296,30 @@
 		recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration.
 		</p></div>
 		<p>
-		This package contains three folders:
+		This package contains four folders:
 		</p>
 		<ul>
 		<li>gallery2/</li>
 		<li>admin/</li>
 		<li>templates/</li>
+		<li>gallery2/</li>
 		</ul>
 		<p>
 		To install, simply upload the contents of the admin and templates folders into the 
 		corresponding folders in your phpBB2 installation.</p>
 		<pre class="CodeSnippet">    phpBB2/admin/admin_gallery2.php
-    phpBB2/admin/gallery2_export.php
-
-    phpBB2/templates/subSilver/admin/gallery2_sync_intro_body.tpl
-    phpBB2/templates/subSilver/admin/gallery2_show_body.tpl
-    phpBB2/templates/subSilver/admin/gallery2_config_body.tpl
-    phpBB2/templates/subSilver/images/exif_parser.gif
-    phpBB2/templates/subSilver/gallery2.tpl</pre>
-		<p>
-		The gallery2.php and g2helper.inc files 
-		should be copied to your phpBB2 root.</p>
-		<pre class="CodeSnippet">    phpBB2/gallery2.php
-    phpBB2/g2helper.inc</pre>
+	phpBB2/gallery2.php
+	phpBB2/g2helper.inc
+	phpBB2/admin/admin_gallery2.php
+	phpBB2/admin/gallery2_export.php
+	phpBB2/admin/g2helper_admin.inc
+	phpBB2/templates/subSilver/gallery2.tpl
+	phpBB2/templates/subSilver/admin/gallery2_config_body.tpl
+	phpBB2/templates/subSilver/admin/gallery2_export.tpl
+	phpBB2/templates/subSilver/admin/gallery2_show_body.tpl
+	phpBB2/templates/subSilver/admin/gallery2_sync_intro_body.tpl
+	phpBB2/templates/subSilver/images/exif_parser.gif
+	gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl</pre>
 		<p>
 		The gallery2 folder contains a customized breadcrumb navigation file that will include 
 		a link back to your forum's index page. To use this feature, create a directory called 
@@ -338,139 +339,68 @@ C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</p
 		<p>The following MOD contains the required SQL and file modifications:</p>
 		<pre class="CodeSnippet">#
 #-----[ SQL ]------------------------------------------
+# (Use correct table prefix if not phpbb)
 # 
 CREATE TABLE `phpbb_gallery2` (
-`configID` TINYINT(1) NOT NULL,
 `fullPath` VARCHAR( 255 ) NOT NULL ,
-`embedPath` VARCHAR( 255 ) NOT NULL ,
-`embedURI` VARCHAR( 255 ) NOT NULL ,
-`relativePath` VARCHAR( 255 ) NOT NULL ,
-`loginPath` VARCHAR( 255 ) NOT NULL ,
-`cookiePath` VARCHAR( 255 ) NOT NULL ,
-`activeUserID` INT NOT NULL
+`embedUri` VARCHAR( 255 ) NOT NULL ,
+`g2Uri` VARCHAR( 255 ) NOT NULL ,
+`loginRedirect` VARCHAR( 255 ) NOT NULL ,
+`activeAdminId` INT NOT NULL
 );
 
 #
 #-----[ OPEN ]------------------------------------------
 # 
-admin/admin_users.php
+groupcp.php
 
 #
 #-----[ FIND ]------------------------------------------
 # 
-                if (!($this_userdata = get_userdata($user_id)))
-                {
-                        message_die(GENERAL_MESSAGE, $lang['No_user_id_specified'] );
-                }
-
-                if( $HTTP_POST_VARS['deleteuser'] && ( $userdata['user_id'] != $user_id ) )
-                {
+					$sql = "INSERT INTO " . USER_GROUP_TABLE . " (user_id, group_id, user_pending) 
+						VALUES (" . $row['user_id'] . ", $group_id, 0)";
 
 #
-#-----[ AFTER, ADD ]------------------------------------------
+#-----[ BEFORE, ADD ]------------------------------------------
 # 
-                     // Remove user from Gallerhy
-                     require($phpbb_root_path . 'g2helper.inc');
-                     $g2h = new g2helper($db);
-                     $g2h->init_admin();
-                     $g2h->deleteUser($user_id);
-                     $g2h->done();
+					// Add new user to group in gallery
+					require($phpbb_root_path . 'g2helper.inc');
+					$g2h = new g2helper($db);
+					$g2h->addUserToGroup($row['user_id'], $group_id);
 
 #
 #-----[ FIND ]------------------------------------------
 # 
-                        if($password != $password_confirm)
-                        {
-                                $error = TRUE;
-                                $error_msg .= ( ( isset($error_msg) ) ? '&lt;br /&gt;' : '' ) . $lang['Password_mismatch'];
-                        }
-                        else
-                        {
-                                $password = md5($password);
+						$sql = "UPDATE " . USER_GROUP_TABLE . " 
+							SET user_pending = 0 
+							WHERE user_id IN ($sql_in) 
+								AND group_id = $group_id";
+						$sql_select = "SELECT user_email 
+							FROM ". USERS_TABLE . " 
+							WHERE user_id IN ($sql_in)"; 
 
 #
-#-----[ AFTER, ADD ]------------------------------------------
+#-----[ BEFORE, ADD ]------------------------------------------
 # 
-                                // Change password in gallery
-                                require($phpbb_root_path . 'g2helper.inc');
-                                $g2h = new g2helper($db);
-                                $g2h->init_admin();
-                                $g2h->changePassword($user_id,$password);
-                                $g2h->done();
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-includes/usercp_register.php
+						// Add new user to group in gallery
+						require($phpbb_root_path . 'g2helper.inc');
+						$g2h = new g2helper($db);
+						$g2h->addUserToGroup($sql_in, $group_id);
 
 #
 #-----[ FIND ]------------------------------------------
 # 
-                        }
-
-                        if ( !$error )
-                        {
-                                $new_password = md5($new_password);
+						$sql = "DELETE FROM " . USER_GROUP_TABLE . " 
+							WHERE user_id IN ($sql_in) 
+								AND group_id = $group_id";
 
 #
-#-----[ AFTER, ADD ]------------------------------------------
+#-----[ BEFORE, ADD ]------------------------------------------
 # 
-                                require($phpbb_root_path . 'g2helper.inc');
-                                $g2h = new g2helper($db);
-                                $g2h->init_admin();
-                                $g2h->changePassword($user_id,$new_password);
-                                $g2h->done();
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-includes/page_header.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '&lt;span style="color:#' . $theme['fontcolor2'] . '"&gt;', '&lt;/span&gt;'),
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-'L_GALLERY2' => 'Gallery 2',
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-'U_GROUP_CP' => append_sid('groupcp.'.$phpEx),
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-'U_GALLERY2' => append_sid('gallery2.'.$phpEx),
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-templates/subSilver/overall_header.tpl
-
-#
-#-----[ FIND ]------------------------------------------
-#
-&lt;link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css"&gt;
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-{GALLERY2_CSS}
-{GALLERY2_JAVASCRIPT}
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-&lt;img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" /&gt;{L_LOGIN_LOGOUT}&lt;/a&gt;&amp;nbsp;
-
-#
-#-----[ IN-LINE AFTER, ADD ]------------------------------------------
-# 
-&amp;nbsp;&lt;a href="{U_GALLERY2}" class="mainmenu"&gt;&lt;img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" /&gt;{L_GALLERY2}&lt;/a&gt;&amp;nbsp;
+						// Remove user from group in gallery
+						require($phpbb_root_path . 'g2helper.inc');
+						$g2h = new g2helper($db);
+						$g2h->removeUserFromGroup($sql_in, $group_id);
 
 #
 #-----[ OPEN ]------------------------------------------
@@ -485,14 +415,237 @@ login.php
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
+#
+		// Logout of gallery
+ 		$g2_sql = 'SELECT fullPath, embedUri FROM ' . GALLERY2_TABLE;
+		$g2_row = $db->sql_fetchrow($db->sql_query($g2_sql));
+		$fullPath = $g2_row['fullPath'];
+		$embedUri = $g2_row['embedUri'];
+		require_once($fullPath . 'embed.php'); 
+		$g2_ret = GalleryEmbed::logout(array('embedUri' => $embedUri));
+
+#
+#-----[ OPEN ]------------------------------------------
 # 
-		$g2_sql = "SELECT * FROM phpbb_gallery2";
-		$g2_result = $db->sql_query($g2_sql);
-		$g2_row = $db->sql_fetchrow($g2_result);
-		$fullpath = $g2_row['fullPath'];
-		$embedPath = $g2_row['embedPath'];
-		require_once($fullpath . 'embed.php'); 
-		$g2_ret = GalleryEmbed::logout(array('embedPath'=>$embedPath));
+admin/admin_groups.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		//
+		// Delete Group
+		//
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		// Delete group in gallery
+		require($phpbb_root_path . 'g2helper.inc');
+		$g2h = new g2helper($db);
+		$g2h->deleteGroup($group_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			$sql = "UPDATE " . GROUPS_TABLE . "
+				SET group_type = $group_type, group_name = '" . str_replace("\'", "''", $group_name) . "', group_description = '" . str_replace("\'", "''", $group_description) . "', group_moderator = $group_moderator 
+				WHERE group_id = $group_id";
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+			// Update group in gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->updateGroup($group_id, str_replace("\'", "''", $group_name));
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		else if( $mode == 'newgroup' )
+		{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			// Create new group in gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->createGroup(str_replace("\'", "''", $group_name));
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+admin/admin_ug_auth.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		//
+		// Make user an admin (if already user)
+		//
+		if ( $userdata['user_id'] != $user_id )
+		{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			// Add admin to gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->mapUserToAdmin($user_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+				//
+				// Update users level, reset to USER
+				//
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			   	// Remove admin from gallery
+				require($phpbb_root_path . 'g2helper.inc');
+				$g2h = new g2helper($db);
+				$g2h->mapAdminToUser($user_id);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+admin/admin_users.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		if (!($this_userdata = get_userdata($user_id)))
+		{
+			message_die(GENERAL_MESSAGE, $lang['No_user_id_specified'] );
+		}
+
+		if( $HTTP_POST_VARS['deleteuser'] && ( $userdata['user_id'] != $user_id ) )
+		{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			// Remove user from Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->deleteUser($user_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			if($password != $password_confirm)
+			{
+				$error = TRUE;
+				$error_msg .= ( ( isset($error_msg) ) ? '<br />' : '' ) . $lang['Password_mismatch'];
+			}
+			else
+			{
+				$password = md5($password);
+				$passwd_sql = "user_password = '$password', ";
+
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+				// Change password in gallery
+				require($phpbb_root_path . 'g2helper.inc');
+				$g2h = new g2helper($db);
+				$g2h->changePassword($user_id, $password);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/constants.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+define('VOTE_USERS_TABLE', $table_prefix.'vote_voters');
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+define('GALLERY2_TABLE', $table_prefix.'gallery2');
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/page_header.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '<span style="color:#' . $theme['fontcolor2'] . '">', '</span>'),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	'L_GALLERY2' => 'Gallery 2',
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	'U_GROUP_CP' => append_sid('groupcp.'.$phpEx),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	'U_GALLERY2' => append_sid('gallery2.'.$phpEx),
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/usercp_register.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		}
+
+			if ( !$error )
+			{
+				$new_password = md5($new_password);
+				$passwd_sql = "user_password = '$new_password', ";
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+				// Change password in gallery
+				if ($mode != 'register') {
+					require($phpbb_root_path . 'g2helper.inc');
+					$g2h = new g2helper($db);
+					$g2h->changePassword($user_id, $new_password);
+				}
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+templates/subSilver/overall_header.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+#
+<link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css">
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+{GALLERY2_JAVASCRIPT}
+{GALLERY2_CSS}
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+<img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" />{L_LOGIN_LOGOUT}</a>&nbsp;
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+# 
+&nbsp;<a href="{U_GALLERY2}" class="mainmenu"><img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" />{L_GALLERY2}</a>&nbsp;
 
 #
 #-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
@@ -972,7 +1125,7 @@ else
 		<p>
 		Before you can view your Gallery 2 installation in phpBB2, you must 
 		first configure this integration package. To do this, navigate to the 
-		phpBB2 administration page and click on the "Gallery2" link.  You will 
+		phpBB2 administration page and click on the "Gallery 2" link.  You will 
 		now be presented with two options.
 		</p>
 		<p>The first area is the primary integration settings.  If these are 
@@ -1004,46 +1157,24 @@ else
 		<li><b>URL to gallery2.php</b> - This is the URL that would take you 
 		to your Gallery 2 installation when it is integrated.  For example:<br />
 		<div class="instructions">
-		<p>/gallery2.php</p>
+		<p>http://www.yoursite.com/gallery2.php</p>
 		</div>
 		</li>
-		<li><b>URL path from document root to gallery2.php</b> - This one can be tricky.  
-		The way to figure this entry out is to go to your website's home page and look 
-		at the URL.  If there is anything after the domain name, enter it here.  For 
-		example:
+		<li><b>URL to the gallery2 directory</b> - This is the URL you'd use to view 
+		your gallery in standalone mode. For example:<br />
 		<div class="instructions">
-		<h3>Example 1</h3>
-		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/</b></p>
-		<p>Then you would enter <b>/</b> in this box</p>
+		<p>http://www.yoursite.com/gallery2/</p>
 		</div>
-		<div class="instructions">
-		<h3>Example 2</h3>
-		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/phpBB2/</b></p>
-		<p>Then you would enter <b>/phpBB2/</b> in this box</p>
-		</div>
-		<div class="instructions">
-		<h3>Example 3</h3>
-		<p>If the URL to your homepage is: <b>http://www.mycoolsite.com/~my_username/</b></p>
-		<p>Then you would enter <b>/~my_username/</b> in this box</p>
-		</div></li>
-		<li><b>Relative path to your Gallery 2 directory</b> - This is the path 
-		to your Gallery2 directory relative to your root web directory.  For 
-		example: <br />
-		<div class="instructions">
-		<p>gallery2</p>
-		</div>
-		Note that depending on your directory structure, you may need to add a 
-		"/" to the beginning of your relative path.
 		</li>
 		<li><b>URL for user login</b> - This is the URL which users must visit 
 		when they want to log into your phpBB2 forums.  The standard Your_Account 
 		modules URL is:
 		<div class="instructions">
-		<p>login.php</p>
+		<p>http://www.yoursite.com/login.php</p>
 		</div>
 		If you use a different account module, you should update this setting.
 		</li>
-		<li><b>Active User ID</b> - You can safely leave this set to "0".
+		<li><b>Active Admin ID</b> - Do not alter this value.
 		</li>
 		<li><b>Cookie Path</b> - This you can safely leave set at it's default 
 		value.  But when Gallery is reachable at http://www.example.com/application/gallery2/ 
@@ -1063,10 +1194,6 @@ else
 		if they do not have one. The first phpBB2 admin account will also be 
 		mapped to the G2 admin account.  Therefore, if you're logged as an admin 
 		in phpBB2, you will also been logged as the admin in G2.
-		<br />
-		No group mapping is done at this time, it will come in a future release.<br />
-		Everytime a new user registers on your phpBB2 forum, on their first G2 visit, 
-		an account will be created for him.
 		</p>
 		<h2>
 		<a name="getting_help">

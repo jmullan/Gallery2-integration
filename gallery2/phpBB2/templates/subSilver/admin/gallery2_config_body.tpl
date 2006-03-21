@@ -23,6 +23,7 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
+ * @author Scott Gregory
  */
  -->
 
@@ -33,31 +34,23 @@
 <form method="post" action="{S_G2_ACTION}"><table cellspacing="1" cellpadding="4" border="0" align="center" class="forumline">
 	<tr>
 		<td align="center" class="row1">{L_FULLPATH}</td>
-		<td align="left" class="row2"><input type="text" name="fullpath" size="60" maxlength="255" value="{S_FULLPATH}"  /></td>
+		<td align="left" class="row2"><input type="text" name="fullpath" value="{S_FULLPATH}"  /></td>
+	</tr>
+	<tr>
+		<td align="center" class="row1">{L_G2URI}</td>
+		<td align="left" class="row2"><input type="text" name="g2uri" value="{S_G2URI}"  /></td>
 	</tr>
 	<tr>
 		<td align="center" class="row1">{L_EMBEDURI}</td>
 		<td align="left" class="row2"><input type="text" name="embeduri" value="{S_EMBEDURI}"  /></td>
 	</tr>
 	<tr>
-		<td align="center" class="row1">{L_EMBEDPATH}</td>
-		<td align="left" class="row2"><input type="text" name="embedpath" value="{S_EMBEDPATH}"  /></td>
+		<td align="center" class="row1">{L_LOGINREDIRECT}</td>
+		<td align="left" class="row2"><input type="text" name="loginredirect" value="{S_LOGINREDIRECT}"  /></td>
 	</tr>
 	<tr>
-		<td align="center" class="row1">{L_RELATIVEPATH}</td>
-		<td align="left" class="row2"><input type="text" name="relativepath" value="{S_RELATIVEPATH}"  /></td>
-	</tr>
-	<tr>
-		<td align="center" class="row1">{L_LOGINPATH}</td>
-		<td align="left" class="row2"><input type="text" name="loginpath" value="{S_LOGINPATH}"  /></td>
-	</tr>
-	<tr>
-		<td align="center" class="row1">{L_COOKIEPATH}</td>
-		<td align="left" class="row2"><input type="text" name="cookiepath" value="{S_COOKIEPATH}"  /></td>
-	</tr>
-	<tr>
-		<td align="center" class="row1">{L_ACTIVEUSERID}</td>
-		<td align="left" class="row2"><input type="text" name="activeuserid" value="{S_ACTIVEUSERID}"  /></td>
+		<td align="center" class="row1">{L_ACTIVEADMINID}</td>
+		<td align="left" class="row2"><input type="text" name="activeadminid" value="{S_ACTIVEADMINID}"  /></td>
 	</tr>
 	<tr>
 		<td align="center" class="catbottom" colspan="2"><input type="submit" name="save" value="{L_SUBMIT}"  /></td>
