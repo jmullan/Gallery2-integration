@@ -307,7 +307,7 @@
 		<p>
 		To install, simply upload the contents of the admin and templates folders into the 
 		corresponding folders in your phpBB2 installation.</p>
-		<pre class="CodeSnippet">    phpBB2/admin/admin_gallery2.php
+		<pre class="CodeSnippet">	phpBB2/admin/admin_gallery2.php
 	phpBB2/gallery2.php
 	phpBB2/g2helper.inc
 	phpBB2/admin/admin_gallery2.php
@@ -336,6 +336,51 @@ C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</p
 		reflect the actual home page of your forums:</p>
 		<div class="instructions">
 		<p><span class="code">&lt;a href="/" class="BreadCrumb-1"&gt;Forum Index&lt;/a&gt;</span></p></div>
+		<p>There is a known issue with the font size in the phpBB2 integration. To fix this, make the following 
+		changes:</p>
+		<pre class="CodeSnippet">#
+#-----[ OPEN ]------------------------------------------
+# 
+templates/subSilver/subSilver.css
+# OR
+templates/subSilver/overall_header.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+#
+ scrollbar-darkshadow-color: #98AAB1;
+} 
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+#gsNavBar div.gbBreadCrumb {
+font-size: 1.6em;
+}
+
+span.block-core-SystemLink {
+font-size: 1.6em;
+} 
+
+#
+#-----[ FIND ]------------------------------------------
+#
+font,th,td,p { font-family: Verdana, Arial, Helvetica, sans-serif }
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------------
+#
+font-family:
+
+#
+#-----[ IN-LINE BEFORE, ADD ]-----------------------------
+#
+font-size: 10px;
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM</pre>
 		<p>The following MOD contains the required SQL and file modifications:</p>
 		<pre class="CodeSnippet">#
 #-----[ SQL ]------------------------------------------
@@ -421,7 +466,7 @@ login.php
 		$g2_row = $db->sql_fetchrow($db->sql_query($g2_sql));
 		$fullPath = $g2_row['fullPath'];
 		$embedUri = $g2_row['embedUri'];
-		require_once($fullPath . 'embed.php'); 
+		require_once($fullPath); 
 		$g2_ret = GalleryEmbed::logout(array('embedUri' => $embedUri));
 
 #
@@ -540,7 +585,7 @@ admin/admin_users.php
 			if($password != $password_confirm)
 			{
 				$error = TRUE;
-				$error_msg .= ( ( isset($error_msg) ) ? '<br />' : '' ) . $lang['Password_mismatch'];
+				$error_msg .= ( ( isset($error_msg) ) ? '&lt;br /&gt;' : '' ) . $lang['Password_mismatch'];
 			}
 			else
 			{
@@ -579,7 +624,7 @@ includes/page_header.php
 #
 #-----[ FIND ]------------------------------------------
 # 
-	'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '<span style="color:#' . $theme['fontcolor2'] . '">', '</span>'),
+	'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '&lt;span style="color:#' . $theme['fontcolor2'] . '"&gt;', '&lt;/span&gt;'),
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
@@ -629,7 +674,7 @@ templates/subSilver/overall_header.tpl
 #
 #-----[ FIND ]------------------------------------------
 #
-<link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css">
+&lt;link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css"&gt;
 
 #
 #-----[ BEFORE, ADD ]------------------------------------------
@@ -640,12 +685,12 @@ templates/subSilver/overall_header.tpl
 #
 #-----[ FIND ]------------------------------------------
 # 
-<img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" />{L_LOGIN_LOGOUT}</a>&nbsp;
+&lt;img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" /&gt;{L_LOGIN_LOGOUT}&lt;/a&gt;&amp;nbsp;
 
 #
 #-----[ IN-LINE AFTER, ADD ]------------------------------------------
 # 
-&nbsp;<a href="{U_GALLERY2}" class="mainmenu"><img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" />{L_GALLERY2}</a>&nbsp;
+&amp;nbsp;&lt;a href="{U_GALLERY2}" class="mainmenu"&gt;&lt;img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" /&gt;{L_GALLERY2}&lt;/a&gt;&amp;nbsp;
 
 #
 #-----[ SAVE/CLOSE ALL FILES ]------------------------------------------

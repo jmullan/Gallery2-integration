@@ -56,7 +56,7 @@ class g2helper_admin {
 			'fullInit' => $this->_fullInit
 		);
 
-		require_once($this->_fullPath . 'embed.php');
+		require_once($this->_fullPath);
 	}
 
 	function init() {

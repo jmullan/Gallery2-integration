@@ -54,8 +54,20 @@ switch ($mode) {
 		$loginRedirect = trim($_POST['loginredirect']);
 		$activeAdminId = ($_POST['activeadminid']) ? intval($_POST['activeadminid']) : 0;
 
-		if ($fullPath == '' || $embedUri == '' || $g2Uri == '' || $loginRedirect == '') {
+		if ($embedUri == '' || $g2Uri == '' || $loginRedirect == '') {
 			message_die(GENERAL_MESSAGE, 'One or more fields are blank. Please go back and correct.');
+		}
+
+		if ($fullPath == '') {
+			require('./G2EmbedDiscoveryUtilities.class');
+			list ($success, $fullPath, $errorString) = G2EmbedDiscoveryUtilities::getG2EmbedPathByG2Uri($g2Uri);
+			if (empty($success)) {
+				message_die(GENERAL_MESSAGE, $errorString);
+			}
+		}
+
+		if (get_magic_quotes_gpc == 0) {
+			$fullPath = addslashes($fullPath);
 		}
 
 		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
@@ -82,15 +94,19 @@ switch ($mode) {
 		$template->set_filenames(array(
 			'body' => './admin/gallery2_config_body.tpl')
 		);
+
 		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
 		$result = $db->sql_query($sql);
 		if (!$db->sql_numrows($result)) {
-			$url_array = parse_url($_SERVER['HTTP_REFERER']);
-			$phpbb_url = str_replace('admin/admin_gallery2.php', '' , $path);
-			$fullpath = dirname(dirname(__FILE__)) . '/gallery2/';
-			$embeduri = $url_array['scheme'] . '://' . $url_array['host'] . '/' . $phpbb_url . 'gallery2.php';
-			$g2uri = $url_array['scheme'] . '://' . $url_array['host'] . '/' . $phpbb_url . 'gallery2/';
-			$loginredirect = $url_array['scheme'] . '://' . $url_array['host'] . '/' . $phpbb_url . 'login.php';
+			$url_path = $_SERVER['SCRIPT_NAME'];
+			$url_path = explode('/', $url_path);
+			$working_url_path = '/';
+			for ($i = 1; $i < count($url_path) - 2; $i++) {
+				$working_url_path .= $url_path[$i] . '/';
+			}
+			$embeduri = $working_url_path . 'gallery2.php';
+			$g2uri = '/gallery2/';
+			$loginredirect = $working_url_path . 'login.php';
 			$activeadminid = 0;
 		}
 		else {
@@ -112,12 +128,14 @@ switch ($mode) {
 			'S_G2_ACTION' => append_sid("admin_gallery2.$phpEx"),
 
 			'L_SUBMIT' => $lang['Submit'],
-			'L_FULLPATH' => 'Full file path to your Gallery 2 directory: ',
+			'L_FULLPATH' => 'Full file path to embed.php: ',
 			'L_EMBEDURI' => 'URL to gallery2.php: ',
-			'L_G2URI' => 'URL to the gallery2 directory: ',
+			'L_G2URI' => 'URL to your gallery2 directory: ',
 			'L_LOGINREDIRECT' => 'URL to your login.php file: ',
 			'L_ACTIVEADMINID' => 'Active Admin ID: ',
-			'L_CONFIG_EXPLAIN' => 'We have done our best to fill these values in for you. However, you should double check them for correctness.<br />Do not change the Active Admin ID, it is managed by the integration package.',
+			'L_CONFIG_EXPLAIN1' => 'This value depends on your particular installation and you must ensure it is entered correctly.<br />Proper examples are http://www.example.com/gallery2/ or just /gallery2/',
+			'L_CONFIG_EXPLAIN2' => 'These values have been auto-detected and should be correct, however, you should double check them.',
+			'L_CONFIG_EXPLAIN3' => 'These values are automatically generated and managed by the integration package.<br />Do not change them unless you are certain you know what you are doing!',
 			'L_CONFIG_TITLE' => 'Gallery 2 Integration Settings')
 		);
 

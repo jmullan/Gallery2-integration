@@ -59,7 +59,7 @@ class g2helper {
 			$this->_errorHandler(GENERAL_ERROR, 'Active admin is not valid. Gallery 2 appears not to be integrated properly. Please run the user sychronization at least once.', __LINE__, __FILE__);
 		}
 		else {
-			require_once($this->_fullPath . 'embed.php');
+			require_once($this->_fullPath);
 		}
 	}
 
