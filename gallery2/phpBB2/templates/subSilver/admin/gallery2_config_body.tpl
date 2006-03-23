@@ -29,13 +29,13 @@
 
 <h1>{L_CONFIG_TITLE}</h1>
 
-<form method="post" action="{S_G2_ACTION}"><table cellspacing="1" cellpadding="4" border="0" align="center" class="forumline">
+<form method="post" action="{S_G2_ACTION}" name="configForm"><table cellspacing="1" cellpadding="4" border="0" align="center" class="forumline">
 	<tr>
 		<th align="center" class="row1" colspan="2">{L_CONFIG_EXPLAIN1}</th>
 	</tr>
 	<tr>
 		<td height="40" valign="top" align="right" class="row1">{L_G2URI}</td>
-		<td height="40" valign="top" align="left" class="row2"><input type="text" name="g2uri" value="{S_G2URI}"  /></td>
+		<td height="40" valign="top" align="left" class="row2"><input type="text" name="g2uri" value="{S_G2URI}" onchange="document.configForm.fullpath.value='';"  /></td>
 	</tr>
 	<tr>
 		<th align="center" class="row1" colspan="2">{L_CONFIG_EXPLAIN2}</th>

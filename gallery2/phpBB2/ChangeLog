@@ -1,3 +1,9 @@
+2006-03-23  Dariush Molavi  <dari@nukedgallery.net> 0.5.1
+	* Fix: Typo correction and minor clarifications in readme.
+	* Fix: Added small javscript call to force the $fullPath 
+	  variable to be re-discovered if the user changes $g2Uri.
+	  Thanks to Scott Gregory.
+
 2006-03-22  Dariush Molavi  <dari@nukedgallery.net> 0.5.0
 	* Fix: Updated Readme with instructions on how to fix the 
 	  font size issue.
