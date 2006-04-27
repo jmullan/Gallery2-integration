@@ -1,25 +1,23 @@
 <?php
 
 /*
-* $RCSfile$
-*
-* Gallery - a web based photo album viewer and editor
-* Copyright (C) 2000-2006 Bharat Mediratta
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or (at
-* your option) any later version.
-*
-* This program is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
-*/
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 /**
 * Gallery 2 index page for PHPNuke.
 * @version $Revision$ $Date$
@@ -92,7 +90,7 @@ function checkVersion() {
         $latest_version = (int) $version_info[0] . '.' . (int) $version_info[1] . '.' . (int) $version_info[2];
 
         // UPDATE ME WHEN CHANGING MAJOR REV
-        if ($latest_head_revision == 0 && $minor_revision == $latest_minor_revision) {    
+        if ($latest_head_revision == 0 && $minor_revision == $latest_minor_revision) {
             return;
         }
         else {
@@ -144,18 +142,18 @@ else {
     if (is_user($user))    {
         // we log as a normal user
         cookiedecode($user);
-        $uid='';  
+        $uid='';
         if (is_user($user)) {
             $uid = $cookie[0];
         }
     }
 }
-  
+
 if ($g2bodyHtml==null) {
     $config_sql = "SELECT * FROM ".$prefix."_g2config";
     $config_result = $db->sql_query($config_sql);
     list($embedUri, $g2Uri, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);
-    
+
     if ($g2configurationDone == 0){
             include "header.php";
               OpenTable();
@@ -166,9 +164,9 @@ if ($g2bodyHtml==null) {
     }
 
     require_once('embed.php');
-                
+
     $g2currentlang = $phpnuke2G2Lang[$currentlang];
-                
+
     $ret = GalleryEmbed::init(array('embedUri' => $embedUri,'g2Uri' => $g2Uri, 'activeUserId' => "$uid",'activeLanguage' =>$g2currentlang));
 
     if ($ret) {
@@ -182,10 +180,10 @@ if ($g2bodyHtml==null) {
                 $sqluserdata        = $db->sql_fetchrow($result);
                 $nukeuser_regdate    = $sqluserdata['user_regdate'];
                 $nukeuser_lang        = $sqluserdata['user_lang'];
-                            
+
                 // Get Arguments for the new user:
                 $args = array('fullname'=> $sqluserdata['username'], 'username'=> $sqluserdata['username'], 'hashedpassword'=> $sqluserdata['user_password'], 'hashmethod'=> 'md5' , 'email'=> $sqluserdata['user_email'] , 'language' => $phpnuke2G2Lang[$nukeuser_lang], 'creationtimestamp'=> strtotime($nukeuser_regdate));
-    
+
                 $retcreate = GalleryEmbed::createUser($sqluserdata['user_id'], $args);
                 if ($retcreate) {
                     list($ret,$user) = GalleryCoreApi::fetchUserByUsername($sqluserdata['username']);
@@ -194,7 +192,7 @@ if ($g2bodyHtml==null) {
                         echo 'Sorry, but your the following PHPNuke user could not be imported to Gallery 2:<br> '.$nukeuser_uname.'.<p> Here is the error message from G2: <br />'.$retcreate->getAsHtml();
                     }
                 }
-                                   
+
                 // Full G2 reinit with the new created user
                 $ret = GalleryEmbed :: init(array ('embedUri' => $embedUri, 'g2Uri' => $g2Uri, 'activeUserId' => "$uid", 'activeLanguage' => $g2currentlang, 'fullInit' => 'true'));
             }
@@ -206,7 +204,7 @@ if ($g2bodyHtml==null) {
             echo 'G2 did not return a success status. Here is the error message from G2: <br />'.$ret->getAsHtml();
         }
     }
-          
+
     // handle the G2 request
 
     if ($showSidebar) {
@@ -220,7 +218,7 @@ if ($g2bodyHtml==null) {
         GalleryCapabilities::set('showSidebarBlocks', false);
         $g2moddata = GalleryEmbed::handleRequest();
         }
-            
+
     // G2 Header hacking (contribution from dmolavi)
     // get the page title, javascript and css links from the <head> html from G2
     $title = ''; $javascript = array();    $css = array();
@@ -260,32 +258,32 @@ if ($g2bodyHtml==null) {
         }
     }
     eval($header);
-          
+
     // show error message if isDone is not defined
     if (!isset($g2moddata['isDone'])) {
         echo 'isDone is not defined, something very bad must have happened.';
         exit;
     }
-            
+
     // die if it was a binary data (image) request
     if ($g2moddata['isDone']) {
         exit; // uploads module does this too
     }
-            
+
     // Main G2 error message
 
     if ($ret) {
         echo $ret->getAsHtml();
     }
-    
+
     $g2bodyHtml = $updateCheck;
     $g2bodyHtml .= $g2moddata['bodyHtml'];
 }
-      
+
 OpenTable();
 echo $g2bodyHtml;
 CloseTable();
-    
+
 include("footer.php");
 
-?> 
+?>
