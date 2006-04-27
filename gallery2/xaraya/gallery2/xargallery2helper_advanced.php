@@ -915,8 +915,6 @@ class xarGallery2Helper_Advanced {
 }
 
 /*
- * $RCSfile$
- *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
  *
