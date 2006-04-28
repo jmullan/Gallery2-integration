@@ -222,7 +222,7 @@ function gallery2_upgrade($oldversion)
 	if (xarGallery2Helper::init(false, true, false)) {
 	    /* Get the current G2 core version */
 	    list ($ret, $g2Version) = GalleryCoreApi::getPluginParameter('module', 'core', '_version');
-	    if ($ret->isSuccess()) {
+	    if (empty($ret)) {
 		$minG2Version = xarModGetVar('gallery2','g2.minCoreVersion');
 		if (version_compare($minG2Version, $g2Version) <= 0) {
 		    $status = true;
