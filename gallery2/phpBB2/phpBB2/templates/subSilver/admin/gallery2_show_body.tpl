@@ -21,7 +21,6 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory
  */
  -->
 
@@ -38,3 +37,8 @@
 		<td align="center" class="catBottom">{S_HIDDEN_FIELDS}<input type="submit" name="sync_intro" value="{L_SYNC}" class="mainoption" /></td>
 	</tr>
 </table></form>
+
+<p>&nbsp;</p>
+<p class="cattitle">{G2_VERSION_TITLE}<br />
+{G2_VERSION_MSG}</p>
+<p>&nbsp;</p>

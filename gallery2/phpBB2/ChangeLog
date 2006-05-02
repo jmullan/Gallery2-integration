@@ -1,20 +1,49 @@
+2006-05-02  Dariush Molavi  <dari@nukedgallery.net> 0.5.2
+	* Update: Moved optional mods to separate add-ons.
+	* Update: Removed loginRedirect.
+	* New: Added mods for admin/page_footer_admin.php and 
+	  templates/subSilver/admin/page_footer.tpl to display 
+	  integration version.
+	* Fix: Altered mods for admin/admin_users.php and 
+	  includes/usercp_register.php to accomodate additional 
+	  capabilities for username and email changes.
+	* Update: Moved code for profile gallery link as 
+	  optional mods are now separate add-ons.
+	* Fix: Fixed problem with renaming groups in external id map.
+	* New: Added external id map checks to all group functions to 
+	  check for group/user existence before executing group function.
+	* Change: Renamed changePassword function to updateUser and 
+	  added capability to handle username and email changes.
+	* New: Added compatible version vars.
+	* New: Added apiVersion to init_array.
+	* New: Added checkConfig method to do verification of 
+	  embedUri and version checks at config time.
+	* New: Added integration version check at Nukedgallery.net.
+	* New: Added clean function to clean all post vars and fix 
+	  backslash problems for windows integrations.
+	* Fix: Re-structured the fullPath logic slightly.
+	* New: In admin_gallery2.php, added call to checkConfig - if 
+	  the user makes it past this point without errors, all 
+	  config settings should be verified and ready to go.
+	* Fix: Fixed switch statement condition logic in gallery2_export.php.
+
 2006-03-23  Dariush Molavi  <dari@nukedgallery.net> 0.5.1
 	* Fix: Typo correction and minor clarifications in readme.
-	* Fix: Added small javscript call to force the $fullPath 
+	* Fix: Added small javscript call to force the $fullPath
 	  variable to be re-discovered if the user changes $g2Uri.
 	  Thanks to Scott Gregory.
 
 2006-03-22  Dariush Molavi  <dari@nukedgallery.net> 0.5.0
-	* Fix: Updated Readme with instructions on how to fix the 
+	* Fix: Updated Readme with instructions on how to fix the
 	  font size issue.
-	* Update: Updated embedding config in ACP to use the 
-	  G2EmbedDiscoveryUtilities class file from valiant.  Thanks 
+	* Update: Updated embedding config in ACP to use the
+	  G2EmbedDiscoveryUtilities class file from valiant.  Thanks
 	  to Scott Gregory for making the change.
 
 2006-03-21  Dariush Molavi  <dari@nukedgallery.net> 0.4.0
-	* Update: Major update for Gallery 2.1.  From this point 
-	  forward, this integration will only support Gallery 2.1 
-	  or greater.  Thanks to Scott Gregory for all his work in 
+	* Update: Major update for Gallery 2.1.  From this point
+	  forward, this integration will only support Gallery 2.1
+	  or greater.  Thanks to Scott Gregory for all his work in
 	  getting this together.
 
 2005-12-20  Dariush Molavi  <dari@nukedgallery.net> 0.3.0
@@ -28,50 +57,50 @@
 	  (Scott Gregory).  This should fix the funky font issues.
 
 2005-11-29  Dariush Molavi  <dari@nukedgallery.net>
-	* Update: Added notices in Readme regarding integrated rewrites and 
+	* Update: Added notices in Readme regarding integrated rewrites and
 	  suggested Gallery 2 installation locations.
 
 2005-11-28  Dariush Molavi  <dari@nukedgallery.net> 0.2.2
-    * Fix: Broken delete user code in g2helper.inc (J. Mike Rollins)
+	* Fix: Broken delete user code in g2helper.inc (J. Mike Rollins)
 	* Update: Modified code listing failed user exports (websnail)
 
 2005-11-07  Dariush Molavi  <dari@nukedgallery.net> 0.2.1
-	* Change: Remove notice about SQL table name, since 
-	  we create the table.
+        * Change: Remove notice about SQL table name, since
+          we create the table.
 
 2005-11-03  Dariush Molavi  <dari@nukedgallery.net> 0.2.0
-	* Fix: Broken G2 image in Readme.html
-	* New: g2helper.inc class (J. Mike Rollins)
-	* New: User update/delete and password changes 
-	  now supported (J. Mike Rollins)
-	* New: Addition ACP features (J. Mike Rollins)
+        * Fix: Broken G2 image in Readme.html
+        * New: g2helper.inc class (J. Mike Rollins)
+        * New: User update/delete and password changes
+          now supported (J. Mike Rollins)
+        * New: Addition ACP features (J. Mike Rollins)
 
 2005-09-30  Dariush Molavi  <dari@nukedgallery.net>
-	* Change: Got the CSS in Readme to work as required.
-	  Props to thumb for the fix.
-	* Change: Readme is now valid XHTML 1.0.
+        * Change: Got the CSS in Readme to work as required.
+          Props to thumb for the fix.
+        * Change: Readme is now valid XHTML 1.0.
 
-2005-09-28  Dariush Molavi  <dari@nukedgallery.net>
-	* Change: Update to Readme.html with new CSS.
-	* Change: Update to Readme.html to G2 Final.
-	* Fix: Typo in Readme.html.
+2005-09-28 Dariush Molavi <dari@nukedgallery.net>
+        * Change: Update to Readme.html with new CSS.
+        * Change: Update to Readme.html to G2 Final.
+        * Fix: Typo in Readme.html.
 
 2005-09-26  Dariush Molavi  <dari@nukedgallery.net>
-	* Change: Updated Readme.html with information on correct 
-	  path for Forum Index link.
+        * Change: Updated Readme.html with information on correct
+          path for Forum Index link.
 
 2005-09-16  Dariush Molavi  <dari@nukedgallery.net>
-	* Change: Added customized BreadCrumb.tpl which adds link 
-	  back to forum index in the breadcrumb trail.
+        * Change: Added customized BreadCrumb.tpl which adds link
+          back to forum index in the breadcrumb trail.
 
-2005-09-08  Dariush Molavi  <dari@nukedgallery.net> 
-	* Fix: Forgot to include the gallery image for 
-	  navigation menu. 
+2005-09-08  Dariush Molavi  <dari@nukedgallery.net>
+        * Fix: Forgot to include the gallery image for
+          navigation menu.
 
 2005-08-30  Dariush Molavi  <dari@nukedgallery.net> 0.1.1
-	* New: Added group sync to admin control panel.  
-	  New users are *not* added to their groups 
-	  yet, that will be next. 
+        * New: Added group sync to admin control panel.
+          New users are *not* added to their groups
+          yet, that will be next.
 
 2005-08-25  Dariush Molavi  <dari@nukedgallery.net> 0.1.0
-	* New: First commit of phpBB2 integration code.
+        * New: First commit of phpBB2 integration code. 

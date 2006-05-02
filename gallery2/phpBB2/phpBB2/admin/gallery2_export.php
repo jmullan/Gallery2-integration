@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
@@ -21,8 +22,8 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory
-*/
+ * @author Scott Gregory 
+ */
 
 define('IN_PHPBB', 1);
 
@@ -175,7 +176,8 @@ if (count($_POST['user']) != 0)	{
 
 				break;
 
-			case ('2' || '3'): // delete user from G2
+			case '2': // delete items and user from G2
+			case '3': // keep items and delete user from G2
 				list ($ret, $adminUsers) = GalleryCoreApi::fetchUsersForGroup($adminGroupId, 2);
 				if (isset($ret)) {
 					$g2h_admin->errorHandler(GENERAL_ERROR, "fetchUsersForGroup failed for $adminGroupId. Here is the error message from G2: <br />" . $ret->getAsHtml(), __LINE__, __FILE__);

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
@@ -21,7 +22,7 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory
+ * @author Scott Gregory 
  */
 
 define('IN_PHPBB', 1);
@@ -32,6 +33,9 @@ if (!empty($setmodules))
 	$module['Forums']['Gallery_2'] = $filename;
 	return;
 }
+
+$currentIntegrationVersion = '0.5.2';
+$integrationVersionText = "Gallery2 <--> phpBB2 Integration $currentIntegrationVersion";
 
 $phpbb_root_path = './../';
 require($phpbb_root_path . 'extension.inc');
@@ -46,43 +50,53 @@ else $mode = '';
 switch ($mode) {
 
 	case 'save':
-		$fullPath = trim($_POST['fullpath']);
-		$embedUri = trim($_POST['embeduri']);
-		$g2Uri = trim($_POST['g2uri']);
-		$loginRedirect = trim($_POST['loginredirect']);
-		$activeAdminId = ($_POST['activeadminid']) ? intval($_POST['activeadminid']) : 0;
+		$embedUri = clean($_POST['embeduri']);
+		$g2Uri = clean($_POST['g2uri']);
 
-		if ($embedUri == '' || $g2Uri == '' || $loginRedirect == '') {
+		if ($embedUri == '' || $g2Uri == '') {
 			message_die(GENERAL_MESSAGE, 'One or more fields are blank. Please go back and correct.');
 		}
 
-		if ($fullPath == '') {
+		if ($_POST['fullpath'] == '') {
 			require('./G2EmbedDiscoveryUtilities.class');
 			list ($success, $fullPath, $errorString) = G2EmbedDiscoveryUtilities::getG2EmbedPathByG2Uri($g2Uri);
 			if (empty($success)) {
 				message_die(GENERAL_MESSAGE, $errorString);
 			}
+
+			$fullPath = (get_magic_quotes_gpc()) ? addslashes($fullPath) : $fullPath;
+		}
+		else {
+			$fullPath = $_POST['fullpath'];
 		}
 
-		if (get_magic_quotes_gpc == 0) {
-			$fullPath = addslashes($fullPath);
-		}
+		$fullPath = clean($fullPath);
+
+		$activeAdminId = ($_POST['activeadminid']) ? intval($_POST['activeadminid']) : 0;
 
 		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
 		$result = $db->sql_query($sql);
 		if(!$db->sql_numrows($result)) {
-			$sql = 'INSERT INTO ' . GALLERY2_TABLE . " (fullPath, embedUri, g2Uri, loginRedirect, activeAdminId) VALUES ('$fullPath', '$embedUri', '$g2Uri', '$loginRedirect', $activeAdminId)";
+			$sql = 'INSERT INTO ' . GALLERY2_TABLE . " (fullPath, embedUri, g2Uri, activeAdminId) VALUES ('$fullPath', '$embedUri', '$g2Uri', $activeAdminId)";
 		}
 		else {
-			$sql = 'UPDATE ' . GALLERY2_TABLE . " SET fullPath = '$fullPath', embedUri = '$embedUri', g2Uri = '$g2Uri', loginRedirect = '$loginRedirect', activeAdminId = $activeAdminId";
+			$sql = 'UPDATE ' . GALLERY2_TABLE . " SET fullPath = '$fullPath', embedUri = '$embedUri', g2Uri = '$g2Uri', activeAdminId = $activeAdminId";
 		}
 
-		$message = 'Configuration data successfully saved.';
-	
 		if (!$result = $db->sql_query($sql)) {
 			message_die(GENERAL_ERROR, 'Could not insert data into Gallery 2 table', $lang['Error'], __LINE__, __FILE__, $sql);
 		}
 
+		require('./g2helper_admin.inc');
+		$g2h_admin = new g2helper_admin($db);
+		list ($success, $msg) = $g2h_admin->checkConfig();
+		if (empty($success)) {
+			$message = $msg . '<br />Configuration data successfully saved, but errors were encountered.';
+		}
+		else {
+			$message = $msg . '<br />Configuration data successfully saved.';
+		}
+	
 		$message .= '<br /><br />' . sprintf('Click %sHere%s to return to the Gallery 2 admin page', "<a href=\"" . append_sid("admin_gallery2.$phpEx") . "\">", "</a>") . "<br /><br />" . sprintf($lang['Click_return_admin_index'], "<a href=\"" . append_sid("index.$phpEx?pane=right") . "\">", "</a>");
 
 		message_die(GENERAL_MESSAGE, $message);
@@ -104,7 +118,6 @@ switch ($mode) {
 			}
 			$embeduri = $working_url_path . 'gallery2.php';
 			$g2uri = '/gallery2/';
-			$loginredirect = $working_url_path . 'login.php';
 			$activeadminid = 0;
 		}
 		else {
@@ -112,27 +125,23 @@ switch ($mode) {
 			$fullpath = $row['fullPath'];
 			$embeduri = $row['embedUri'];
 			$g2uri = $row['g2Uri'];
-			$loginredirect = $row['loginRedirect'];
-			$activeadminid = intval($row['activeAdminId']);
+			$activeadminid = $row['activeAdminId'];
 		}
 
 		$template->assign_vars(array(
 			'S_FULLPATH' => $fullpath,
 			'S_EMBEDURI' => $embeduri,
 			'S_G2URI' => $g2uri,
-			'S_LOGINREDIRECT' => $loginredirect,
 			'S_ACTIVEADMINID' => $activeadminid,
-			'S_SAVECONFIG' => append_sid("admin_gallery2.$phpEx"),
 			'S_G2_ACTION' => append_sid("admin_gallery2.$phpEx"),
 
 			'L_SUBMIT' => $lang['Submit'],
 			'L_FULLPATH' => 'Full file path to embed.php: ',
-			'L_EMBEDURI' => 'URL to gallery2.php: ',
-			'L_G2URI' => 'URL to your gallery2 directory: ',
-			'L_LOGINREDIRECT' => 'URL to your login.php file: ',
+			'L_EMBEDURI' => 'URL path to gallery2.php: ',
+			'L_G2URI' => 'URL path to the gallery2 directory: ',
 			'L_ACTIVEADMINID' => 'Active Admin ID: ',
-			'L_CONFIG_EXPLAIN1' => 'This value depends on your particular installation and you must ensure it is entered correctly.<br />Proper examples are http://www.example.com/gallery2/ or just /gallery2/',
-			'L_CONFIG_EXPLAIN2' => 'These values have been auto-detected and should be correct, however, you should double check them.',
+			'L_CONFIG_EXPLAIN1' => 'This value depends on your particular installation and you must ensure it is entered correctly.<br />Proper examples are http://example.com/gallery2/ or just /gallery2/',
+			'L_CONFIG_EXPLAIN2' => 'This value has been auto-detected and should be correct, however, you should double check it.',
 			'L_CONFIG_EXPLAIN3' => 'These values are automatically generated and managed by the integration package.<br />Do not change them unless you are certain you know what you are doing!',
 			'L_CONFIG_TITLE' => 'Gallery 2 Integration Settings')
 		);
@@ -211,6 +220,38 @@ switch ($mode) {
     	break;
 
 	default:
+		$url = 'http://www.nukedgallery.net/upgradecheck/phpbbupgrade.txt';
+		if ($fp = @fopen($url, 'r')) {
+			$versionData = fread($fp, 4096);
+			fclose($fp);
+
+			$versionData = explode("\n", $versionData);
+			$latestHeadRevision = intval($versionData[0]);
+			$latestMajorRevision = intval($versionData[1]);
+			$latestMinorRevision = intval($versionData[2]);
+			$latestVersion = "$latestHeadRevision.$latestMajorRevision.$latestMinorRevision";
+
+			$integrationVersion = explode('.', $currentIntegrationVersion);
+			$integrationHeadVersion = intval($integrationVersion[0]);
+			$integrationMajorVersion = intval($integrationVersion[1]);
+			$integrationMinorVersion = intval($integrationVersion[2]);
+
+			if ($latestHeadRevision == $integrationHeadVersion && $latestMajorRevision == $integrationMajorVersion && $latestMinorRevision == $integrationMinorVersion) {	
+				$versionText = '<p style="color:green">You have the most current integration package.</p>';
+			}
+			else {
+				$versionText = '<p style="color:red">Your integration package is <b>not</b> up to date.  '
+				. "Latest version available is <b>$latestVersion</b></p>"
+				. '<p>To see what has changed, read the ChangeLog here: <a href="http://www.nukedgallery.net/postp11212.html#11212" target="_blank">http://www.nukedgallery.net/postp11212.html#11212</a><br />'
+				. 'You can download the latest integration package from: <a href="http://www.nukedgallery.net/downloads-cat12.html" target="_blank">http://www.nukedgallery.net/downloads-cat12.html</a></p>';
+			}
+		}
+		else {
+			fclose($fp);
+
+			$versionText = "Could not open $url for input.";
+		}
+		
 		$template->set_filenames(array(
 			'body' => './admin/gallery2_show_body.tpl')
 		);
@@ -220,13 +261,22 @@ switch ($mode) {
 			'L_CONFIG' => 'Configure Gallery 2 Integration',
 			'L_SYNC' => 'Synchronize phpBB2 Users to Gallery 2',
 			'G2_TITLE' => 'Gallery 2 Administration',
-			'G2_ADMIN_TASK' => 'Choose your Gallery 2 Adminstration Task')
+			'G2_ADMIN_TASK' => 'Choose your Gallery 2 Adminstration Task',
+			'G2_VERSION_TITLE' => 'Integration Version Information',
+			'G2_VERSION_MSG' => $versionText)
 		);
 
 		$template->pparse('body');
 
 		include('./page_footer_admin.' . $phpEx);
 
+}
+
+function clean($value) {
+	$value = trim($value);
+	$value = (get_magic_quotes_gpc()) ? stripslashes($value) : $value;
+	$value = str_replace('\\', '/', $value);
+	return $value;
 }
 
 ?>

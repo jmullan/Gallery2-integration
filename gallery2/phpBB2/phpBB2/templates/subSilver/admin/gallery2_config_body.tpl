@@ -21,7 +21,6 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory
  */
  -->
 
@@ -41,10 +40,6 @@
 	<tr>
 		<td align="right" class="row1">{L_EMBEDURI}</td>
 		<td align="left" class="row2"><input type="text" name="embeduri" value="{S_EMBEDURI}"  /></td>
-	</tr>
-	<tr>
-		<td height="40" valign="top" align="right" class="row1">{L_LOGINREDIRECT}</td>
-		<td height="40" valign="top" align="left" class="row2"><input type="text" name="loginredirect" value="{S_LOGINREDIRECT}"  /></td>
 	</tr>
 	<tr>
 		<th align="center" class="row1" colspan="2">{L_CONFIG_EXPLAIN3}</th>

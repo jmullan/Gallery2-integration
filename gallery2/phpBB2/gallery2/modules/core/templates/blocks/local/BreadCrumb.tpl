@@ -18,11 +18,11 @@
   {if !$smarty.section.parent.last}
   <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.parents[parent].id`"
 		   arg3="highlightId=`$theme.parents[parent.index_next].id`"}">
-    {$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:strip}</a>
+    {$theme.parents[parent].title|markup:strip|default:$theme.parents[parent].pathComponent}</a>
   {else}
   <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.parents[parent].id`"
 		   arg3="highlightId=`$theme.item.id`"}">
-    {$theme.parents[parent].title|default:$theme.parents[parent].pathComponent|markup:strip}</a>
+    {$theme.parents[parent].title|markup:strip|default:$theme.parents[parent].pathComponent}</a>
   {/if}
   {if isset($separator)} {$separator} {/if}
   {/section}
@@ -30,9 +30,9 @@
   {if ($theme.pageType == 'admin' || $theme.pageType == 'module')}
   <a href="{g->url arg1="view=core.ShowItem"
 		   arg2="itemId=`$theme.item.id`"}">
-     {$theme.item.title|default:$theme.item.pathComponent|markup:strip}</a>
+     {$theme.item.title|markup:strip|default:$theme.item.pathComponent}</a>
   {else}
   <span>
-     {$theme.item.title|default:$theme.item.pathComponent|markup:strip}</span>
+     $theme.item.title|markup:strip|default:$theme.item.pathComponent}</span>
   {/if}
 </div>

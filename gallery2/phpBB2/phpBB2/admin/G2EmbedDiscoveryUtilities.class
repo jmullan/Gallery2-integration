@@ -1,5 +1,6 @@
 <?php
 /*
+ *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
  *
@@ -87,7 +88,7 @@ class G2EmbedDiscoveryUtilities {
      *     embed.php, since it does that already internally
      *
      *   1. $g2Uri = G2EmbedDiscoveryUtilities::normalizeG2Uri($g2Uri);
-     *   2. $embedUri = G2EmbedDiscoveryUtilities::normalizeEmbedUri($embedUri);
+     *   2. $embedUri = G2EmbedDiscoveryUtilities::normalizeG2Uri($embedUri);
      */
 
     /**
@@ -137,7 +138,7 @@ class G2EmbedDiscoveryUtilities {
     function getG2EmbedPathByG2Uri($g2Uri) {
 	$g2Uri = trim($g2Uri);
 	if (empty($g2Uri)) {
-	    return array (false, null, "Bad parameter: the provided g2Uri is empty");
+	    return array (false, null, "Bad parameter: the provideded g2Uri is empty");
 	}
 
 	$g2Uri = G2EmbedDiscoveryUtilities::normalizeG2Uri($g2Uri);

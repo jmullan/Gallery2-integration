@@ -21,9 +21,9 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory
  */
  -->
+
 <h1>{L_SYNC_TITLE}</h1>
 
 <P>{L_SYNC_EXPLAIN}</P>
