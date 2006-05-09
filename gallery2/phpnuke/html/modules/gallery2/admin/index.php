@@ -25,7 +25,7 @@
  */
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name,$nukeurl;
 
-$embedVersion = "0.5.10";
+$embedVersion = "0.5.11";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -311,9 +311,9 @@ function DisplayMainPage() {
 		$errno = 0;
 		$errstr = $version_info = '';
 
-		if ($fsock = @fsockopen('www.nukedgallery.net', 80, $errno, $errstr, 10)) {
-			@fputs($fsock, "GET /upgradecheck/upgrade.txt HTTP/1.1\r\n");
-			@fputs($fsock, "HOST: www.nukedgallery.net\r\n");
+		if ($fsock = @fsockopen('nukedgallery.sourceforge.net', 80, $errno, $errstr, 10)) {
+			@fputs($fsock, "GET /upgrade.txt HTTP/1.1\r\n");
+			@fputs($fsock, "HOST: nukedgallery.sourceforge.net\r\n");
 			@fputs($fsock, "Connection: close\r\n\r\n");
 
 			$get_info = false;
