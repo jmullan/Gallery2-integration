@@ -34,7 +34,7 @@ if (!empty($setmodules))
 	return;
 }
 
-$currentIntegrationVersion = '0.5.2';
+$currentIntegrationVersion = '0.5.3';
 $integrationVersionText = "Gallery2 <--> phpBB2 Integration $currentIntegrationVersion";
 
 $phpbb_root_path = './../';
@@ -220,7 +220,7 @@ switch ($mode) {
     	break;
 
 	default:
-		$url = 'http://www.nukedgallery.net/upgradecheck/phpbbupgrade.txt';
+		$url = 'http://nukedgallery.sourceforge.net/phpbbupgrade.txt';
 		if ($fp = @fopen($url, 'r')) {
 			$versionData = fread($fp, 4096);
 			fclose($fp);

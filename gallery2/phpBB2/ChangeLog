@@ -1,3 +1,7 @@
+2006-05-09  Dariush Molavi  <dari@nukedgallery.net> 0.5.3
+	* Fix: Typo in BreadCrumb.tpl.
+	* Update: New version check file location.
+
 2006-05-02  Dariush Molavi  <dari@nukedgallery.net> 0.5.2
 	* Update: Moved optional mods to separate add-ons.
 	* Update: Removed loginRedirect.

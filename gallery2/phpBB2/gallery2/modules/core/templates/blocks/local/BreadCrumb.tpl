@@ -33,6 +33,6 @@
      {$theme.item.title|markup:strip|default:$theme.item.pathComponent}</a>
   {else}
   <span>
-     $theme.item.title|markup:strip|default:$theme.item.pathComponent}</span>
+     {$theme.item.title|markup:strip|default:$theme.item.pathComponent}</span>
   {/if}
 </div>
