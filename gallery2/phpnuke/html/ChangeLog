@@ -1,3 +1,8 @@
+2006-05-15  Dariush Molavi  <dari@nukedgallery.net> 0.5.12
+	* Fix: Modified SQL query to create config table. This should
+	  resolve the "blank screen" issue that users have complained
+	  about.
+
 2006-05-09  Dariush Molavi  <dari@nukedgallery.net> 0.5.11
 	* Update: New version file location.
 

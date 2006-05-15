@@ -25,7 +25,7 @@
  */
 global $prefix, $db, $g2config_error, $currentlang, $admin_file, $module_name,$nukeurl;
 
-$embedVersion = "0.5.11";
+$embedVersion = "0.5.12";
 
 if(!isset($admin_file)) {
 	$admin_file = "admin";
@@ -206,13 +206,13 @@ function update_database() {
 			$delete_res = $db->sql_query($delete_sql);
 
 			$setup_sql = "CREATE TABLE ".$prefix."_g2config (
-						embedUri VARCHAR( 255 ) NOT NULL ,
-						g2Uri VARCHAR( 255 ) NOT NULL ,
-						activeUserId INT( 10 ) NOT NULL ,
-						cookiepath VARCHAR( 255 ) NOT NULL ,
-						showSidebar TINYINT( 1 ) NOT NULL ,
-						g2configurationDone TINYINT( 1 ) NOT NULL ,
-						embedVersion VARCHAR( 255 ) NOT NULL
+						embedUri VARCHAR( 255 ),
+						g2Uri VARCHAR( 255 ),
+						activeUserId INT( 10 ),
+						cookiepath VARCHAR( 255 ),
+						showSidebar TINYINT( 1 ),
+						g2configurationDone TINYINT( 1 ),
+						embedVersion VARCHAR( 255 )
 						)";
 			$setup_result = $db->sql_query($setup_sql);
 
@@ -263,13 +263,13 @@ function DisplayMainPage() {
 	if($db->sql_numrows($exist_result) == 0) {
 		$installed = 0;
 		$setup_sql = "CREATE TABLE ".$prefix."_g2config (
-					embedUri VARCHAR( 255 ) NOT NULL ,
-					g2Uri VARCHAR( 255 ) NOT NULL ,
-					activeUserId INT( 10 ) NOT NULL ,
-					cookiepath VARCHAR( 255 ) NOT NULL ,
-					showSidebar TINYINT( 1 ) NOT NULL ,
-					g2configurationDone TINYINT( 1 ) NOT NULL ,
-					embedVersion VARCHAR( 255 ) NOT NULL
+					embedUri VARCHAR( 255 ),
+					g2Uri VARCHAR( 255 ),
+					activeUserId INT( 10 ),
+					cookiepath VARCHAR( 255 ),
+					showSidebar TINYINT( 1 ),
+					g2configurationDone TINYINT( 1 ),
+					embedVersion VARCHAR( 255 )
 					)";
 		$setup_result = $db->sql_query($setup_sql);
 		$version_text .= '<p style="color:green">You are currently installing the integration package for the first time.</p></center>';
