@@ -689,7 +689,7 @@ templates/subSilver/overall_header.tpl
 #
 #-----[ FIND ]------------------------------------------
 #
-&lt;link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css"&gt;
+&lt;!-- link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css" --&gt; 
 
 #
 #-----[ BEFORE, ADD ]------------------------------------------
@@ -906,10 +906,9 @@ templates/subSilver/admin/page_footer.tpl
 		after you've saved the config settings and run the user integration at 
 		least once. This is normal.</i>
 		<br />
-		<li><b>Full file path to the gallery2 directory</b> - This setting is the 
-		complete path to your Gallery 2 directory.  For example:<br />
+		<li><b>Full file path to embed.php</b> - This setting is the complete path to your embed.php file. For example:<br />
 		<div class="instructions">
-		<p>/home/myuser/public_html/gallery2/</p>
+		<p>/home/myuser/public_html/gallery2/embed.php</p>
 		</div>
 		</li>
 		<li><b>Active Admin ID</b> - This setting is the gallery external id of a valid admin.<br />

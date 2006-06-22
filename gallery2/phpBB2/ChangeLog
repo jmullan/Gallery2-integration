@@ -1,3 +1,12 @@
+2006-06-22  Dariush Molavi  <dari@nukedgallery.net> 0.5.4
+	* Fix: Corrected bad "Find" in integration MOD. Thanks 
+	  to estoke.
+	* Fix: Corrected wording and example in Readme for 
+	  embed.php location. Thanks to estoke.
+	* Fix: Removed unnecessary fclose call. Thank to exeqo.
+	* Fix: Won't show empty albums in user profile. Thanks to Adu
+	  for pointing it out. Props to Jettyrat for the fix.
+	   
 2006-05-09  Dariush Molavi  <dari@nukedgallery.net> 0.5.3
 	* Fix: Typo in BreadCrumb.tpl.
 	* Update: New version check file location.

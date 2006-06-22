@@ -366,7 +366,7 @@ g2helper.inc
 			}
 
 			list ($ret, $descendentCounts) = GalleryCoreApi::fetchDescendentCounts($itemIds, $entityId-&gt;getId());
-			if (isset($ret) && $ret-&gt;getErrorCode() & ERROR_STORAGE_FAILURE) {
+			if ((count($descendentCounts) &lt; 1) || (isset($ret) && $ret-&gt;getErrorCode() & ERROR_STORAGE_FAILURE)) {
 				$this-&gt;_done();
 
 				return NULL;

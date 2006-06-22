@@ -34,7 +34,7 @@ if (!empty($setmodules))
 	return;
 }
 
-$currentIntegrationVersion = '0.5.3';
+$currentIntegrationVersion = '0.5.4';
 $integrationVersionText = "Gallery2 <--> phpBB2 Integration $currentIntegrationVersion";
 
 $phpbb_root_path = './../';
@@ -247,8 +247,6 @@ switch ($mode) {
 			}
 		}
 		else {
-			fclose($fp);
-
 			$versionText = "Could not open $url for input.";
 		}
 		
