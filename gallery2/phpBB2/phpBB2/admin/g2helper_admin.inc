@@ -22,7 +22,7 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory 
+ * @author Scott Gregory <jettyrat@jettyfishing.com>
  */
 
 class g2helper_admin {
@@ -30,54 +30,72 @@ class g2helper_admin {
 	var $_compatibleGalleryVersion = '2.1';
 	var $_compatibleEmbedVersionMajor = 1;
 	var $_compatibleEmbedVersionMinor = 1;
-	var $_fullPath;
 	var $_embedUri;
 	var $_g2Uri;
-	var $_activeAdminId;
-	var $_fullInit = true;
 	var $_init_array;
 	var $_timeLimit = 300;
 
 	function g2helper_admin($db) {
-		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
-		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->errorHandler(CRITICAL_ERROR, 'Could not obtain config settings from ' . GALLERY2_TABLE . '.', __LINE__, __FILE__, $sql);
+		global $lang, $phpbb_root_path, $board_config, $phpEx;
+
+		$lang_file_path = $phpbb_root_path . 'language/lang_' . $board_config['default_lang'] . '/lang_gallery2.' . $phpEx;
+		if (file_exists($lang_file_path)) {
+			include($lang_file_path);
+		}
+		else {
+			include($phpbb_root_path . 'language/lang_english/lang_gallery2.' . $phpEx);
 		}
 
-		$this->_fullPath = $row['fullPath'];
+		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
+		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
+			$this->errorHandler(CRITICAL_ERROR, $lang['OBTAIN_SETTINGS_FAILED'], __LINE__, __FILE__, $sql);
+		}
+
 		$this->_embedUri = $row['embedUri'];
 		$this->_g2Uri = $row['g2Uri'];
-		$this->_activeAdminId = $row['activeAdminId'];
 		$this->_init_array = array(
 			'embedUri' => $this->_embedUri, 
 			'g2Uri' => $this->_g2Uri, 
-			'activeUserId' => $this->_activeAdminId,
-			'fullInit' => $this->_fullInit,
+			'activeUserId' => $row['activeAdminId'],
+			'fullInit' => true,
 			'apiVersion' => array($this->_compatibleEmbedVersionMajor, $this->_compatibleEmbedVersionMinor)
 		);
 
-		require_once($this->_fullPath);
+		if (!empty($row['utf8_translate'])) {
+			define('UTF8_TRANSLATE', true);
+		}
+
+		require_once($row['fullPath']);
 	}
 
 	function init() {
-		global $gallery;
+		global $lang, $gallery;
 
 		$ret = GalleryEmbed::init($this->_init_array);
 		if (isset($ret)) {
-			$this->errorHandler(GENERAL_ERROR, 'G2 init failed. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, $lang['G2_INIT_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 
 		$gallery->guaranteeTimeLimit($this->_timeLimit);
 		if (isset($ret)) {
-			$this->errorHandler(GENERAL_ERROR, 'G2 did not guarantee a time limit of ' . $this->_timeLimit . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_TIME_LIMIT'], $this->_timeLimit) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 	}
 
 	function done() {
 		$ret = GalleryEmbed::done();
 		if (isset($ret)) {
-			$this->errorHandler(GENERAL_ERROR, 'Failed to complete transaction. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			global $lang;
+
+			$this->errorHandler(GENERAL_ERROR, $lang['G2_TRANSACTION_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
+	}
+
+	function clean($value) {
+		$value = trim($value);
+		$value = (get_magic_quotes_gpc()) ? stripslashes($value) : $value;
+		$value = str_replace('\\', '/', $value);
+		return $value;
 	}
 
 	function checkConfig() {
@@ -138,6 +156,8 @@ class g2helper_admin {
 		* End embedUri check
 		*/
 
+		global $lang;
+
 		if (is_callable('GalleryEmbed', 'getApiVersion')) {
 			list ($major, $minor) = GalleryEmbed::getApiVersion();
 			if ($major == $this->_compatibleEmbedVersionMajor && $minor >= $this->_compatibleEmbedVersionMinor) {
@@ -145,21 +165,29 @@ class g2helper_admin {
 				* If we reach this point without error; g2Uri, fullPath, embedUri file checks have passed and version check has passed
 				* Integration life is good!
 				*/
-				return array(true, 'Gallery integration settings and version checks passed.');
+				return array(true, $lang['GALLERY2_SETTINGS_PASSED']);
 			}
 			elseif ($major > $this->_compatibleEmbedVersionMajor) {
 				/* GalleryEmbed module major version is newer, may or may not work */
-				return array(false, 'Gallery integration settings and version checks passed, but GalleryEmbed module is newer and may be incompatible.<br /> Required module version ' . $this->_compatibleEmbedVersionMajor . '.' . $this->_compatibleEmbedVersionMinor . " - installed module version is $major.$minor");
+				return array(false, sprintf($lang['GALLERY2_SETTINGS_WARNING'], $this->_compatibleEmbedVersionMajor, $this->_compatibleEmbedVersionMinor, $major, $minor));
 			}
 			else {
 				/* GalleryEmbed module version is older, good chance will not work */
-				return array(false, 'Gallery version check failed. Currently this integration is compatible with Gallery version ' . $this->_compatibleGalleryVersion . ' and up,<br />using GalleryEmbed module version ' . $this->_compatibleEmbedVersionMajor . '.' . $this->_compatibleEmbedVersionMinor . " - installed module version is $major.$minor");
+				return array(false, sprintf($lang['GALLERY2_SETTINGS_FAILED'], $this->_compatibleGalleryVersion, $this->_compatibleEmbedVersionMajor, $this->_compatibleEmbedVersionMinor, $major, $minor));
 			}
 		}
 		else {
 			/* GalleryEmbed module version doesn't support getApiVersion. Gallery version is older than 2.1 */
-			return array(false, 'Gallery version check failed. Currently this integration is compatible with Gallery version ' . $this->_compatibleGalleryVersion . ' and up.');
+			return array(false, sprintf($lang['GALLERY_OLDER_VERSION'], $this->_compatibleGalleryVersion));
 		}
+	}
+
+	function utf8Translate($value) {
+		return (defined('UTF8_TRANSLATE')) ? utf8_encode($value) : $value;
+	}
+
+	function utf8Untranslate($value) {
+		return (defined('UTF8_TRANSLATE')) ? utf8_decode($value) : $value;
 	}
 
 	function errorHandler($code, $msg, $line, $file, $sql = '') {

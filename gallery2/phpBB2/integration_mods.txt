@@ -1,0 +1,649 @@
+##############################################################
+## MOD Title: Gallery2 Integration Mod 
+## MOD Author: dari <dari@nukedgallery.net> (Dariush Molavi) http://nukedgallery.net 
+## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
+## MOD Description: This mod integrates phpBB2 and Gallery2. See the Readme.
+## MOD Version: 0.5.5
+##
+## Installation Level: Intermediate
+## Installation Time: 45 Minutes
+## Files To Edit: groupcp.php,
+##       login.php,
+##       posting.php,
+##       admin/admin_groups.php,
+##       admin/admin_ug_auth.php,
+##       admin/admin_users.php,
+##       admin/page_footer_admin.php,
+##       includes/bbcode.php,
+##       includes/constants.php,
+##       includes/page_header.php,
+##       includes/template.php,
+##       includes/usercp_register.php,
+##       language/lang_english/lang_admin.php,
+##       language/lang_english/lang_main.php,
+##       templates/subSilver/overall_header.tpl,
+##       templates/subSilver/posting_body.tpl,
+##       templates/subSilver/subSilver.css,
+##       templates/subSilver/admin/page_footer.tpl
+## Included Files: gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl
+##       phpBB2/gallery2.php,
+##       phpBB2/g2helper.inc,
+##       phpBB2/admin/admin_gallery2.php,
+##       phpBB2/admin/gallery2_export.php,
+##       phpBB2/admin/g2helper_admin.inc,
+##       phpBB2/admin/G2EmbedDiscoveryUtilities.class,
+##       phpBB2/g2image/g2image.php,
+##       phpBB2/g2image/css/g2image.css,
+##       phpBB2/g2image/jscripts/functions.js,
+##       phpBB2/language/lang_english/lang_g2image.php,
+##       phpBB2/language/lang_english/lang_gallery2.php,
+##       phpBB2/templates/subSilver/gallery2.tpl,
+##       phpBB2/templates/subSilver/admin/gallery2_config_body.tpl,
+##       phpBB2/templates/subSilver/admin/gallery2_export.tpl,
+##       phpBB2/templates/subSilver/admin/gallery2_show_body.tpl,
+##       phpBB2/templates/subSilver/admin/gallery2_sync_intro_body.tpl,
+##       phpBB2/templates/subSilver/images/exif_parser.gif
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+## For security purposes, please check: http://www.phpbb.com/mods/
+## for the latest version of this MOD. Although MODs are checked
+## before being allowed in the MODs Database there is no guarantee
+## that there are no security problems within the MOD. No support
+## will be given for MODs not found within the MODs Database which
+## can be found at http://www.phpbb.com/mods/
+##############################################################
+## Author Notes: Support for this mod can be found at http://www.nukedgallery.net
+##
+##############################################################
+## MOD History: See ChangeLog
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#-----[ SQL ]------------------------------------------
+# (Use correct table prefix if not phpbb)
+# 
+CREATE TABLE `phpbb_gallery2` (
+`fullPath` VARCHAR( 255 ) NOT NULL ,
+`embedUri` VARCHAR( 255 ) NOT NULL ,
+`g2Uri` VARCHAR( 255 ) NOT NULL ,
+`activeAdminId` INT NOT NULL ,
+`utf8_translate` TINYINT NOT NULL
+);
+
+#
+#-----[ COPY ]------------------------------------------
+#
+copy phpBB2/gallery2.php to gallery2.php
+copy phpBB2/g2helper.inc to g2helper.inc
+copy phpBB2/admin/admin_gallery2.php to admin/admin_gallery2.php
+copy phpBB2/admin/gallery2_export.php to admin/gallery2_export.php
+copy phpBB2/admin/g2helper_admin.inc to admin/g2helper_admin.inc
+copy phpBB2/admin/G2EmbedDiscoveryUtilities.class to admin/G2EmbedDiscoveryUtilities.class
+copy phpBB2/g2image/g2image.php to g2image/g2image.php
+copy phpBB2/g2image/css/g2image.css to g2image/css/g2image.css
+copy phpBB2/g2image/jscripts/functions.js to g2image/jscripts/functions.js
+copy phpBB2/language/lang_english/lang_g2image.php to language/lang_english/lang_g2image.php
+copy phpBB2/language/lang_english/lang_gallery2.php to language/lang_english/lang_gallery2.php
+copy phpBB2/templates/subSilver/gallery2.tpl to templates/subSilver/gallery2.tpl
+copy phpBB2/templates/subSilver/admin/gallery2_config_body.tpl to templates/subSilver/admin/gallery2_config_body.tpl
+copy phpBB2/templates/subSilver/admin/gallery2_export.tpl to templates/subSilver/admin/gallery2_export.tpl
+copy phpBB2/templates/subSilver/admin/gallery2_show_body.tpl to templates/subSilver/admin/gallery2_show_body.tpl
+copy phpBB2/templates/subSilver/admin/gallery2_sync_intro_body.tpl to templates/subSilver/admin/gallery2_sync_intro_body.tpl
+copy phpBB2/templates/subSilver/images/exif_parser.gif to templates/subSilver/images/exif_parser.gif
+copy gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl to /gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+groupcp.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+					$sql = "INSERT INTO " . USER_GROUP_TABLE . " (user_id, group_id, user_pending) 
+						VALUES (" . $row['user_id'] . ", $group_id, 0)";
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+					// Add new user to group in gallery
+					require($phpbb_root_path . 'g2helper.inc');
+					$g2h = new g2helper($db);
+					$g2h->addUserToGroup($row['user_id'], $group_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+						$sql = "UPDATE " . USER_GROUP_TABLE . " 
+							SET user_pending = 0 
+							WHERE user_id IN ($sql_in) 
+								AND group_id = $group_id";
+						$sql_select = "SELECT user_email 
+							FROM ". USERS_TABLE . " 
+							WHERE user_id IN ($sql_in)"; 
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+						// Add new user to group in gallery
+						require($phpbb_root_path . 'g2helper.inc');
+						$g2h = new g2helper($db);
+						$g2h->addUserToGroup($sql_in, $group_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+						$sql = "DELETE FROM " . USER_GROUP_TABLE . " 
+							WHERE user_id IN ($sql_in) 
+								AND group_id = $group_id";
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+						// Remove user from group in gallery
+						require($phpbb_root_path . 'g2helper.inc');
+						$g2h = new g2helper($db);
+						$g2h->removeUserFromGroup($sql_in, $group_id);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+login.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	else if( ( isset($HTTP_GET_VARS['logout']) || isset($HTTP_POST_VARS['logout']) ) && $userdata['session_logged_in'] )
+	{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		// Logout of gallery
+ 		$g2_sql = 'SELECT fullPath, embedUri FROM ' . GALLERY2_TABLE;
+		$g2_row = $db->sql_fetchrow($db->sql_query($g2_sql));
+		require_once($g2_row['fullPath']); 
+		$g2_ret = GalleryEmbed::logout(array('embedUri' => $g2_row['embedUri']));
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+posting.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	'L_BBCODE_F_HELP' => $lang['bbcode_f_help'], 
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	'L_BBCODE_G_HELP' => $lang['bbcode_g_help'], 
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+admin/admin_groups.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		//
+		// Delete Group
+		//
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		// Delete group in gallery
+		require($phpbb_root_path . 'g2helper.inc');
+		$g2h = new g2helper($db);
+		$g2h->deleteGroup($group_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			$sql = "UPDATE " . GROUPS_TABLE . "
+				SET group_type = $group_type, group_name = '" . str_replace("\'", "''", $group_name) . "', group_description = '" . str_replace("\'", "''", $group_description) . "', group_moderator = $group_moderator 
+				WHERE group_id = $group_id";
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+			// Update group in gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->updateGroup($group_id, str_replace("\'", "''", $group_name));
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		else if( $mode == 'newgroup' )
+		{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			// Create new group in gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->createGroup(str_replace("\'", "''", $group_name));
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+admin/admin_ug_auth.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		//
+		// Make user an admin (if already user)
+		//
+		if ( $userdata['user_id'] != $user_id )
+		{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			// Add admin to gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->mapUserToAdmin($user_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+				//
+				// Update users level, reset to USER
+				//
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			   	// Remove admin from gallery
+				require($phpbb_root_path . 'g2helper.inc');
+				$g2h = new g2helper($db);
+				$g2h->mapAdminToUser($user_id);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+admin/admin_users.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		if (!($this_userdata = get_userdata($user_id)))
+		{
+			message_die(GENERAL_MESSAGE, $lang['No_user_id_specified'] );
+		}
+
+		if( $HTTP_POST_VARS['deleteuser'] && ( $userdata['user_id'] != $user_id ) )
+		{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			// Remove user from Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->deleteUser($user_id);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			$sql = "UPDATE " . USERS_TABLE . "
+				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) . "', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", $aim) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_sig_bbcode_uid = '$signature_bbcode_uid', user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowavatar = $user_allowavatar, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_allow_pm = $user_allowpm, user_notify_pm = $notifypm, user_popup_pm = $popuppm, user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_active = $user_status, user_rank = $user_rank" . $avatar_sql . "
+				WHERE user_id = $user_id";
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+			// Update user in gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->updateUser($user_id, $username, $password, $email);
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+admin/page_footer_admin.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+$template->assign_vars(array(
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	'INTEGRATION_VERSION' => $integrationVersionText,
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/bbcode.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	$text = preg_replace("#\[img\]((http|ftp|https|ftps)://)([^ \?&=\#\"\n\r\t<]*?(\.(jpg|jpeg|gif|png)))\[/img\]#sie", "'[img:$uid]\\1' . str_replace(' ', '%20', '\\3') . '[/img:$uid]'", $text);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	global $phpEx;
+	$g2img_baseurl = str_replace(array('.', '?'), array('\.', '\?'), $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') + 1) . 'gallery2.' . $phpEx . '?g2_view=core.DownloadItem');
+	$text = preg_replace('#\[img\]((http|https)://)(' . $g2img_baseurl . '\&amp\;g2_itemId=[0-9]+)\[/img\]#sie', "'[img:$uid]\\1' . str_replace(' ', '%20', '\\3') . '[/img:$uid]'", $text);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/constants.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+define('VOTE_USERS_TABLE', $table_prefix.'vote_voters');
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+define('GALLERY2_TABLE', $table_prefix.'gallery2');
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/page_header.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+$template->assign_vars(array(
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+if ( defined('UTF8_TRANSLATE') )
+{
+	$lang['ENCODING'] = 'utf-8';
+}
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '<span style="color:#' . $theme['fontcolor2'] . '">', '</span>'),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	'L_GALLERY2' => $lang['Gallery2'],
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	'U_GROUP_CP' => append_sid('groupcp.'.$phpEx),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	'U_GALLERY2' => append_sid('gallery2.'.$phpEx),
+
+#
+#-----[ FIND ]------------------------------------------
+#
+header ('Pragma: no-cache');
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+header ('Content-Type: text/html; charset=' . $lang['ENCODING']);
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+includes/template.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+				if (!$do_not_echo)
+				{
+					$code_lines[$i] = 'echo \'' . $code_lines[$i] . '\' . "\\n";';
+				}
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+				if (!$do_not_echo)
+				{
+					if ( defined('UTF8_TRANSLATE') )
+					{
+						$code_lines[$i] = 'echo utf8_encode(\'' . $code_lines[$i] . '\' . "\\n");';
+					}
+					else
+					{
+						$code_lines[$i] = 'echo \'' . $code_lines[$i] . '\' . "\\n";';
+					}
+				}
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/usercp_register.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			$sql = "UPDATE " . USERS_TABLE . "
+				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) ."', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_sig_bbcode_uid = '$signature_bbcode_uid', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_notify_pm = $notifypm, user_popup_pm = $popup_pm, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_active = $user_active, user_actkey = '" . str_replace("\'", "''", $user_actkey) . "'" . $avatar_sql . "
+				WHERE user_id = $user_id";
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+			// Update user in gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->updateUser($user_id, $username, $password, $email);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+language/lang_english/lang_admin.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+$lang['Click_return_admin_index'] = 'Click %sHere%s to return to the Admin Index';
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+$lang['Click_return_gallery2_index'] = 'Click %sHere%s to return to the Gallery 2 admin page';
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+language/lang_english/lang_main.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+$lang['Moderators'] = 'Moderators';
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+$lang['Gallery2'] = 'Gallery 2';
+
+#
+#-----[ FIND ]------------------------------------------
+#
+$lang['bbcode_f_help'] = 'Font size: [size=x-small]small text[/size]';
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+$lang['bbcode_g_help'] = 'Insert Gallery 2 image';
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+templates/subSilver/overall_header.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+#
+<!-- link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css" --> 
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+{GALLERY2_JAVASCRIPT}
+{GALLERY2_CSS}
+<!-- BEGIN switch_phpbb_base -->
+<base href="{switch_phpbb_base.PHPBB_BASE}">
+<!-- END switch_phpbb_base -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+ scrollbar-darkshadow-color: #98AAB1;
+} 
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+#gsNavBar div.gbBreadCrumb {
+font-size: 1.6em;
+}
+
+span.block-core-SystemLink {
+font-size: 1.6em;
+} 
+
+#
+#-----[ FIND ]------------------------------------------
+#
+font,th,td,p { font-family: Verdana, Arial, Helvetica, sans-serif }
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------------
+#
+font-family:
+
+#
+#-----[ IN-LINE BEFORE, ADD ]-----------------------------
+#
+font-size: 10px;
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+<img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" />{L_LOGIN_LOGOUT}</a>&amp;nbsp;
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+# 
+&amp;nbsp;<a href="{U_GALLERY2}" class="mainmenu"><img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" />{L_GALLERY2}</a>&amp;nbsp;
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+templates/subSilver/posting_body.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+#
+f_help = "{L_BBCODE_F_HELP}";
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+g_help = "{L_BBCODE_G_HELP}";
+
+function g2ic_open(form, field) {
+	var url = './g2image/g2image.php?g2ic_form='+form+'&g2ic_field='+field;
+	var name = 'g2image';
+	var w = 600;
+	var h = 600;
+	var valLeft = (screen.width) ? (screen.width-w)/2 : 0;
+	var valTop = (screen.height) ? (screen.height-h)/2 : 0;
+	var features = 'width='+w+',height='+h+',left='+valLeft+',top='+valTop+',resizable=1,scrollbars=1';
+	window.open(url, name, features);
+}
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			<td><span class="genmed"> 
+			  <input type="button" class="button" accesskey="p" name="addbbcode14" value="Img" style="width: 40px"  onClick="bbstyle(14)" onMouseOver="helpline('p')" />
+
+			  </span></td>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			<td><span class="genmed"> 
+			  <input type="button" class="button" name="g2image" value="g2Img" style="width: 55px"  onClick="g2ic_open('post', 'message');" onMouseOver="helpline('g')" />
+			  </span></td>
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+templates/subSilver/subSilver.css
+
+#
+#-----[ FIND ]------------------------------------------
+#
+ scrollbar-darkshadow-color: #98AAB1;
+} 
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+#gsNavBar div.gbBreadCrumb {
+font-size: 1.6em;
+}
+
+span.block-core-SystemLink {
+font-size: 1.6em;
+} 
+
+#
+#-----[ FIND ]------------------------------------------
+#
+font,th,td,p { font-family: Verdana, Arial, Helvetica, sans-serif }
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------------
+#
+font-family:
+
+#
+#-----[ IN-LINE BEFORE, ADD ]-----------------------------
+#
+font-size: 10px;
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+templates/subSilver/admin/page_footer.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+#
+//-->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+<div align="center"><span class="copyright">{INTEGRATION_VERSION}</span></div>
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM

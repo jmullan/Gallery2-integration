@@ -22,59 +22,71 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory 
+ * @author Scott Gregory <jettyrat@jettyfishing.com>
  */
 
 class g2helper {
 
 	var $_compatibleEmbedVersionMajor = 1;
 	var $_compatibleEmbedVersionMinor = 1;
-	var $_fullPath;
-	var $_embedUri;
-	var $_g2Uri;
 	var $_activeAdminId;
 	var $_init_array;
 	var $_adminGroupId;
 
 	function g2helper($db) {
-		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
-		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not obtain config settings from ' . GALLERY2_TABLE . '.', __LINE__, __FILE__, $sql);
+		global $lang, $phpbb_root_path, $board_config, $phpEx;
+
+		$lang_file_path = $phpbb_root_path . 'language/lang_' . $board_config['default_lang'] . '/lang_gallery2.' . $phpEx;
+		if (file_exists($lang_file_path)) {
+			include($lang_file_path);
+		}
+		else {
+			include($phpbb_root_path . 'language/lang_english/lang_gallery2.' . $phpEx);
 		}
 
-		$this->_fullPath = $row['fullPath'];
-		$this->_embedUri = $row['embedUri'];
-		$this->_g2Uri = $row['g2Uri'];
+		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
+		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
+			$this->errorHandler(CRITICAL_ERROR, $lang['OBTAIN_SETTINGS_FAILED'], __LINE__, __FILE__, $sql);
+		}
+
 		$this->_activeAdminId = $row['activeAdminId'];
 		$this->_init_array = array(
-			'embedUri' => $this->_embedUri, 
-			'g2Uri' => $this->_g2Uri, 
+			'embedUri' => $row['embedUri'], 
+			'g2Uri' => $row['g2Uri'], 
 			'apiVersion' => array($this->_compatibleEmbedVersionMajor, $this->_compatibleEmbedVersionMinor)
 		);
 
+		if (!empty($row['utf8_translate'])) {
+			define('UTF8_TRANSLATE', true);
+		}
+
 		if ($this->_activeAdminId == 0) {
-			$this->_errorHandler(GENERAL_ERROR, 'Active admin is not valid. Gallery 2 appears not to be integrated properly. Please run the user sychronization at least once.', __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, $lang['G2_AUTHADMIN_FAILED'], __LINE__, __FILE__);
 		}
 		else {
-			require_once($this->_fullPath);
+			require_once($row['fullPath']);
 		}
 	}
 
 	function _initAdmin() {
+		global $lang;
+
 		$this->_init_array['activeUserId'] = $this->_activeAdminId;
 
 		$ret = GalleryEmbed::init($this->_init_array);
 		if (isset($ret)) {
-			$this->_errorHandler(GENERAL_ERROR, 'initAdmin failed. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, $lang['G2_INITADMIN_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 
 		list ($ret, $this->_adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 		if (isset($ret)) {
-			$this->_errorHandler(GENERAL_ERROR, 'getPluginParameter id.adminGroup failed. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, $lang['G2_ADMINPARAMETER_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 	}
 
 	function init($userdata) {
+		global $lang;
+
 		if ($userdata['user_id'] != ANONYMOUS) {
 			$this->_initAdmin();
 
@@ -82,12 +94,11 @@ class g2helper {
 
 			$ret = GalleryEmbed::isExternalIdMapped($userdata['user_id'], 'GalleryUser');
 			if (empty($ret)) {
-
-				$this->_done();
+				$this->done();
 
 				$ret = GalleryEmbed::init($this->_init_array);
 				if (isset($ret)) {
-					$this->_errorHandler(GENERAL_ERROR, 'init failed for ' . $userdata['username'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+					$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_INITUSER_FAILED'], $userdata['username']) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 				}
 			}
 			elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -99,15 +110,15 @@ class g2helper {
 					'fullname' => $userdata['username'])
 				);
 
-				$this->_done();
+				$this->done();
 
 				$ret = GalleryEmbed::init($this->_init_array);
 				if (isset($ret)) {
-					$this->_errorHandler(GENERAL_ERROR, 'init failed for ' . $userdata['username'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+					$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_INITUSER_FAILED'], $userdata['username']) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 				}
 			}
 			else {
-				$this->_errorHandler(GENERAL_ERROR, 'isExternalIdMapped failed for ' . $userdata['user_id'] . '.', __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $userdata['username']), __LINE__, __FILE__);
 			}
 		}
 		else {
@@ -115,56 +126,67 @@ class g2helper {
 
 			$ret = GalleryEmbed::init($this->_init_array);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, 'init failed for "guest". Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_INITUSER_FAILED'], 'guest') . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 	}
 
-	function _done() {
+	function done() {
 		$ret = GalleryEmbed::done();
 		if (isset($ret)) {
-			$this->_errorHandler(GENERAL_ERROR, 'Failed to complete transaction. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			global $lang;
+
+			$this->errorHandler(GENERAL_ERROR, $lang['G2_TRANSACTION_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 	}
 
 	function _createUser($id, $level, $newUserData) {
-		global $db;
+		global $db, $lang;
+
+		$user_name = $newUserData['username'];
+		$newUserData['fullname'] = $newUserData['username'] = $this->_utf8Translate($newUserData['username']);
 
 		$ret = GalleryEmbed::createUser($id, $newUserData);
 		if (isset($ret)) {
-			$this->_errorHandler(GENERAL_ERROR, "createUser failed for $id. Here is the error message from G2: <br />" . $ret->getAsHtml(), __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_CREATEUSER_FAILED'], $id) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 
 		$g_sql = 'SELECT DISTINCT g.group_name FROM ' . GROUPS_TABLE . ' g, ' . USER_GROUP_TABLE . " ug WHERE ug.user_id = $id AND ug.group_id = g.group_id AND g.group_name <> 'Anonymous' AND g.group_name <> 'Admin' AND g.group_name <> ''";
 		if (!$g_result = $db->sql_query($g_sql)) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not obtain user/group information from ' . GROUPS_TABLE . ' and/or ' . USER_GROUP_TABLE . '.', __LINE__, __FILE__, $g_sql);
+			$this->errorHandler(CRITICAL_ERROR, $lang['FETCH_USERGROUPDATA_FAILED'], __LINE__, __FILE__, $g_sql);
 		}
 
 		while ($g_row = $db->sql_fetchrow($g_result)) {
-			$ret = GalleryEmbed::addUserToGroup($id, $g_row['group_name']);
+			$groupName = $this->_utf8Translate($g_row['group_name']);
+
+			$ret = GalleryEmbed::addUserToGroup($id, $groupName);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, "addUserToGroup failed adding $id to " . $g_row['group_name'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ADDUSERTOGROUP_FAILED'], $g_row['group_name'], $id) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 
 		if ($level === ADMIN) {
 			list ($ret, $userId) = GalleryCoreApi::fetchUserByUserName($newUserData['username']);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, 'fetchUserByName failed for ' . $newUserData['username'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_FETCHUSERBYUSERNAME_FAILED'], $user_name) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 
 			$ret = GalleryCoreApi::addUserToGroup($userId->getId(), $this->_adminGroupId);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, 'addUserToGroup ' . $this->_adminGroupId . ' failed for ' . $userId->getId() . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ADDUSERTOGROUP_FAILED'], $this->_adminGroupId, $userId->getId()) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 	}
 
 	function updateUser($id, $userName, $password, $email) {
+		global $lang;
+
 		$this->_initAdmin();
 
 		$ret = GalleryEmbed::isExternalIdMapped($id, 'GalleryUser');
 		if (empty($ret)) {
+			$userName = $this->_utf8Translate($userName);
+
 			$ret = GalleryEmbed::updateUser($id, array(
 				'username' => $userName,
 				'email' => $email,
@@ -173,7 +195,7 @@ class g2helper {
 				'hashmethod' => 'md5')
 			);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, "updateUser failed for $id. Here is the error message from G2: <br />" . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_UPDATEUSER_FAILED'], $id) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 		elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -182,13 +204,15 @@ class g2helper {
 			*/
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, "isExternalIdMapped failed for $id.", __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $id), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 
 	function deleteUser($id) {
+		global $lang;
+
 		$this->_initAdmin();
 
 		$ret = GalleryEmbed::isExternalIdMapped($id, 'GalleryUser');
@@ -196,10 +220,10 @@ class g2helper {
 			if ($this->_activeAdminId == $id) {
 				list ($ret, $adminUsers) = GalleryCoreApi::fetchUsersForGroup($this->_adminGroupId, 2);
 				if (isset($ret)) {
-					$this->_errorHandler(GENERAL_ERROR, 'fetchUsersForGroup ' . $this->_adminGroupId . ' failed. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+					$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_FETCHUSERSFORGROUP_FAILED'], $this->_adminGroupId) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 				}
 				if (empty($adminUsers)) {
-					$this->_errorHandler(GENERAL_ERROR, 'No adminUsers were returned from fetchUsersForGroup ' . $this->_adminGroupId . '.', __LINE__, __FILE__);
+					$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_RETURNADMINS_FAILED'], $this->_adminGroupId), __LINE__, __FILE__);
 				}
 
 				$adminIds = array_keys($adminUsers);
@@ -209,12 +233,12 @@ class g2helper {
 					$adminIds[0] = (isset($entityIdMap[$adminIds[0]])) ? $entityIdMap[$adminIds[0]]['externalId'] : $adminIds[0];
 					$adminIds[1] = (isset($entityIdMap[$adminIds[1]])) ? $entityIdMap[$adminIds[1]]['externalId'] : $adminIds[1];
 					if ($adminIds[0] == $id && count($adminIds) == 1) {
-						$this->_errorHandler(GENERAL_ERROR, 'The only G2 admin cannot be deleted.', __LINE__, __FILE__);
+						$this->errorHandler(GENERAL_ERROR, $lang['G2_DELETEADMIN_FAILED'], __LINE__, __FILE__);
 					}
 					$validAdmin = ($adminIds[0] != $id) ? $adminIds[0] : $adminIds[1];
 				}
 				else {
-					$this->_errorHandler(GENERAL_ERROR, 'getExternalIdMap failed. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+					$this->errorHandler(GENERAL_ERROR, $lang['G2_GETEXTERNALIDMAP_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 				}
 
 				$newActiveAdmin = $validAdmin;
@@ -223,19 +247,19 @@ class g2helper {
 
 				$sql = 'UPDATE ' . GALLERY2_TABLE . " SET activeAdminId = $newActiveAdmin";
 				if (!$db->sql_query($sql)) {
-					$this->_errorHandler(CRITICAL_ERROR, 'Could not update activeAdminId in ' . GALLERY2_TABLE . '.', __LINE__, __FILE__, $sql);
+					$this->errorHandler(CRITICAL_ERROR, $lang['UPDATE_ACTIVEADMINID_FAILED'], __LINE__, __FILE__, $sql);
 				}
 
 				$this->_activeAdminId = $newActiveAdmin;
 
-				$this->_done();
+				$this->done();
 
 				$this->_initAdmin();
 			}
 
 			$ret = GalleryEmbed::deleteUser($id);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, "deleteUser failed for $id. Here is the error message from G2: <br />" . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_DELETEUSER_FAILED'], $id) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 		elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -244,34 +268,36 @@ class g2helper {
 			*/
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, "isExternalIdMapped failed for $id.", __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $id), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 
 	function mapUserToAdmin($id) {
-		global $db;
+		global $db, $lang;
 
 		$sql = 'SELECT username, user_password, user_email FROM ' . USERS_TABLE . " WHERE user_id = $id";
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not get user data from ' . USERS_TABLE . '.', __LINE__, __FILE__, $sql);
+			$this->errorHandler(CRITICAL_ERROR, $lang['OBTAIN_USERINFO_FAILED'], __LINE__, __FILE__, $sql);
 		}
+
+		$userName = $this->_utf8Translate($row['username']);
 
 		$this->_initAdmin();
 		$ret = GalleryEmbed::isExternalIdMapped($id, 'GalleryUser');
 		if (empty($ret)) {
-			list ($ret, $userId) = GalleryCoreApi::fetchUserByUserName($row['username']);
+			list ($ret, $userId) = GalleryCoreApi::fetchUserByUserName($userName);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, 'fetchUserByName failed for ' . $row['username'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_FETCHUSERBYUSERNAME_FAILED'], $row['username']) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 
 			$ret = GalleryCoreApi::addUserToGroup($userId->getId(), $this->_adminGroupId);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, 'addUserToGroup ' . $this->_adminGroupId . ' failed for ' . $userId->getId() . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ADDUSERTOGROUP_FAILED'], $this->_adminGroupId, $userId->getId()) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 
-			$this->_done();
+			$this->done();
 		}
 		elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 			$this->_createUser($id, ADMIN, array(
@@ -282,44 +308,51 @@ class g2helper {
 				'fullname' => $row['username'])
 			);
 
-			$this->_done();
+			$this->done();
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, "isExternalIdMapped failed for $id.", __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $id), __LINE__, __FILE__);
 		}
 	}
 	
 	function mapAdminToUser($id) {
-		global $db;
+		global $db, $lang;
 
 		$sql = 'SELECT username FROM ' . USERS_TABLE . " WHERE user_id = $id";
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not get user data from ' . USERS_TABLE . '.', __LINE__, __FILE__, $sql);
+			$this->errorHandler(CRITICAL_ERROR, $lang['OBTAIN_USERINFO_FAILED'], __LINE__, __FILE__, $sql);
 		}
+
+		$userName = $this->_utf8Translate($row['username']);
 
 		$this->_initAdmin();
 
-		list ($ret, $userId) = GalleryCoreApi::fetchUserByUserName($row['username']);
+		list ($ret, $userId) = GalleryCoreApi::fetchUserByUserName($userName);
 		if (isset($ret)) {
-			$this->_errorHandler(GENERAL_ERROR, 'fetchUserByName failed for ' . $row['username'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_FETCHUSERBYUSERNAME_FAILED'], $row['username']) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 
 		$ret = GalleryCoreApi::removeUserFromGroup($userId->getId(), $this->_adminGroupId);
 		if (isset($ret)) {
-			$this->_errorHandler(GENERAL_ERROR, 'addUserToGroup ' . $this->_adminGroupId . ' failed for ' . $userId->getId() . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_REMOVEUSERFROMGROUP_FAILED'], $this->_adminGroupId, $userId->getId()) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 	
 	function createGroup($groupName) {
+		global $lang;
+
+		$group_name = $groupName;
+		$groupName = $this->_utf8Translate($groupName);
+
 		$this->_initAdmin();
 
 		$ret = GalleryEmbed::isExternalIdMapped($groupName, 'GalleryGroup');
 		if (empty($ret)) {
 			$ret = GalleryEmbed::createGroup($groupName, $groupName);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, "createGroup failed for $groupName. Here is the error message from G2: <br />" . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_CREATEGROUP_FAILED'], $group_name) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 		elseif (isset($ret)) {
@@ -328,32 +361,36 @@ class g2helper {
 			*/
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, "isExternalIdMapped failed for $groupName.", __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $group_name), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 
 	function updateGroup($group_id, $newGroupName) {
-		global $db, $gallery;
+		global $db, $lang, $gallery;
 
 		$sql = 'SELECT group_name FROM ' . GROUPS_TABLE . " WHERE group_id = $group_id LIMIT 1";
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not get group data from ' . GROUPS_TABLE . '.', __LINE__, __FILE__, $sql);
+			$this->errorHandler(CRITICAL_ERROR, $lang['FETCH_GROUPDATA_FAILED'], __LINE__, __FILE__, $sql);
 		}
+
+		$new_group_name = $newGroupName;
+		$newGroupName = $this->_utf8Translate($newGroupName);
+		$groupName = $this->_utf8Translate($row['group_name']);
 
 		$this->_initAdmin();
 
-		$ret = GalleryEmbed::isExternalIdMapped($row['group_name'], 'GalleryGroup');
+		$ret = GalleryEmbed::isExternalIdMapped($groupName, 'GalleryGroup');
 		if (empty($ret)) {
-			$ret = GalleryEmbed::updateGroup($row['group_name'], array('groupname' => $newGroupName));
+			$ret = GalleryEmbed::updateGroup($groupName, array('groupname' => $newGroupName));
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, "updateGroup $newGroupName failed. Here is the error message from G2: <br />" . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_UPDATEGROUP_FAILED'], $new_group_name) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 
-			$ret = GalleryCoreApi::updateMapEntry('ExternalIdMap', array('externalId' => $row['group_name']) , array('externalId' => $newGroupName));
+			$ret = GalleryCoreApi::updateMapEntry('ExternalIdMap', array('externalId' => $groupName) , array('externalId' => $newGroupName));
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, 'updateMapEntry failed for ' . $row['group_name'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_UPDATEMAPENTRY_FAILED'], $row['group_name']) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 		elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -362,27 +399,29 @@ class g2helper {
 			*/
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, 'isExternalIdMapped failed for ' . $row['group_name'] . '.', __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $row['group_name']), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 
 	function deleteGroup($groupId) {
-		global $db;
+		global $db, $lang;
 
 		$sql = 'SELECT group_name FROM ' . GROUPS_TABLE . "	WHERE group_id = $groupId LIMIT 1";
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not get group data from ' . GROUPS_TABLE . '.', __LINE__, __FILE__, $sql);
+			$this->errorHandler(CRITICAL_ERROR, $lang['FETCH_GROUPDATA_FAILED'], __LINE__, __FILE__, $sql);
 		}
+
+		$groupName = $this->_utf8Translate($row['group_name']);
 
 		$this->_initAdmin();
 
-		$ret = GalleryEmbed::isExternalIdMapped($row['group_name'], 'GalleryGroup');
+		$ret = GalleryEmbed::isExternalIdMapped($groupName, 'GalleryGroup');
 		if (empty($ret)) {
-			$ret = GalleryEmbed::deleteGroup($row['group_name']);
+			$ret = GalleryEmbed::deleteGroup($groupName);
 			if (isset($ret)) {
-				$this->_errorHandler(GENERAL_ERROR, 'deleteGroup failed for ' . $row['group_name'] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+				$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_DELETEGROUP_FAILED'], $row['group_name']) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 			}
 		}
 		elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -391,32 +430,34 @@ class g2helper {
 			*/
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, 'isExternalIdMapped failed for ' . $row['group_name'] . '.', __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $row['group_name']), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 
 	function addUserToGroup($members, $groupId) {
-		global $db;
+		global $db, $lang;
 
 		$sql = 'SELECT group_name FROM ' . GROUPS_TABLE . " WHERE group_id = $groupId LIMIT 1";
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not get group data from ' . GROUPS_TABLE . '.', __LINE__, __FILE__, $sql);
+			$this->errorHandler(CRITICAL_ERROR, $lang['FETCH_GROUPDATA_FAILED'], __LINE__, __FILE__, $sql);
 		}
+
+		$groupName = $this->_utf8Translate($row['group_name']);
 
 		$this->_initAdmin();
 
-		$ret = GalleryEmbed::isExternalIdMapped($row['group_name'], 'GalleryGroup');
+		$ret = GalleryEmbed::isExternalIdMapped($groupName, 'GalleryGroup');
 		if (empty($ret)) {
 			$id[] = explode(', ', $members);
 
 			for ($i = 0; $i < count($id); $i++) {
 				$ret = GalleryEmbed::isExternalIdMapped($id[$i][0], 'GalleryUser');
 				if (empty($ret)) {
-					$ret = GalleryEmbed::addUserToGroup($id[$i][0], $row['group_name']);
+					$ret = GalleryEmbed::addUserToGroup($id[$i][0], $groupName);
 					if (isset($ret)) {
-						$this->_errorHandler(GENERAL_ERROR, 'addUserToGroup failed for ' . $row['group_name'] . ' : ' . $id[$i][0] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+						$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ADDUSERTOGROUP_FAILED'], $row['group_name'], $id[$i][0]) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 					}
 				}
 				elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -425,7 +466,7 @@ class g2helper {
 					*/
 				}
 				else {
-					$this->_errorHandler(GENERAL_ERROR, 'isExternalIdMapped failed for ' . $id[$i][0] . '.', __LINE__, __FILE__);
+					$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $id[$i][0]), __LINE__, __FILE__);
 				}
 			}
 		}
@@ -435,32 +476,34 @@ class g2helper {
 			*/
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, 'isExternalIdMapped failed for ' . $row['group_name'] . '.', __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $row['group_name']), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 
 	function removeUserFromGroup($members, $groupId) {
-		global $db;
+		global $db, $lang;
 
 		$sql = 'SELECT group_name FROM ' . GROUPS_TABLE . " WHERE group_id = $groupId LIMIT 1";
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
-			$this->_errorHandler(CRITICAL_ERROR, 'Could not get group data from ' . GROUPS_TABLE . '.', __LINE__, __FILE__, $sql);
+			$this->errorHandler(CRITICAL_ERROR, $lang['FETCH_GROUPDATA_FAILED'], __LINE__, __FILE__, $sql);
 		}
+
+		$groupName = $this->_utf8Translate($row['group_name']);
 
 		$this->_initAdmin();
 
-		$ret = GalleryEmbed::isExternalIdMapped($row['group_name'], 'GalleryGroup');
+		$ret = GalleryEmbed::isExternalIdMapped($groupName, 'GalleryGroup');
 		if (empty($ret)) {
 			$id[] = explode(', ', $members);
 
 			for ($i = 0; $i < count($id); $i++) {
 				$ret = GalleryEmbed::isExternalIdMapped($id[$i][0], 'GalleryUser');
 				if (empty($ret)) {
-					$ret = GalleryEmbed::removeUserFromGroup($id[$i][0], $row['group_name']);
+					$ret = GalleryEmbed::removeUserFromGroup($id[$i][0], $groupName);
 					if (isset($ret)) {
-						$this->_errorHandler(GENERAL_ERROR, "removeUserFromGroup failed for $groupId : " . $id[$i][0] . '. Here is the error message from G2: <br />' . $ret->getAsHtml(), __LINE__, __FILE__);
+						$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_REMOVEUSERFROMGROUP_FAILED'], $groupId, $id[$i][0]) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 					}
 				}
 				elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -469,7 +512,7 @@ class g2helper {
 					*/
 				}
 				else {
-					$this->_errorHandler(GENERAL_ERROR, 'isExternalIdMapped failed for ' . $id[$i][0] . '.', __LINE__, __FILE__);
+					$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $id[$i][0]), __LINE__, __FILE__);
 				}
 			}
 		}
@@ -479,13 +522,21 @@ class g2helper {
 			*/
 		}
 		else {
-			$this->_errorHandler(GENERAL_ERROR, 'isExternalIdMapped failed for ' . $row['group_name'] . '.', __LINE__, __FILE__);
+			$this->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $row['group_name']), __LINE__, __FILE__);
 		}
 
-		$this->_done();
+		$this->done();
 	}
 
-	function _errorHandler($code, $msg, $line, $file, $sql = '') {
+	function _utf8Translate($value) {
+		return (defined('UTF8_TRANSLATE')) ? utf8_encode($value) : $value;
+	}
+
+	function utf8Untranslate($value) {
+		return (defined('UTF8_TRANSLATE')) ? utf8_decode($value) : $value;
+	}
+
+	function errorHandler($code, $msg, $line, $file, $sql = '') {
 		switch ($code) {
 			case CRITICAL_ERROR :
 				message_die(CRITICAL_ERROR, $msg, '', $line, $file, $sql);

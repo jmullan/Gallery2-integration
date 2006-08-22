@@ -201,18 +201,6 @@
 					</ul>
 					</li>
 					<li>
-					<a href="#upgrading">
-					Upgrading Your Integration
-					</a>
-					<ul class="toc-level-3">
-						<li>
-						<a href="#51-52">
-						0.5.1 - 0.5.2 / 0.5.3
-						</a>
-						</li>
-					</ul>
-					</li>
-					<li>
 					<a href="#configuration">
 					Configuration
 					</a>
@@ -254,12 +242,9 @@
 		</a>
 		</h2>
 		<p>
-		This package contains all the files and directories you will need 
+		This package contains all the files, directories and mod instructions you will need 
 		in order to integrate Gallery 2 into your phpBB2 website.  This integration package 
-		is still under very heavy development and is being released as a beta package.  It's 
-		limitations are many, bugs (probably) numerous.  But, we rely on you, the user, to locate 
-		them and make us aware of them.	<b>Standard Disclaimer: Back up all files/folders/databases 
-		related to Gallery 2 before attempting this integration.</b>
+		is still under continual development and improvement and is being released as a beta package.
 		</p>
 		<h2>
 		<a name="dodont">
@@ -278,11 +263,9 @@
 		<ol>
 			<li>Creates an administration link/page in the phpBB2 administration page.</li>
 			<li>Allows you to export your existing phpBB2 users and groups to Gallery 2.</li>
+			<li>Maintains synchronization between Gallery 2 and phpBB2 user database tables.</li>
+			<li>Allows users to include Gallery 2 images in phpBB2 posts.</li>
 		</ol>
-		<p>
-		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
-		proceed with this integration, you <b>must</b> install and configure Gallery 2.
-		</p>
 		<h2>
 		<a name="installing">
 		Installation
@@ -295,16 +278,32 @@
 		</p>
 		<div class="important">
 		<h3>NOTICE</h3>
+		<p><b>Standard Disclaimer: Back up all files/folders/databases 
+		related to Gallery 2 and phpBB2 before attempting this integration.</b>
+		</p></div>
+		<br />
+		<div class="important">
+		<h3>NOTICE</h3>
 		<p>
 		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
-		proceed with this integration, you <b>must</b> install and configure Gallery 2.
+		proceed with this integration, you <b>must</b> install and configure Gallery 2 and you must 
+		already have phpBB2 installed and configured.
 		</p></div>
 		<br />
 		<div class="important">
 		<h3>IMPORTANT</h3>
 		<p>
-		The use of the Gallery 2 rewrite module in an integrated environment has proven to be a tricky task.  It is highly 
-		recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration.
+		The use of the Gallery 2 rewrite module in an integrated environment can be a tricky task.  It is highly 
+		recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration.  You 
+		can then try activating it once everything else is working properly.
+		</p></div>
+		<br />
+		<div class="important">
+		<h3>IMPORTANT</h3>
+		<p>
+		This integration package is developed and tested using the subSilver template style.  If you are using 
+		any kind of custom template, style, theme, skin, etc.; you will have to find and make the necessary 
+		equivalent changes yourself.  We cannot support every variant out there.
 		</p></div>
 		<p>
 		This package contains these folders:
@@ -313,11 +312,13 @@
 		<li>/add-ons<br>&nbsp;&nbsp;/all_gallery_links_in_profile<br>&nbsp;&nbsp;&nbsp;&nbsp;/images<br>&nbsp;&nbsp;/gallery_link_in_profile<br>&nbsp;&nbsp;&nbsp;&nbsp;/images</li>
 		<li>/gallery2<br>&nbsp;&nbsp;/modules<br>&nbsp;&nbsp;&nbsp;&nbsp;/core<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/templates<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/blocks<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/local</li>
 		<li>/images</li>
-		<li>/phpbb2<br>&nbsp;&nbsp;/admin<br>&nbsp;&nbsp;/templates<br>&nbsp;&nbsp;&nbsp;&nbsp;/subSilver<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/admin<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/images</li>
+		<li>/phpbb2<br>&nbsp;&nbsp;/admin<br>&nbsp;&nbsp;/g2image<br>&nbsp;&nbsp;/language<br>&nbsp;&nbsp;&nbsp;&nbsp;/lang_english<br>&nbsp;&nbsp;/templates<br>&nbsp;&nbsp;&nbsp;&nbsp;/subSilver<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/admin<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/images</li>
 		</ul>
 		<p>
-		To install, simply upload the contents of the phpbb2, phpbb2/admin and phpbb2/templates folders into the 
-		corresponding folders in your phpBB2 installation.</p>
+		To install, create a folder named "g2image" in your phpBB2 installation. Then upload the contents of 
+		the phpBB2, phpBB2/admin, phpBB2/g2image and phpBB2/templates folders into the corresponding 
+		folders in your phpBB2 installation.
+		</p>
 		<pre class="CodeSnippet">
 	phpBB2/gallery2.php
 	phpBB2/g2helper.inc
@@ -325,6 +326,11 @@
 	phpBB2/admin/gallery2_export.php
 	phpBB2/admin/g2helper_admin.inc
 	phpBB2/admin/G2EmbedDiscoveryUtilities.class
+	phpBB2/g2image/g2image.php
+	phpBB2/g2image/css/g2image.css
+	phpBB2/g2image/jscripts/functions.js
+	phpBB2/language/lang_english/lang_g2image.php
+	phpBB2/language/lang_english/lang_gallery2.php
 	phpBB2/templates/subSilver/gallery2.tpl
 	phpBB2/templates/subSilver/admin/gallery2_config_body.tpl
 	phpBB2/templates/subSilver/admin/gallery2_export.tpl
@@ -348,385 +354,10 @@ C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</p
 		reflect the actual home page of your forums:</p>
 		<div class="instructions">
 		<p><span class="code">&lt;a href="/" class="BreadCrumb-1"&gt;Forum Index&lt;/a&gt;</span></p></div>
-		<p>There is a known issue with the font size in the phpBB2 integration. To fix this, make the following 
-		changes:</p>
-		<pre class="CodeSnippet">
-#
-#-----[ OPEN ]------------------------------------------
-# 
-templates/subSilver/subSilver.css
-# OR
-templates/subSilver/overall_header.tpl
-
-#
-#-----[ FIND ]------------------------------------------
-#
- scrollbar-darkshadow-color: #98AAB1;
-} 
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-#gsNavBar div.gbBreadCrumb {
-font-size: 1.6em;
-}
-
-span.block-core-SystemLink {
-font-size: 1.6em;
-} 
-
-#
-#-----[ FIND ]------------------------------------------
-#
-font,th,td,p { font-family: Verdana, Arial, Helvetica, sans-serif }
-
-#
-#-----[ IN-LINE FIND ]------------------------------------------------
-#
-font-family:
-
-#
-#-----[ IN-LINE BEFORE, ADD ]-----------------------------
-#
-font-size: 10px;
-
-#
-#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
-#
-# EoM</pre>
-		<p>The following MOD contains the required SQL and file modifications:</p>
-		<pre class="CodeSnippet">#
-#-----[ SQL ]------------------------------------------
-# (Use correct table prefix if not phpbb)
-# 
-CREATE TABLE `phpbb_gallery2` (
-`fullPath` VARCHAR( 255 ) NOT NULL ,
-`embedUri` VARCHAR( 255 ) NOT NULL ,
-`g2Uri` VARCHAR( 255 ) NOT NULL ,
-`activeAdminId` INT NOT NULL
-);
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-groupcp.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-					$sql = "INSERT INTO " . USER_GROUP_TABLE . " (user_id, group_id, user_pending) 
-						VALUES (" . $row['user_id'] . ", $group_id, 0)";
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-					// Add new user to group in gallery
-					require($phpbb_root_path . 'g2helper.inc');
-					$g2h = new g2helper($db);
-					$g2h->addUserToGroup($row['user_id'], $group_id);
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-						$sql = "UPDATE " . USER_GROUP_TABLE . " 
-							SET user_pending = 0 
-							WHERE user_id IN ($sql_in) 
-								AND group_id = $group_id";
-						$sql_select = "SELECT user_email 
-							FROM ". USERS_TABLE . " 
-							WHERE user_id IN ($sql_in)"; 
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-						// Add new user to group in gallery
-						require($phpbb_root_path . 'g2helper.inc');
-						$g2h = new g2helper($db);
-						$g2h->addUserToGroup($sql_in, $group_id);
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-						$sql = "DELETE FROM " . USER_GROUP_TABLE . " 
-							WHERE user_id IN ($sql_in) 
-								AND group_id = $group_id";
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-						// Remove user from group in gallery
-						require($phpbb_root_path . 'g2helper.inc');
-						$g2h = new g2helper($db);
-						$g2h->removeUserFromGroup($sql_in, $group_id);
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-login.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-	else if( ( isset($HTTP_GET_VARS['logout']) || isset($HTTP_POST_VARS['logout']) ) && $userdata['session_logged_in'] )
-	{
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-		// Logout of gallery
- 		$g2_sql = 'SELECT fullPath, embedUri FROM ' . GALLERY2_TABLE;
-		$g2_row = $db->sql_fetchrow($db->sql_query($g2_sql));
-		$fullPath = $g2_row['fullPath'];
-		$embedUri = $g2_row['embedUri'];
-		require_once($fullPath); 
-		$g2_ret = GalleryEmbed::logout(array('embedUri' => $embedUri));
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-admin/admin_groups.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-		//
-		// Delete Group
-		//
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-		// Delete group in gallery
-		require($phpbb_root_path . 'g2helper.inc');
-		$g2h = new g2helper($db);
-		$g2h->deleteGroup($group_id);
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-			$sql = "UPDATE " . GROUPS_TABLE . "
-				SET group_type = $group_type, group_name = '" . str_replace("\'", "''", $group_name) . "', group_description = '" . str_replace("\'", "''", $group_description) . "', group_moderator = $group_moderator 
-				WHERE group_id = $group_id";
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-			// Update group in gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->updateGroup($group_id, str_replace("\'", "''", $group_name));
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-		else if( $mode == 'newgroup' )
-		{
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-			// Create new group in gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->createGroup(str_replace("\'", "''", $group_name));
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-admin/admin_ug_auth.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-		//
-		// Make user an admin (if already user)
-		//
-		if ( $userdata['user_id'] != $user_id )
-		{
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-			// Add admin to gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->mapUserToAdmin($user_id);
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-				//
-				// Update users level, reset to USER
-				//
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-			   	// Remove admin from gallery
-				require($phpbb_root_path . 'g2helper.inc');
-				$g2h = new g2helper($db);
-				$g2h->mapAdminToUser($user_id);
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-admin/admin_users.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-		if (!($this_userdata = get_userdata($user_id)))
-		{
-			message_die(GENERAL_MESSAGE, $lang['No_user_id_specified'] );
-		}
-
-		if( $HTTP_POST_VARS['deleteuser'] && ( $userdata['user_id'] != $user_id ) )
-		{
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-			// Remove user from Gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->deleteUser($user_id);
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-			$sql = "UPDATE " . USERS_TABLE . "
-				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) . "', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", $aim) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_sig_bbcode_uid = '$signature_bbcode_uid', user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowavatar = $user_allowavatar, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_allow_pm = $user_allowpm, user_notify_pm = $notifypm, user_popup_pm = $popuppm, user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_active = $user_status, user_rank = $user_rank" . $avatar_sql . "
-				WHERE user_id = $user_id";
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-			// Update user in gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->updateUser($user_id, $username, $password, $email);
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-admin/page_footer_admin.php
-
-#
-#-----[ FIND ]------------------------------------------
-#
-$template->assign_vars(array(
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-   'INTEGRATION_VERSION' => $integrationVersionText,
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-includes/constants.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-define('VOTE_USERS_TABLE', $table_prefix.'vote_voters');
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-define('GALLERY2_TABLE', $table_prefix.'gallery2');
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-includes/page_header.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-	'L_WHOSONLINE_MOD' => sprintf($lang['Mod_online_color'], '&lt;span style="color:#' . $theme['fontcolor2'] . '"&gt;', '&lt;/span&gt;'),
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-	'L_GALLERY2' => 'Gallery 2',
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-	'U_GROUP_CP' => append_sid('groupcp.'.$phpEx),
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-# 
-	'U_GALLERY2' => append_sid('gallery2.'.$phpEx),
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-includes/usercp_register.php
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-			$sql = "UPDATE " . USERS_TABLE . "
-				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) ."', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_sig_bbcode_uid = '$signature_bbcode_uid', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_notify_pm = $notifypm, user_popup_pm = $popup_pm, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_active = $user_active, user_actkey = '" . str_replace("\'", "''", $user_actkey) . "'" . $avatar_sql . "
-				WHERE user_id = $user_id";
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-			// Update user in gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->updateUser($user_id, $username, $password, $email);
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-templates/subSilver/overall_header.tpl
-
-#
-#-----[ FIND ]------------------------------------------
-#
-&lt;!-- link rel="stylesheet" href="templates/subSilver/{T_HEAD_STYLESHEET}" type="text/css" --&gt; 
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-#
-{GALLERY2_JAVASCRIPT}
-{GALLERY2_CSS}
-
-#
-#-----[ FIND ]------------------------------------------
-# 
-&lt;img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" /&gt;{L_LOGIN_LOGOUT}&lt;/a&gt;&amp;nbsp;
-
-#
-#-----[ IN-LINE AFTER, ADD ]------------------------------------------
-# 
-&amp;nbsp;&lt;a href="{U_GALLERY2}" class="mainmenu"&gt;&lt;img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" /&gt;{L_GALLERY2}&lt;/a&gt;&amp;nbsp;
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-templates/subSilver/admin/page_footer.tpl
-
-#
-#-----[ FIND ]------------------------------------------
-#
-//--&gt;
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-&lt;div align="center"&gt;&lt;span class="copyright"&gt;{INTEGRATION_VERSION}&lt;/span&gt;&lt;/div&gt;
-
-#
-#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
-#
-# EoM
-		</pre>
+		<p>Next follow the instructions in the following mod file.</p>
+		<p><a href="./integration_mods.txt">
+		MOD instructions in plain mod txt format
+		</a></p>
 		<h2>
 		<a name="mod">
 		Optional MODifications
@@ -738,123 +369,10 @@ templates/subSilver/admin/page_footer.tpl
 		</a>
 		</p>
 		<p>
-		Optional MOD's can be found in the /add-on mods folder. Check the readme's in these folders for additional information if you are interested in using any of them. It is recommended you get the basic integration installed and working before adding optional mods.
+		Optional MOD's can be found in the /add-on mods folder.  Check the readme's in these 
+		folders for additional information if you are interested in using any of them.  It is 
+		recommended you get the basic integration installed and working before adding optional mods.
 		</p>
-		<h2>
-		<a name="upgrading">
-		Upgrading Your Integration
-		</a>
-		</h2>
-		<p class="toc-link">
-		<a href="#toc">
-		[table of contents]
-		</a>
-		</p>
-		<h3>
-		<a name="51-52">
-		0.5.1 - 0.5.2 / 0.5.3
-		</a>
-		</h3>
-		<p>
-		<ol>
-		<li>Copy all new integration files to appropriate folders and overwrite all existing integration files.</li>
-		<li>See the add-on mods folder if you are using optional mods for the changes required with them.</li>
-		<li>Following are the mod changes required for the upgrade:</li>
-		</ol>
-		</p>
-		<pre class="CodeSnippet">#
-#-----[ OPEN ]------------------------------------------
-# 
-admin/admin_users.php
-
-#
-#-----[ REMOVE ]------------------------------------------
-#
-				// Change password in gallery
-				require($phpbb_root_path . 'g2helper.inc');
-				$g2h = new g2helper($db);
-				$g2h->changePassword($user_id, $password);
-
-#
-#-----[ FIND ]------------------------------------------
-#
-			$sql = "UPDATE " . USERS_TABLE . "
-				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) . "', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", $aim) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_sig_bbcode_uid = '$signature_bbcode_uid', user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowavatar = $user_allowavatar, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_allow_pm = $user_allowpm, user_notify_pm = $notifypm, user_popup_pm = $popuppm, user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_active = $user_status, user_rank = $user_rank" . $avatar_sql . "
-				WHERE user_id = $user_id";
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-			// Update user in gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->updateUser($user_id, $username, $password, $email);
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-admin/page_footer_admin.php
-
-#
-#-----[ FIND ]------------------------------------------
-#
-$template->assign_vars(array(
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-   'INTEGRATION_VERSION' => $integrationVersionText,
-
-#
-#-----[ OPEN ]------------------------------------------
-# 
-includes/usercp_register.php
-
-#
-#-----[ REMOVE ]------------------------------------------
-#
-				// Change password in gallery
-				if ($mode != 'register') {
-					require($phpbb_root_path . 'g2helper.inc');
-					$g2h = new g2helper($db);
-					$g2h->changePassword($user_id, $new_password);
-				}
-
-#
-#-----[ FIND ]------------------------------------------
-#
-			$sql = "UPDATE " . USERS_TABLE . "
-				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) ."', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_sig_bbcode_uid = '$signature_bbcode_uid', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_notify_pm = $notifypm, user_popup_pm = $popup_pm, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_active = $user_active, user_actkey = '" . str_replace("\'", "''", $user_actkey) . "'" . $avatar_sql . "
-				WHERE user_id = $user_id";
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-# 
-			// Update user in gallery
-			require($phpbb_root_path . 'g2helper.inc');
-			$g2h = new g2helper($db);
-			$g2h->updateUser($user_id, $username, $password, $email);
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-templates/subSilver/admin/page_footer.tpl
-
-#
-#-----[ FIND ]------------------------------------------
-#
-//--&gt;
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-&lt;div align="center"&gt;&lt;span class="copyright"&gt;{INTEGRATION_VERSION}&lt;/span&gt;&lt;/div&gt;
-
-#
-#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
-#
-# EoM</pre>
-
 		<h2>
 		<a name="configuration">
 		Configuration
@@ -913,6 +431,10 @@ templates/subSilver/admin/page_footer.tpl
 		</li>
 		<li><b>Active Admin ID</b> - This setting is the gallery external id of a valid admin.<br />
 		</li>
+		<br />
+		<li><b>UTF-8 Translation</b> - This setting controls utf-8 translation. This is only needed 
+		for non-english installations that require special extended charaters such as é, ö, etc.
+		</li>
 		</ol>
 		<p>
 		When you are finished, click the "Submit" button.  
@@ -922,9 +444,13 @@ templates/subSilver/admin/page_footer.tpl
 		<h3>Export Users to Gallery 2</h3>
 		<p>
 		This will export all your phpBB2 users and create a G2 account for them 
-		if they do not have one. The phpBB2 admin accounts will also be 
+		if they do not have one.  The phpBB2 admin accounts will also be 
 		mapped to the G2 admin accounts.  Therefore, if you're logged as an admin 
-		in phpBB2, you will also be logged as an admin in G2.
+		in phpBB2, you will also be logged as an admin in G2.  The integration 
+		configuration will not be completed until the export users option has been 
+		run at least once.  This will fill in the Active Admin ID field and map 
+		the admin and guest accounts, along with the users if you elect to export 
+		all users at config time.
 		</p>
 		<h2>
 		<a name="getting_help">
@@ -975,7 +501,7 @@ templates/subSilver/admin/page_footer.tpl
 		The following are known issues with this integration package:
 		</p>
 		<ol>
-		<li><b>Languages other than english not supported</b></li>
+		<li><b>Apache aliased directories are known to have issues or not work at all with this integration.</b></li>
 		</ol>
 		<p>
 		For a list of known issues with Gallery 2, view the <a href="http://svn.sourceforge.net/viewcvs.cgi/*checkout*/gallery/trunk/gallery2/README.html?rev=13566#known_issues">

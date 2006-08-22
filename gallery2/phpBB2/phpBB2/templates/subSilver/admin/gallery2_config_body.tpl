@@ -21,6 +21,7 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
+ * @author Scott Gregory <jettyrat@jettyfishing.com>
  */
  -->
 
@@ -38,19 +39,29 @@
 		<th align="center" class="row1" colspan="2">{L_CONFIG_EXPLAIN2}</th>
 	</tr>
 	<tr>
-		<td align="right" class="row1">{L_EMBEDURI}</td>
-		<td align="left" class="row2"><input type="text" name="embeduri" value="{S_EMBEDURI}"  /></td>
+		<td height="40" valign="top" align="right" class="row1">{L_EMBEDURI}</td>
+		<td height="40" valign="top" align="left" class="row2"><input type="text" name="embeduri" value="{S_EMBEDURI}"  /></td>
 	</tr>
 	<tr>
 		<th align="center" class="row1" colspan="2">{L_CONFIG_EXPLAIN3}</th>
 	</tr>
 	<tr>
-		<td align="right" class="row1">{L_FULLPATH}</td>
-		<td align="left" class="row2"><input type="text" name="fullpath" value="{S_FULLPATH}"  /></td>
+		<td height="40" valign="top" align="right" class="row1">{L_FULLPATH}</td>
+		<td height="40" valign="top" align="left" class="row2"><input type="text" name="fullpath" value="{S_FULLPATH}"  /></td>
+	</tr>
+	<tr>
+		<th align="center" class="row1" colspan="2">{L_CONFIG_EXPLAIN4}</th>
 	</tr>
 	<tr>
 		<td height="40" valign="top" align="right" class="row1">{L_ACTIVEADMINID}</td>
 		<td height="40" valign="top" align="left" class="row2"><input type="text" name="activeadminid" value="{S_ACTIVEADMINID}"  /></td>
+	</tr>
+	<tr>
+		<th align="center" class="row1" colspan="2">{L_CONFIG_EXPLAIN5}</th>
+	</tr>
+	<tr>
+		<td height="40" valign="top" align="right" class="row1">{L_UTF8}</td>
+		<td height="40" valign="top" align="left" class="row2"><input type="radio" name="utf8" value="1" {S_UTF8_1}/>&nbsp;{L_ENABLE}&nbsp;&nbsp;<input type="radio" name="utf8" value="0" {S_UTF8_0}/>&nbsp;{L_DISABLE}</td>
 	</tr>
 	<tr>
 		<td align="center" class="catbottom" colspan="2"><input type="submit" name="save" value="{L_SUBMIT}"  /></td>

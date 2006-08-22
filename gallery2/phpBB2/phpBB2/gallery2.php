@@ -22,7 +22,7 @@
  * Gallery 2 integration for phpBB2.
  * @version $Revision$ $Date$
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @author Scott Gregory 
+ * @author Scott Gregory <jettyrat@jettyfishing.com>
  */
 
 define('IN_PHPBB', true);
@@ -44,14 +44,27 @@ if ($g2data['isDone']) {
 elseif (isset($g2data['headHtml'])) {
 	list($page_title, $css, $javascript) = GalleryEmbed::parseHead($g2data['headHtml']);
 }
-$css = ($css) ? implode("\n", $css) . "\n" : '';
-$javascript = ($javascript) ? implode("\n", $javascript) . "\n" : '';
-$bodyHtml = ($g2data['bodyHtml']) ? $g2data['bodyHtml'] : '';
+$css = (isset($css)) ? implode("\n", $css) . "\n" : '';
+$javascript = (isset($javascript)) ? implode("\n", $javascript) . "\n" : '';
+$bodyHtml = (isset($g2data['bodyHtml'])) ? $g2data['bodyHtml'] : '';
 
-$template->set_filenames(array('body' => 'gallery2.tpl'));
+$template->set_filenames(array(
+	'body' => 'gallery2.tpl')
+);
+
+list($ret, $pluginStatusList) = GalleryCoreApi::fetchPluginStatus('module');
+if (isset($ret)) {
+	$g2h->errorHandler(GENERAL_ERROR, $lang['G2_FETCHPLUGINSTATUS_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
+}
+elseif (!empty($pluginStatusList['rewrite']['active'])) {
+	$template->assign_block_vars('switch_phpbb_base', array(
+		'PHPBB_BASE' => strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, strpos($_SERVER['SERVER_PROTOCOL'], '/'))) . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') + 1))
+	);
+}
+
 $template->assign_vars(array(
-	'PAGE_TITLE' => $page_title,
-	'GALLERY2_BODY' => $bodyHtml,
+	'PAGE_TITLE' => $g2h->utf8Untranslate($page_title),
+	'GALLERY2_BODY' => $g2h->utf8Untranslate($bodyHtml),
 	'GALLERY2_CSS' => $css,
 	'GALLERY2_JAVASCRIPT' => $javascript)
 );

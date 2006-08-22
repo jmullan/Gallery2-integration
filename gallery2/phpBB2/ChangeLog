@@ -1,3 +1,21 @@
+2006-08-21  Dariush Molavi  <dari@nukedgallery.net> 0.5.5
+	* New: Added capability to include Gallery 2 images in phpBB2 posts 
+	  using backported phpBB3b1 image selector.
+	* Fix: Added code to address issue where phpBB2 header images are 
+	  broken when using url rewrite module. Thanks to oma for initial work on 
+	  this.
+	* Change: Moved all text messages to proper language files to better 
+	  facilitate language translations.
+	* Update: Added changes that support characterset encoding for languages 
+	  other than english. Thanks to Emanuelle82 for initial work on this.
+	* New: Added utf-8 translation option to config settings. 
+	* Update: Changes and tweaks to codebase too numerous to mention. Mostly 
+	  related to the utf-8 translation option.
+	* Update: Changes/clarifications to readme.
+	* Update: Moved MOD instructions to separate txt file because the text 
+	  '&amp;' is needed in the bbcode regex and was being displayed as '&' when 
+	  embedded inline in the Readme file.
+
 2006-06-22  Dariush Molavi  <dari@nukedgallery.net> 0.5.4
 	* Fix: Corrected bad "Find" in integration MOD. Thanks 
 	  to estoke.

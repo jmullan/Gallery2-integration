@@ -1,677 +1,1 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" />
-		<title>
-		README: All Gallery Links In Profile Integration Add-On
-		</title>
-		<style type="text/css">
-		html {
-		font-family: "Lucida Grande", Verdana, Arial, sans-serif;
-		font-size: 62.5%;
-		}
-		body {
-		font-size: 1.2em;
-		margin: 16px 16px 0px 16px;
-		background: white;
-		}
-		a {
-		text-decoration: none;
-		}
-		p {
-		line-height: 1.5em;
-		}
-		h2 {
-		font-family: "Gill Sans", Verdana, Arial, sans-serif;
-		font-size: 1.5em;
-		color: #333;
-		border-bottom: 1px solid #ddd;
-		margin: 0;
-		padding: 1.0em 0 0.15em 0;
-		}
-		ul, ol {
-		margin: 1.2em 0 1.2em 1.75em;
-		padding: 0;
-		}
-		li {
-		padding: 0.2em 0;
-		line-height: 1.5em;
-		}
-		ol ul {
-		margin-top: 0.4em;
-		margin-bottom: 0.4em;
-		}
-		a:link {
-		font-weight: 700;
-		color: #5D728E;
-		background-color: transparent;
-		}
-		a:visited {
-		font-weight: 700;
-		color: #5D728E;
-		background-color: transparent;
-		}
-		a:hover {
-		font-weight: 700;
-		color: #B30400;
-		text-decoration: underline;
-		}
-		div.instructions {
-		background: #ddd;
-		border: 1px solid #777;
-		width: 480px;
-		margin: 8px;
-		padding: 0px;
-		}
-		div.instructions h3 {
-		background: #ccc;
-		border-bottom: 1px solid #777;
-		font-size: 1.1em;
-		margin: 0px 0px 4px 0px;
-		padding: 4px;
-		}
-		div.instructions p {
-		margin: 0px 0px 0px 4px;
-		}
-		.fineprint {
-		font-size: .8em;
-		color: #ccc;
-		}
-		div.toc {
-		float: right;
-		border: 1px solid #F15D22;
-		background: #e9eff3;
-		padding: 2px 4px 2px 4px;
-		margin: 15px auto auto 15px;
-		}
-		div.toc h2 {
-		font-size: 1.1em;
-		margin-top: -8px;
-		}
-		p.toc-link {
-		margin: 0px;
-		}
-		ul.toc-level-1 {
-		margin: 0px 16px 0px 16px;
-		list-style-type: none;
-		}
-		ul.toc-level-1 li {
-		margin: auto;
-		font-weight: bold;
-		}
-		ul.toc-level-2 {
-		margin: auto 0px auto 15px;
-		list-style-type: none;
-		}
-		ul.toc-level-2 li {
-		margin: auto;
-		}
-		ul.toc-level-3 {
-		margin: auto 0px auto 20px;
-		list-style-type: none;
-		}
-		ul.toc-level-3 li {
-		margin: auto;
-		}
-		pre.CodeSnippet	{
-		background-color: #f0f0f0;
-		padding: 1em;
-		margin: 0px;
-		border: 1px solid gray;
-		font-family: "Lucida Console";
-		font-size: 1em ;
-		width: 800px ;
-		color: #000000;
-		overflow:auto;
-		}
-		pre.Console	{
-		width: auto ;
-		background-color: #000000; 
-		color: #00ff00;
-		}
-		div.codecontainer {
-		margin: 0px;
-		width:800px;
-		padding: 1em;
-		}
-		div.codecontainer h3 {
-		background: #ccc;
-		font-size: 1.1em;
-		margin: 0px 0px 0px 0px;
-		padding: 4px;
-		}
-		.important {
-		background: #FACA61;
-		border: 2px;
-		width: 480px;
-		margin: 0.6em 0 0.6em 0;
-		padding: 0.6em;
-		color: #C00;
-		text-align: center;
-		}
-		.important .email {
-		font-size: 1.3em;
-		color: black;
-		font-weight: 700;
-		margin: 0.6em 0 0 0;
-		}
-		.important h3 {
-		color: #eee;
-		background: #f00;
-		font-size: 1.3em;
-		margin: -0.2em -0.2em 0.2em -0.2em;
-		padding: 0.2em 0.2em;
-		}
-	</style>
-	</head>
-	<body>
-		<div class="toc">
-		<h2>
-		<a name="toc">Contents</a>
-		</h2>
-		<ul class="toc-level-1">
-			<li>
-			Introduction
-				<ul class="toc-level-2">
-					<li>
-					<a href="#description">
-					Description
-					</a>
-					</li>
-					<li>
-					<a href="#dodont">
-					What this package does
-					</a>
-					</li>
-				</ul>
-			</li>
-			<li>
-			Installation
-				<ul class="toc-level-2">
-					<li>
-					<a href="#installing">
-					Installing
-					</a>
-					</li>
-					<li>
-					<a href="#configuration">
-					Configuration
-					</a>
-					</li>
-				</ul>
-			</li>
-			<li>
-			Help!
-				<ul class="toc-level-2">
-					<li>
-					<a href="#getting_help">
-					Getting Help
-					</a>
-					</li>
-					<li>
-					<a href="#known_issues">
-					Known Issues / Bugs
-					</a>
-					</li>
-				</ul>
-			</li>
-		</ul>
-		</div>
-		<div>
-		<img alt="Gallery 2" src="../../images/g2Logo.gif" />
-		</div>
-		<p>
-		Welcome to Gallery 2.1. This integration package is part of the 
-		ongoing effort to seamlessly integrate Gallery 2 in phpBB2.  
-		Please read through this document carefully
-		before integrating Gallery 2 and before asking for help.  We have
-		taken care to try to answer as many of your questions here as
-		possible.  If you don't read this and have problems, we may
-		refer you back to this document as a first resource.
-		</p>
-		<h2>
-		<a name="description">
-		Description
-		</a>
-		</h2>
-		<p>
-		This package contains all the information you will need 
-		in order to include an optional mod to the basic integration package 
-		that will add links and thumbnails to all the users gallery items in 
-		their profile.  <b>Standard Disclaimer: Back up all files/folders/databases 
-		related to Gallery 2 and phpBB2 before attempting this integration.</b>
-		</p>
-		<h2>
-		<a name="dodont">
-		What this package does
-		</a>
-		</h2>
-		<p class="toc-link">
-		<a href="#toc">
-		[table of contents]
-		</a>
-		</p>
-		<p>
-		Simply put, this package allows you to include thumbnail images in the users phpBB2 profile as shown in the sample screenshot.
-		</p>
-		<ol>
-			<li>Creates a list of thumbnails linked to the original images of all the users gallery images in the users phpbb profile.</li>
-			<li>Creates an option in each users profile settings to turn this feature on or off.</li>
-		</ol>
-		<p>
-		This package <b>does not</b> install or configure Gallery 2 for you.  Before you 
-		proceed with this add-on mod, you <b>must</b> install and configure Gallery 2 and get the basic integration working.
-		</p>
-		<p>
-		<img alt="Screenshot 1" src="./images/screenshot1.jpg" />
-		</p>
-		<p>
-		<img alt="Screenshot 2" src="./images/screenshot2.jpg" />
-		</p>
-		<h2>
-		<a name="installing">
-		Installation
-		</a>
-		</h2>
-		<p class="toc-link">
-		<a href="#toc">
-		[table of contents]
-		</a>
-		</p>
-		<div class="important">
-		<h3>NOTICE</h3>
-		<p>
-		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
-		proceed with this integration, you <b>must</b> install and configure Gallery 2 and have the basic integration already working.
-		</p></div>
-		<div class="important">
-		<h3>NOTICE</h3>
-		<p>
-		This mod may not be a good idea for users who have a large amount of images because it does not stop until it generates a thumbnail and url in the users profile for every single image the user owns at each access.
-		</p></div>
-		<p>
-		This package contains these folders:
-		</p>
-		<ul>
-		<li>/images</li>
-		</ul>
-		<p>
-		To install, simply follow the mod instructions.  No additional files are required for installation.</p>
-		<br />
-		<p>The following MOD contains the required SQL and file modifications:</p>
-		<pre class="CodeSnippet">##############################################################
-## MOD Title: All Gallery Links In Profile Mod 
-## MOD Author: Scott Gregory &lt; jettyrat@jettyfishing.com &gt; (N/A) NA 
-## MOD Description: This mod adds all gallery image links the nuked G2 integration into user profiles 
-## MOD Version: 0.1.0 
-##
-## Installation Level: Intermediate
-## Installation Time: 30 Minutes
-## Files To Edit: g2helper.inc, 
-##	includes/usercp_register.php,
-##	includes/usercp_viewprofile.php,
-##	language/lang_english/lang_main.php,
-##	templates/subSilver/profile_add_body.tpl,
-##	templates/subSilver/profile_view_body.tpl,
-## Included Files: images/icon_gallery.gif 
-## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
-##############################################################
-## Author Notes:
-##
-##############################################################
-## MOD History:
-##
-## 2006-04-21 - Version 0.1.0 
-##      - Initial Developmental Release 
-##
-##############################################################
-## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
-##############################################################
-
-#
-#-----[ SQL ]------------------------------------------
-#
-ALTER TABLE phpbb_users ADD `user_gallery_links` TINYINT(1) NULL DEFAULT NULL;
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-g2helper.inc
-
-#
-#-----[ FIND ]------------------------------------------
-#
-	function _createUser($id, $level, $newUserData) {
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-#
-	function mapAllGalleryLinks($userId) {
-		$this-&gt;_initAdmin();
-
-		$ret = GalleryEmbed::isExternalIdMapped($userId, 'GalleryUser');
-		if (empty($ret)) {
-			global $gallery;
-
-			$urlGenerator =& $gallery-&gt;getUrlGenerator();
-
-			list ($ret, $entityId) = GalleryCoreApi::loadEntityByExternalId($userId, 'GalleryUser');
-			if (isset($ret)) {
-				$this-&gt;_errorHandler(GENERAL_ERROR, "loadEntityByExternalId failed for $userId. Here is the error message from G2: &lt;br /&gt;" . $ret-&gt;getAsHtml(), __LINE__, __FILE__);
-			}
-
-			list ($ret, $itemIds) = GalleryCoreApi::fetchAllItemIdsByOwnerId($entityId-&gt;getId());
-			if (isset($ret)) {
-				$this-&gt;_errorHandler(GENERAL_ERROR, 'fetchAllItemIdsByOwnerId failed for ' . $entityId-&gt;getId() . '. Here is the error message from G2: &lt;br /&gt;' . $ret-&gt;getAsHtml(), __LINE__, __FILE__);
-			}
-
-			list ($ret, $descendentCounts) = GalleryCoreApi::fetchDescendentCounts($itemIds, $entityId-&gt;getId());
-			if ((count($descendentCounts) &lt; 1) || (isset($ret) && $ret-&gt;getErrorCode() & ERROR_STORAGE_FAILURE)) {
-				$this-&gt;_done();
-
-				return NULL;
-			} 	
-			elseif (isset($ret)) {
-				$this-&gt;_errorHandler(GENERAL_ERROR, 'fetchDescendentCounts failed for ' . $entityId-&gt;getId() . '. Here is the error message from G2: &lt;br /&gt;' . $ret-&gt;getAsHtml(), __LINE__, __FILE__);
-			}
-
-			$itemIds = array_diff($itemIds, array_keys($descendentCounts));
-
-			list ($ret, $thumbNails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
-			if (isset($ret)) {
-				$this-&gt;_errorHandler(GENERAL_ERROR, 'fetchThumbnailsByItemIds failed for ' . $entityId-&gt;getId() . '. Here is the error message from G2: &lt;br /&gt;' . $ret-&gt;getAsHtml(), __LINE__, __FILE__);
-			}
-
-			$itemLinks = "  &lt;tr&gt;\n";
-			$itemLinks .= '    &lt;td colspan="2" class="catLeft" align="center" height="28"&gt;&lt;b&gt;&lt;span class="gen"&gt;Gallery Items For ' . $entityId-&gt;getUserName() . ' :: ' . count($itemIds) . ' Images&lt;/span&gt;&lt;/b&gt;&lt;/td&gt;' . "\n";
-			$itemLinks .= "  &lt;/tr&gt;\n";
-			$itemLinks .= "  &lt;tr&gt;\n";
-			$itemLinks .= '    &lt;td colspan="2" align="center"&gt;' . "\n";
-			$itemLinks .= '&lt;table&gt;&lt;tr&gt;&lt;td align="center"&gt;' . "\n";
-
-			foreach ($itemIds as $id) {
-				$url = $urlGenerator-&gt;generateUrl(array('view' =&gt; 'core.DownloadItem', 'itemId' =&gt; $thumbNails[$id]-&gt;getId()), array('fullUrl' =&gt; true));
-
-				$itemLinks .= "&lt;a href=\"gallery2.php?g2_itemId=$id\"&gt;&lt;img hspace=\"5\" vspace=\"5\" src=\"$url\"&gt;&lt;/a&gt;\n";
-			}
-
-			$itemLinks .= "&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n";
-			$itemLinks .= "    &lt;/td&gt;\n";
-			$itemLinks .= "  &lt;/tr&gt;\n";
-
-			$this-&gt;_done();
-
-			return $itemLinks;
-		}
-		elseif (isset($ret) && $ret-&gt;getErrorCode() & ERROR_MISSING_OBJECT) {
-			/*
-			* User does not exist in gallery, so do nothing!
-			*/
-		}
-		else {
-			$this-&gt;_errorHandler(GENERAL_ERROR, "isExternalIdMapped failed for $id.", __LINE__, __FILE__);
-		}
-
-		$this-&gt;_done();
-
-		return NULL;
-	}
-#
-#-----[ OPEN ]------------------------------------------
-#
-includes/usercp_register.php
-
-#
-#-----[ FIND ]------------------------------------------
-#
-	$popup_pm = ( isset($HTTP_POST_VARS['popup_pm']) ) ? ( ($HTTP_POST_VARS['popup_pm']) ? TRUE : 0 ) : TRUE;
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-	$user_gallery_links = ( isset($HTTP_POST_VARS['user_gallery_links']) ) ? ( ($HTTP_POST_VARS['user_gallery_links']) ? TRUE : 0 ) : TRUE;
-
-#
-#-----[ FIND ]------------------------------------------
-#
-				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) ."', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_sig_bbcode_uid = '$signature_bbcode_uid', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_notify_pm = $notifypm, user_popup_pm = $popup_pm, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_active = $user_active, user_actkey = '" . str_replace("\'", "''", $user_actkey) . "'" . $avatar_sql . "
-
-#
-#-----[ INLINE, FIND ]------------------------------------------
-#
-'$signature_bbcode_uid',
-
-#
-#-----[ INLINE AFTER, ADD ]------------------------------------------
-#
- user_gallery_links = $user_gallery_links,
-
-#
-#-----[ FIND ]------------------------------------------
-#
-			$sql = "INSERT INTO " . USERS_TABLE . "	(user_id, username, user_regdate, user_password, user_email, user_icq, user_website, user_occ, user_from, user_interests, user_sig, user_sig_bbcode_uid, user_avatar, user_avatar_type, user_viewemail, user_aim, user_yim, user_msnm, user_attachsig, user_allowsmile, user_allowhtml, user_allowbbcode, user_allow_viewonline, user_notify, user_notify_pm, user_popup_pm, user_timezone, user_dateformat, user_lang, user_style, user_level, user_allow_pm, user_active, user_actkey)
-
-#
-#-----[ INLINE, FIND ]------------------------------------------
-#
-user_avatar_type,
-
-#
-#-----[ INLINE AFTER, ADD ]------------------------------------------
-#
- user_gallery_links,
- 
-#
-#-----[ FIND ]------------------------------------------
-#
-				VALUES ($user_id, '" . str_replace("\'", "''", $username) . "', " . time() . ", '" . str_replace("\'", "''", $new_password) . "', '" . str_replace("\'", "''", $email) . "', '" . str_replace("\'", "''", $icq) . "', '" . str_replace("\'", "''", $website) . "', '" . str_replace("\'", "''", $occupation) . "', '" . str_replace("\'", "''", $location) . "', '" . str_replace("\'", "''", $interests) . "', '" . str_replace("\'", "''", $signature) . "', '$signature_bbcode_uid', $avatar_sql, $viewemail, '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', '" . str_replace("\'", "''", $yim) . "', '" . str_replace("\'", "''", $msn) . "', $attachsig, $allowsmilies, $allowhtml, $allowbbcode, $allowviewonline, $notifyreply, $notifypm, $popup_pm, $user_timezone, '" . str_replace("\'", "''", $user_dateformat) . "', '" . str_replace("\'", "''", $user_lang) . "', $user_style, 0, 1, ";
-
-#
-#-----[ INLINE, FIND ]------------------------------------------
-#
-$avatar_sql,
-
-#
-#-----[ INLINE AFTER, ADD ]------------------------------------------
-#
- $user_gallery_links,
- 
-#
-#-----[ FIND ]------------------------------------------
-#
-	$viewemail = $userdata['user_viewemail'];
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-#
-	$user_gallery_links = $userdata['user_gallery_links'];
-
-#
-#-----[ FIND ]------------------------------------------
-#
-		'ALWAYS_ALLOW_SMILIES_NO' =&gt; ( !$allowsmilies ) ? 'checked="checked"' : '',
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-		'GALLERY_LINKS_YES' =&gt; ( $user_gallery_links ) ? 'checked="checked"' : '',
-		'GALLERY_LINKS_NO' =&gt; ( !$user_gallery_links ) ? 'checked="checked"' : '',
-
-#
-#-----[ FIND ]------------------------------------------
-#
-		'L_ALWAYS_ADD_SIGNATURE' =&gt; $lang['Always_add_sig'],
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-		'L_ALLOW_GALLERY_LINKS' =&gt; $lang['Allow_gallery_links'],
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-includes/usercp_viewprofile.php
-
-#
-#-----[ FIND ]------------------------------------------
-#
-//
-// Generate page
-//
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-if (!empty($profiledata['user_gallery_links']))
-{
-	// Fetch all gallery items for this user
-	require($phpbb_root_path . 'g2helper.inc');
-	$g2h = new g2helper($db);
-	$item_links = $g2h-&gt;mapAllGalleryLinks($profiledata['user_id']);
-}
-
-#
-#-----[ FIND ]------------------------------------------
-#
-	'POST_PERCENT_STATS' =&gt; sprintf($lang['User_post_pct_stats'], $percentage), 
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-	'GALLERY2_LINKS_DATA' =&gt; $item_links,
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-/language/lang_english/lang_main.php
-
-#
-#-----[ FIND ]------------------------------------------
-#
-$lang['Always_add_sig'] = 'Always attach my signature';
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-$lang['Allow_gallery_links'] = 'Allow Gallery links in public profile';
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-/templates/subSilver/profile_add_body.tpl
-
-#
-#-----[ FIND ]------------------------------------------
-#
-	&lt;tr&gt; 
-	  &lt;th class="thSides" colspan="2" height="25" valign="middle"&gt;{L_PREFERENCES}&lt;/th&gt;
-	&lt;/tr&gt;
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-	&lt;tr&gt; 
-	  &lt;td class="row1"&gt;&lt;span class="gen"&gt;{L_ALLOW_GALLERY_LINKS}:&lt;/span&gt;&lt;/td&gt;
-	  &lt;td class="row2"&gt; 
-		&lt;input type="radio" name="user_gallery_links" value="1" {GALLERY_LINKS_YES} /&gt;
-		&lt;span class="gen"&gt;{L_YES}&lt;/span&gt;&nbsp;&nbsp; 
-		&lt;input type="radio" name="user_gallery_links" value="0" {GALLERY_LINKS_NO} /&gt;
-		&lt;span class="gen"&gt;{L_NO}&lt;/span&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-
-#
-#-----[ OPEN ]------------------------------------------
-#
-/templates/subSilver/profile_view_body.tpl
-
-#
-#-----[ FIND ]------------------------------------------
-#
-&lt;/table&gt;
-
-&lt;table width="100%" border="0" cellspacing="0" cellpadding="0" align="center"&gt;
-  &lt;tr&gt;
-   &lt;td align="right"&gt;&lt;span class="nav"&gt;&lt;br /&gt;{JUMPBOX}&lt;/span&gt;&lt;/td&gt;
-
-#
-#-----[ BEFORE, ADD ]------------------------------------------
-#
-  {GALLERY2_LINKS_DATA}
-
-#
-#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
-#
-# EoM
-		</pre>
-		<h2>
-		<a name="configuration">
-		Configuration
-		</a>
-		</h2>
-		<p class="toc-link">
-		<a href="#toc">
-		[table of contents]
-		</a>
-		</p>
-		<p>
-		<p>
-		No configuration is necessary with this mod.  Each user can turn this feature on or off within their profile settings.
-		</p>
-		<h2>
-		<a name="getting_help">
-		Getting Help
-		</a>
-		</h2>
-		<p class="toc-link">
-		<a href="#toc">
-		[table of contents]
-		</a>
-		</p>
-		<p>
-		If you are having problems getting your add-on mod completed successfully, 
-		start out by searching the Forums at <a href="http://www.nukedgallery.net">
-		NukedGallery.net</a>.  Gallery2 specific help is offered in <a href="http://www.nukedgallery.net/forum13.html">
-		this forum</a> on NukedGallery.</p>
-		<p>If you are having general Gallery 2 problems,  you should start by looking in the <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22">Gallery 2 Support Forum</a> on the <a href="http://gallery.sourceforge.net">Gallery
-		  Website</a>.  Search the forum to see if somebody else has
-		  posted a similar problem and maybe there's an answer
-		  there, otherwise start a new topic to get help.  If the problem
-		  seems like a bug in the Gallery 2 software you can <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130">file a bug</a> in our bug tracker on
-		  SourceForge.  Please read our <a href="http://gallery.sourceforge.net/wiki.php?page=Feature%20Requests%20and%20Bug%20Reports">tracker guidelines</a> before filing a bug so
-		  that we can cut down on the number of spurious reports.  If
-		  you're unsure whether to file a bug you can always post in the
-		  forums first and we'll ask you to file a bug if needed.  If you
-		  want to chat in real time, you can talk on our user-to-user irc
-		  support channel, <a href="irc://irc.freenode.net/#gallery-support">#gallery-support on irc.freenode.net</a>.
-		</p>
-
-		<p>
-		  Remember - reporting bugs is <b>good</b>.  Even if you think
-		  it's silly, go ahead and report it.  We can always close the bug
-		  or refile it (please don't be offended in this case) but it's
-		  harder to find bugs than it is to fix them so we're counting on
-		  you to help us with the finding part.
-		</p>
-		<h2>
-		<a name="known_issues">
-		Known Issues
-		</a>
-		</h2>
-		<p class="toc-link">
-		<a href="#toc">
-		[table of contents]
-		</a>
-		</p>
-		<p>
-		The following are known issues with this add-on mod package:
-		</p>
-		<p>
-		For a list of known issues with Gallery 2, view the <a href="http://svn.sourceforge.net/viewcvs.cgi/*checkout*/gallery/trunk/gallery2/README.html?rev=13566#known_issues">
-		Gallery 2 README</a>.
-		</p>
-    <hr />
-	<p class="fineprint">
-	$Id$
-	</p>
-	</body>
-	</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml">	<head>		<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" />		<title>		README: All Gallery Links In Profile Integration Add-On		</title>		<style type="text/css">		html {		font-family: "Lucida Grande", Verdana, Arial, sans-serif;		font-size: 62.5%;		}		body {		font-size: 1.2em;		margin: 16px 16px 0px 16px;		background: white;		}		a {		text-decoration: none;		}		p {		line-height: 1.5em;		}		h2 {		font-family: "Gill Sans", Verdana, Arial, sans-serif;		font-size: 1.5em;		color: #333;		border-bottom: 1px solid #ddd;		margin: 0;		padding: 1.0em 0 0.15em 0;		}		ul, ol {		margin: 1.2em 0 1.2em 1.75em;		padding: 0;		}		li {		padding: 0.2em 0;		line-height: 1.5em;		}		ol ul {		margin-top: 0.4em;		margin-bottom: 0.4em;		}		a:link {		font-weight: 700;		color: #5D728E;		background-color: transparent;		}		a:visited {		font-weight: 700;		color: #5D728E;		background-color: transparent;		}		a:hover {		font-weight: 700;		color: #B30400;		text-decoration: underline;		}		div.instructions {		background: #ddd;		border: 1px solid #777;		width: 480px;		margin: 8px;		padding: 0px;		}		div.instructions h3 {		background: #ccc;		border-bottom: 1px solid #777;		font-size: 1.1em;		margin: 0px 0px 4px 0px;		padding: 4px;		}		div.instructions p {		margin: 0px 0px 0px 4px;		}		.fineprint {		font-size: .8em;		color: #ccc;		}		div.toc {		float: right;		border: 1px solid #F15D22;		background: #e9eff3;		padding: 2px 4px 2px 4px;		margin: 15px auto auto 15px;		}		div.toc h2 {		font-size: 1.1em;		margin-top: -8px;		}		p.toc-link {		margin: 0px;		}		ul.toc-level-1 {		margin: 0px 16px 0px 16px;		list-style-type: none;		}		ul.toc-level-1 li {		margin: auto;		font-weight: bold;		}		ul.toc-level-2 {		margin: auto 0px auto 15px;		list-style-type: none;		}		ul.toc-level-2 li {		margin: auto;		}		ul.toc-level-3 {		margin: auto 0px auto 20px;		list-style-type: none;		}		ul.toc-level-3 li {		margin: auto;		}		pre.CodeSnippet	{		background-color: #f0f0f0;		padding: 1em;		margin: 0px;		border: 1px solid gray;		font-family: "Lucida Console";		font-size: 1em ;		width: 800px ;		color: #000000;		overflow:auto;		}		pre.Console	{		width: auto ;		background-color: #000000; 		color: #00ff00;		}		div.codecontainer {		margin: 0px;		width:800px;		padding: 1em;		}		div.codecontainer h3 {		background: #ccc;		font-size: 1.1em;		margin: 0px 0px 0px 0px;		padding: 4px;		}		.important {		background: #FACA61;		border: 2px;		width: 480px;		margin: 0.6em 0 0.6em 0;		padding: 0.6em;		color: #C00;		text-align: center;		}		.important .email {		font-size: 1.3em;		color: black;		font-weight: 700;		margin: 0.6em 0 0 0;		}		.important h3 {		color: #eee;		background: #f00;		font-size: 1.3em;		margin: -0.2em -0.2em 0.2em -0.2em;		padding: 0.2em 0.2em;		}	</style>	</head>	<body>		<div class="toc">		<h2>		<a name="toc">Contents</a>		</h2>		<ul class="toc-level-1">			<li>			Introduction				<ul class="toc-level-2">					<li>					<a href="#description">					Description					</a>					</li>					<li>					<a href="#dodont">					What this package does					</a>					</li>				</ul>			</li>			<li>			Installation				<ul class="toc-level-2">					<li>					<a href="#installing">					Installing					</a>					</li>					<li>					<a href="#configuration">					Configuration					</a>					</li>				</ul>			</li>			<li>			Help!				<ul class="toc-level-2">					<li>					<a href="#getting_help">					Getting Help					</a>					</li>					<li>					<a href="#known_issues">					Known Issues / Bugs					</a>					</li>				</ul>			</li>		</ul>		</div>		<div>		<img alt="Gallery 2" src="../../images/g2Logo.gif" />		</div>		<p>		Welcome to Gallery 2.1. This integration package is part of the 		ongoing effort to seamlessly integrate Gallery 2 in phpBB2.  		Please read through this document carefully		before integrating Gallery 2 and before asking for help.  We have		taken care to try to answer as many of your questions here as		possible.  If you don't read this and have problems, we may		refer you back to this document as a first resource.		</p>		<h2>		<a name="description">		Description		</a>		</h2>		<p>		This package contains all the information you will need 		in order to include an optional mod to the basic integration package 		that will add links and thumbnails to all the users gallery items in 		their profile.  <b>Standard Disclaimer: Back up all files/folders/databases 		related to Gallery 2 and phpBB2 before attempting this integration.</b>		</p>		<h2>		<a name="dodont">		What this package does		</a>		</h2>		<p class="toc-link">		<a href="#toc">		[table of contents]		</a>		</p>		<p>		Simply put, this package allows you to include thumbnail images in the users phpBB2 profile as shown in the sample screenshot.		</p>		<ol>			<li>Creates a list of thumbnails linked to the original images of all the users gallery images in the users phpbb profile.</li>			<li>Creates an option in each users profile settings to turn this feature on or off.</li>		</ol>		<p>		This package <b>does not</b> install or configure Gallery 2 for you.  Before you 		proceed with this add-on mod, you <b>must</b> install and configure Gallery 2 and get the basic integration working.		</p>		<p>		<img alt="Screenshot 1" src="./images/screenshot1.jpg" />		</p>		<p>		<img alt="Screenshot 2" src="./images/screenshot2.jpg" />		</p>		<h2>		<a name="installing">		Installation		</a>		</h2>		<p class="toc-link">		<a href="#toc">		[table of contents]		</a>		</p>		<div class="important">		<h3>NOTICE</h3>		<p>		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 		proceed with this integration, you <b>must</b> install and configure Gallery 2 and have the basic integration already working.		</p></div>		<div class="important">		<h3>NOTICE</h3>		<p>		This mod may not be a good idea for users who have a large amount of images because it does not stop until it generates a thumbnail and url in the users profile for every single image the user owns at each access.		</p></div>		<p>		This package contains these folders:		</p>		<ul>		<li>/images</li>		</ul>		<p>		To install, simply follow the mod instructions.  No additional files are required for installation.</p>		<br />		<p>The following MOD contains the required SQL and file modifications:</p>		<pre class="CodeSnippet">################################################################ MOD Title: All Gallery Links In Profile Mod ## MOD Author: Scott Gregory &lt; jettyrat@jettyfishing.com &gt; (N/A) NA ## MOD Description: This mod adds all gallery image links the nuked G2 integration into user profiles ## MOD Version: 0.1.0 #### Installation Level: Intermediate## Installation Time: 30 Minutes## Files To Edit: g2helper.inc, ##	includes/usercp_register.php,##	includes/usercp_viewprofile.php,##	language/lang_english/lang_main.php,##	templates/subSilver/profile_add_body.tpl,##	templates/subSilver/profile_view_body.tpl,## Included Files: images/icon_gallery.gif ## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2################################################################ Author Notes:################################################################## MOD History:#### 2006-04-21 - Version 0.1.0 ##      - Initial Developmental Release ################################################################## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD################################################################-----[ SQL ]------------------------------------------#ALTER TABLE phpbb_users ADD `user_gallery_links` TINYINT(1) NULL DEFAULT NULL;##-----[ OPEN ]------------------------------------------#g2helper.inc##-----[ FIND ]------------------------------------------#	function _createUser($id, $level, $newUserData) {##-----[ BEFORE, ADD ]------------------------------------------#	function mapAllGalleryLinks($userId) {		global $lang;		$this-&gt;_initAdmin();		$ret = GalleryEmbed::isExternalIdMapped($userId, 'GalleryUser');		if (empty($ret)) {			global $gallery;			$urlGenerator =& $gallery-&gt;getUrlGenerator();			list ($ret, $entityId) = GalleryCoreApi::loadEntityByExternalId($userId, 'GalleryUser');			if (isset($ret)) {				$this-&gt;_errorHandler(GENERAL_ERROR, sprintf($lang['G2_LOADENTITYBYEXTID_FAILED'], $userId) . $lang['G2_ERROR'] . $ret-&gt;getAsHtml(), __LINE__, __FILE__);			}			list ($ret, $itemIds) = GalleryCoreApi::fetchAllItemIdsByOwnerId($entityId-&gt;getId());			if (isset($ret)) {				$this-&gt;_errorHandler(GENERAL_ERROR, sprintf($lang['G2_FETCHITEMSBYOWNER_FAILED'], $entityId-&gt;getId()) . $lang['G2_ERROR'] . $ret-&gt;getAsHtml(), __LINE__, __FILE__);			}			list ($ret, $descendentCounts) = GalleryCoreApi::fetchDescendentCounts($itemIds, $entityId-&gt;getId());			if ((count($descendentCounts) &lt; 1) || (isset($ret) && $ret-&gt;getErrorCode() & ERROR_STORAGE_FAILURE)) {				$this-&gt;done();				return null;			} 				elseif (isset($ret)) {				$this-&gt;_errorHandler(GENERAL_ERROR, sprintf($lang['G2_FETCHDESCENDCOUNTS_FAILED'], $entityId-&gt;getId()) . $lang['G2_ERROR'] . $ret-&gt;getAsHtml(), __LINE__, __FILE__);			}			$itemIds = array_diff($itemIds, array_keys($descendentCounts));			list ($ret, $thumbNails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);			if (isset($ret)) {				$this-&gt;_errorHandler(GENERAL_ERROR, sprintf($lang['G2_FETCHTHUMBSBYIDS_FAILED'], $entityId-&gt;getId()) . $lang['G2_ERROR'] . $ret-&gt;getAsHtml(), __LINE__, __FILE__);			}			$itemLinks = "  &lt;tr&gt;\n";			$itemLinks .= '    &lt;td colspan="2" class="catLeft" align="center" height="28"&gt;&lt;b&gt;&lt;span class="gen"&gt;Gallery Items For ' . $this->utf8Untranslate($entityId-&gt;getUserName()) . ' :: ' . count($itemIds) . ' Images&lt;/span&gt;&lt;/b&gt;&lt;/td&gt;' . "\n";			$itemLinks .= "  &lt;/tr&gt;\n";			$itemLinks .= "  &lt;tr&gt;\n";			$itemLinks .= '    &lt;td colspan="2" align="center"&gt;' . "\n";			$itemLinks .= '&lt;table&gt;&lt;tr&gt;&lt;td align="center"&gt;' . "\n";			foreach ($itemIds as $id) {				$url = $urlGenerator-&gt;generateUrl(array('view' =&gt; 'core.DownloadItem', 'itemId' =&gt; $thumbNails[$id]-&gt;getId()), array('fullUrl' =&gt; true));				$itemLinks .= "&lt;a href=\"gallery2.php?g2_itemId=$id\"&gt;&lt;img hspace=\"5\" vspace=\"5\" src=\"$url\"&gt;&lt;/a&gt;\n";			}			$itemLinks .= "&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n";			$itemLinks .= "    &lt;/td&gt;\n";			$itemLinks .= "  &lt;/tr&gt;\n";			$this-&gt;done();			return $itemLinks;		}		elseif (isset($ret) && $ret-&gt;getErrorCode() & ERROR_MISSING_OBJECT) {			/*			* User does not exist in gallery, so do nothing!			*/		}		else {			$this-&gt;_errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], $userId), __LINE__, __FILE__);		}		$this-&gt;done();		return null;	}##-----[ OPEN ]------------------------------------------#includes/usercp_register.php##-----[ FIND ]------------------------------------------#	$popup_pm = ( isset($HTTP_POST_VARS['popup_pm']) ) ? ( ($HTTP_POST_VARS['popup_pm']) ? TRUE : 0 ) : TRUE;##-----[ AFTER, ADD ]------------------------------------------#	$user_gallery_links = ( isset($HTTP_POST_VARS['user_gallery_links']) ) ? ( ($HTTP_POST_VARS['user_gallery_links']) ? TRUE : 0 ) : TRUE;##-----[ FIND ]------------------------------------------#				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) ."', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_sig_bbcode_uid = '$signature_bbcode_uid', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_notify_pm = $notifypm, user_popup_pm = $popup_pm, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_active = $user_active, user_actkey = '" . str_replace("\'", "''", $user_actkey) . "'" . $avatar_sql . "##-----[ INLINE, FIND ]------------------------------------------#'$signature_bbcode_uid',##-----[ INLINE AFTER, ADD ]------------------------------------------# user_gallery_links = $user_gallery_links,##-----[ FIND ]------------------------------------------#			$sql = "INSERT INTO " . USERS_TABLE . "	(user_id, username, user_regdate, user_password, user_email, user_icq, user_website, user_occ, user_from, user_interests, user_sig, user_sig_bbcode_uid, user_avatar, user_avatar_type, user_viewemail, user_aim, user_yim, user_msnm, user_attachsig, user_allowsmile, user_allowhtml, user_allowbbcode, user_allow_viewonline, user_notify, user_notify_pm, user_popup_pm, user_timezone, user_dateformat, user_lang, user_style, user_level, user_allow_pm, user_active, user_actkey)##-----[ INLINE, FIND ]------------------------------------------#user_avatar_type,##-----[ INLINE AFTER, ADD ]------------------------------------------# user_gallery_links, ##-----[ FIND ]------------------------------------------#				VALUES ($user_id, '" . str_replace("\'", "''", $username) . "', " . time() . ", '" . str_replace("\'", "''", $new_password) . "', '" . str_replace("\'", "''", $email) . "', '" . str_replace("\'", "''", $icq) . "', '" . str_replace("\'", "''", $website) . "', '" . str_replace("\'", "''", $occupation) . "', '" . str_replace("\'", "''", $location) . "', '" . str_replace("\'", "''", $interests) . "', '" . str_replace("\'", "''", $signature) . "', '$signature_bbcode_uid', $avatar_sql, $viewemail, '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', '" . str_replace("\'", "''", $yim) . "', '" . str_replace("\'", "''", $msn) . "', $attachsig, $allowsmilies, $allowhtml, $allowbbcode, $allowviewonline, $notifyreply, $notifypm, $popup_pm, $user_timezone, '" . str_replace("\'", "''", $user_dateformat) . "', '" . str_replace("\'", "''", $user_lang) . "', $user_style, 0, 1, ";##-----[ INLINE, FIND ]------------------------------------------#$avatar_sql,##-----[ INLINE AFTER, ADD ]------------------------------------------# $user_gallery_links, ##-----[ FIND ]------------------------------------------#	$viewemail = $userdata['user_viewemail'];##-----[ BEFORE, ADD ]------------------------------------------#	$user_gallery_links = $userdata['user_gallery_links'];##-----[ FIND ]------------------------------------------#		'ALWAYS_ALLOW_SMILIES_NO' =&gt; ( !$allowsmilies ) ? 'checked="checked"' : '',##-----[ AFTER, ADD ]------------------------------------------#		'GALLERY_LINKS_YES' =&gt; ( $user_gallery_links ) ? 'checked="checked"' : '',		'GALLERY_LINKS_NO' =&gt; ( !$user_gallery_links ) ? 'checked="checked"' : '',##-----[ FIND ]------------------------------------------#		'L_ALWAYS_ADD_SIGNATURE' =&gt; $lang['Always_add_sig'],##-----[ AFTER, ADD ]------------------------------------------#		'L_ALLOW_GALLERY_LINKS' =&gt; $lang['Allow_gallery_links'],##-----[ OPEN ]------------------------------------------#includes/usercp_viewprofile.php##-----[ FIND ]------------------------------------------#//// Generate page//##-----[ AFTER, ADD ]------------------------------------------#if (!empty($profiledata['user_gallery_links'])){	// Fetch all gallery items for this user	require($phpbb_root_path . 'g2helper.inc');	$g2h = new g2helper($db);	$item_links = $g2h-&gt;mapAllGalleryLinks($profiledata['user_id']);}##-----[ FIND ]------------------------------------------#	'POST_PERCENT_STATS' =&gt; sprintf($lang['User_post_pct_stats'], $percentage), ##-----[ AFTER, ADD ]------------------------------------------#	'GALLERY2_LINKS_DATA' =&gt; $item_links,##-----[ OPEN ]------------------------------------------#/language/lang_english/lang_main.php##-----[ FIND ]------------------------------------------#$lang['Always_add_sig'] = 'Always attach my signature';##-----[ AFTER, ADD ]------------------------------------------#$lang['Allow_gallery_links'] = 'Allow Gallery links in public profile';##-----[ OPEN ]------------------------------------------#/templates/subSilver/profile_add_body.tpl##-----[ FIND ]------------------------------------------#	&lt;tr&gt; 	  &lt;th class="thSides" colspan="2" height="25" valign="middle"&gt;{L_PREFERENCES}&lt;/th&gt;	&lt;/tr&gt;##-----[ AFTER, ADD ]------------------------------------------#	&lt;tr&gt; 	  &lt;td class="row1"&gt;&lt;span class="gen"&gt;{L_ALLOW_GALLERY_LINKS}:&lt;/span&gt;&lt;/td&gt;	  &lt;td class="row2"&gt; 		&lt;input type="radio" name="user_gallery_links" value="1" {GALLERY_LINKS_YES} /&gt;		&lt;span class="gen"&gt;{L_YES}&lt;/span&gt;&nbsp;&nbsp; 		&lt;input type="radio" name="user_gallery_links" value="0" {GALLERY_LINKS_NO} /&gt;		&lt;span class="gen"&gt;{L_NO}&lt;/span&gt;&lt;/td&gt;	&lt;/tr&gt;##-----[ OPEN ]------------------------------------------#/templates/subSilver/profile_view_body.tpl##-----[ FIND ]------------------------------------------#&lt;/table&gt;&lt;table width="100%" border="0" cellspacing="0" cellpadding="0" align="center"&gt;  &lt;tr&gt;   &lt;td align="right"&gt;&lt;span class="nav"&gt;&lt;br /&gt;{JUMPBOX}&lt;/span&gt;&lt;/td&gt;##-----[ BEFORE, ADD ]------------------------------------------#  {GALLERY2_LINKS_DATA}##-----[ SAVE/CLOSE ALL FILES ]------------------------------------------## EoM		</pre>		<h2>		<a name="configuration">		Configuration		</a>		</h2>		<p class="toc-link">		<a href="#toc">		[table of contents]		</a>		</p>		<p>		<p>		No configuration is necessary with this mod.  Each user can turn this feature on or off within their profile settings.		</p>		<h2>		<a name="getting_help">		Getting Help		</a>		</h2>		<p class="toc-link">		<a href="#toc">		[table of contents]		</a>		</p>		<p>		If you are having problems getting your add-on mod completed successfully, 		start out by searching the Forums at <a href="http://www.nukedgallery.net">		NukedGallery.net</a>.  Gallery2 specific help is offered in <a href="http://www.nukedgallery.net/forum13.html">		this forum</a> on NukedGallery.</p>		<p>If you are having general Gallery 2 problems,  you should start by looking in the <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22">Gallery 2 Support Forum</a> on the <a href="http://gallery.sourceforge.net">Gallery		  Website</a>.  Search the forum to see if somebody else has		  posted a similar problem and maybe there's an answer		  there, otherwise start a new topic to get help.  If the problem		  seems like a bug in the Gallery 2 software you can <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130">file a bug</a> in our bug tracker on		  SourceForge.  Please read our <a href="http://gallery.sourceforge.net/wiki.php?page=Feature%20Requests%20and%20Bug%20Reports">tracker guidelines</a> before filing a bug so		  that we can cut down on the number of spurious reports.  If		  you're unsure whether to file a bug you can always post in the		  forums first and we'll ask you to file a bug if needed.  If you		  want to chat in real time, you can talk on our user-to-user irc		  support channel, <a href="irc://irc.freenode.net/#gallery-support">#gallery-support on irc.freenode.net</a>.		</p>		<p>		  Remember - reporting bugs is <b>good</b>.  Even if you think		  it's silly, go ahead and report it.  We can always close the bug		  or refile it (please don't be offended in this case) but it's		  harder to find bugs than it is to fix them so we're counting on		  you to help us with the finding part.		</p>		<h2>		<a name="known_issues">		Known Issues		</a>		</h2>		<p class="toc-link">		<a href="#toc">		[table of contents]		</a>		</p>		<p>		The following are known issues with this add-on mod package:		</p>		<p>		For a list of known issues with Gallery 2, view the <a href="http://svn.sourceforge.net/viewcvs.cgi/*checkout*/gallery/trunk/gallery2/README.html?rev=13566#known_issues">		Gallery 2 README</a>.		</p>    <hr />	<p class="fineprint">	$Id$	</p>	</body>	</html>
