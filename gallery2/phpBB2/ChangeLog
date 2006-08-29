@@ -1,3 +1,8 @@
+2006-08-28  Dariush Molavi  <dari@nukedgallery.net> 0.5.6
+	* Fix: Broken admin functions introduced in version 0.5.5 as a result of
+	  trying to load the language file in g2helper_admin before config setup
+	  is complete.
+
 2006-08-21  Dariush Molavi  <dari@nukedgallery.net> 0.5.5
 	* New: Added capability to include Gallery 2 images in phpBB2 posts 
 	  using backported phpBB3b1 image selector.

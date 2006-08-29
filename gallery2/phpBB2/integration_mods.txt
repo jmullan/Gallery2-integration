@@ -3,7 +3,7 @@
 ## MOD Author: dari <dari@nukedgallery.net> (Dariush Molavi) http://nukedgallery.net 
 ## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
 ## MOD Description: This mod integrates phpBB2 and Gallery2. See the Readme.
-## MOD Version: 0.5.5
+## MOD Version: 0.5.6
 ##
 ## Installation Level: Intermediate
 ## Installation Time: 45 Minutes
@@ -68,7 +68,7 @@ CREATE TABLE `phpbb_gallery2` (
 `embedUri` VARCHAR( 255 ) NOT NULL ,
 `g2Uri` VARCHAR( 255 ) NOT NULL ,
 `activeAdminId` INT NOT NULL ,
-`utf8_translate` TINYINT NOT NULL
+`utf8_translate` TINYINT( 1 ) NOT NULL
 );
 
 #

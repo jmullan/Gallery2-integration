@@ -34,7 +34,7 @@ if (!empty($setmodules))
 	return;
 }
 
-$currentIntegrationVersion = '0.5.5';
+$currentIntegrationVersion = '0.5.6';
 $integrationVersionUrl = 'http://nukedgallery.sourceforge.net/phpbbupgrade.txt';
 $integrationChangeLog = 'http://www.nukedgallery.net/postp11212.html#11212';
 $integrationDownload = 'http://www.nukedgallery.net/downloads-cat12.html';
@@ -45,22 +45,21 @@ $phpbb_root_path = './../';
 require($phpbb_root_path . 'extension.inc');
 require('./pagestart.' . $phpEx);
 
-require('./g2helper_admin.inc');
-$g2h_admin = new g2helper_admin($db);
-$g2h_admin->init();
+$lang_file_path = $phpbb_root_path . 'language/lang_' . $board_config['default_lang'] . '/lang_gallery2.' . $phpEx;
+if (file_exists($lang_file_path)) {
+	include($lang_file_path);
+}
+else {
+	include($phpbb_root_path . 'language/lang_english/lang_gallery2.' . $phpEx);
+}
 
-
-if ($_POST['mode']) $mode = htmlspecialchars($mode);
-elseif ($_POST['save']) $mode = 'save';
-elseif ($_POST['config']) $mode = 'config';
-elseif ($_POST['sync_intro']) $mode = 'sync_intro';
-else $mode = '';
+$mode = ($_POST['save']) ? 'save' : (($_POST['config']) ? 'config' : (($_POST['sync_intro']) ? 'sync_intro' : ''));
 
 switch ($mode) {
 
 	case 'save':
-		$embedUri = $g2h_admin->clean($_POST['embeduri']);
-		$g2Uri = $g2h_admin->clean($_POST['g2uri']);
+		$embedUri = clean($_POST['embeduri']);
+		$g2Uri = clean($_POST['g2uri']);
 
 		if ($embedUri == '' || $g2Uri == '') {
 			message_die(GENERAL_MESSAGE, $lang['GALLERY2_CONFIG_ERROR']);
@@ -79,7 +78,7 @@ switch ($mode) {
 			$fullPath = $_POST['fullpath'];
 		}
 
-		$fullPath = $g2h_admin->clean($fullPath);
+		$fullPath = clean($fullPath);
 
 		$activeAdminId = ($_POST['activeadminid']) ? intval($_POST['activeadminid']) : 0;
 
@@ -98,7 +97,14 @@ switch ($mode) {
 			message_die(GENERAL_ERROR, $lang['INSERT_QUERY_FAILED'], __LINE__, __FILE__, $sql);
 		}
 
+		require('./g2helper_admin.inc');
+		$g2h_admin = new g2helper_admin($db);
+		$g2h_admin->init();
+
 		list ($success, $msg) = $g2h_admin->checkConfig();
+
+		$g2h_admin->done();
+
 		if (empty($success)) {
 			$message = $msg . '<br />' . $lang['GALLERY2_SAVE_ERROR'];
 		}
@@ -170,6 +176,10 @@ switch ($mode) {
     	break;
 
 	case 'sync_intro':
+		require('./g2helper_admin.inc');
+		$g2h_admin = new g2helper_admin($db);
+		$g2h_admin->init();
+
 		list ($ret, $userList) = GalleryCoreApi::fetchUsernames();
 		if (isset($ret)) {
 			$g2h_admin->errorHandler(GENERAL_ERROR, $lang['G2_FETCHUSERNAMES_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
@@ -282,6 +292,13 @@ switch ($mode) {
 
 		include('./page_footer_admin.' . $phpEx);
 
+}
+
+function clean($value) {
+	$value = trim($value);
+	$value = (get_magic_quotes_gpc()) ? stripslashes($value) : $value;
+	$value = str_replace('\\', '/', $value);
+	return $value;
 }
 
 ?>

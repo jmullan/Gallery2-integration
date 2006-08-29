@@ -35,6 +35,14 @@ require('./pagestart.' . $phpEx);
 require('./g2helper_admin.inc');
 $g2h_admin = new g2helper_admin($db);
 
+$lang_file_path = $phpbb_root_path . 'language/lang_' . $board_config['default_lang'] . '/lang_gallery2.' . $phpEx;
+if (file_exists($lang_file_path)) {
+	include($lang_file_path);
+}
+else {
+	include($phpbb_root_path . 'language/lang_english/lang_gallery2.' . $phpEx);
+}
+
 $template->set_filenames(array(
 	'body' => './admin/gallery2_export.tpl')
 );

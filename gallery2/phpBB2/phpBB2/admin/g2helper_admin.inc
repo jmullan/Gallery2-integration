@@ -38,14 +38,6 @@ class g2helper_admin {
 	function g2helper_admin($db) {
 		global $lang, $phpbb_root_path, $board_config, $phpEx;
 
-		$lang_file_path = $phpbb_root_path . 'language/lang_' . $board_config['default_lang'] . '/lang_gallery2.' . $phpEx;
-		if (file_exists($lang_file_path)) {
-			include($lang_file_path);
-		}
-		else {
-			include($phpbb_root_path . 'language/lang_english/lang_gallery2.' . $phpEx);
-		}
-
 		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
 			$this->errorHandler(CRITICAL_ERROR, $lang['OBTAIN_SETTINGS_FAILED'], __LINE__, __FILE__, $sql);
@@ -89,13 +81,6 @@ class g2helper_admin {
 
 			$this->errorHandler(GENERAL_ERROR, $lang['G2_TRANSACTION_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 		}
-	}
-
-	function clean($value) {
-		$value = trim($value);
-		$value = (get_magic_quotes_gpc()) ? stripslashes($value) : $value;
-		$value = str_replace('\\', '/', $value);
-		return $value;
 	}
 
 	function checkConfig() {
