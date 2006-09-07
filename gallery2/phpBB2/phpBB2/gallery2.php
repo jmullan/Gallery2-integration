@@ -52,15 +52,9 @@ $template->set_filenames(array(
 	'body' => 'gallery2.tpl')
 );
 
-list($ret, $pluginStatusList) = GalleryCoreApi::fetchPluginStatus('module');
-if (isset($ret)) {
-	$g2h->errorHandler(GENERAL_ERROR, $lang['G2_FETCHPLUGINSTATUS_FAILED'] . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
-}
-elseif (!empty($pluginStatusList['rewrite']['active'])) {
-	$template->assign_block_vars('switch_phpbb_base', array(
-		'PHPBB_BASE' => strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, strpos($_SERVER['SERVER_PROTOCOL'], '/'))) . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') + 1))
-	);
-}
+$template->assign_block_vars('switch_phpbb_base', array(
+	'PHPBB_BASE' => strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, strpos($_SERVER['SERVER_PROTOCOL'], '/'))) . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') + 1))
+);
 
 $template->assign_vars(array(
 	'PAGE_TITLE' => $g2h->utf8Untranslate($page_title),

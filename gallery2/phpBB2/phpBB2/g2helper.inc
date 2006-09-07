@@ -539,11 +539,11 @@ class g2helper {
 	function errorHandler($code, $msg, $line, $file, $sql = '') {
 		switch ($code) {
 			case CRITICAL_ERROR :
-				message_die(CRITICAL_ERROR, $msg, '', $line, $file, $sql);
+				message_die(CRITICAL_ERROR, $this->utf8Untranslate($msg), '', $line, $file, $sql);
 				break;
 
 			case GENERAL_ERROR :
-				message_die(GENERAL_ERROR, $msg, '', $line, $file, $sql);
+				message_die(GENERAL_ERROR, $this->utf8Untranslate($msg), '', $line, $file, $sql);
 				break;
 		}
 

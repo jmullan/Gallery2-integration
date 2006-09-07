@@ -36,7 +36,7 @@ class g2helper_admin {
 	var $_timeLimit = 300;
 
 	function g2helper_admin($db) {
-		global $lang, $phpbb_root_path, $board_config, $phpEx;
+		global $lang;
 
 		$sql = 'SELECT * FROM ' . GALLERY2_TABLE . ' LIMIT 1';
 		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
@@ -178,11 +178,11 @@ class g2helper_admin {
 	function errorHandler($code, $msg, $line, $file, $sql = '') {
 		switch ($code) {
 			case CRITICAL_ERROR :
-				message_die(CRITICAL_ERROR, $msg, '', $line, $file, $sql);
+				message_die(CRITICAL_ERROR, $this->utf8Untranslate($msg), '', $line, $file, $sql);
 				break;
 
 			case GENERAL_ERROR :
-				message_die(GENERAL_ERROR, $msg, '', $line, $file, $sql);
+				message_die(GENERAL_ERROR, $this->utf8Untranslate($msg), '', $line, $file, $sql);
 				break;
 		}
 

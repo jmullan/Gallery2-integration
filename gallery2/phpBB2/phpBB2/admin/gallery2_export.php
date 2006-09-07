@@ -160,7 +160,7 @@ if (count($_POST['user']) != 0)	{
 					$g2h_admin->errorHandler(GENERAL_ERROR, sprintf($lang['G2_LOADENTITIESBYID_FAILED'], $g2Id) . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 				}
 
-				$sql = 'INSERT INTO ' . USERS_TABLE . " (user_id, username, user_password, user_regdate, user_level, user_email) VALUES ($user_id, '" . $g2h_admin->utf8Untranslate($entityId->getuserName()) . "', '$user_password', " . time() . ", '$user_level', '" . $entityId->getemail() . "')";
+				$sql = 'INSERT INTO ' . USERS_TABLE . " (user_id, username, user_password, user_regdate, user_level, user_email) VALUES ($user_id, '" . addslashes($g2h_admin->utf8Untranslate($entityId->getuserName())) . "', '$user_password', " . time() . ", '$user_level', '" . $entityId->getemail() . "')";
 				if (!$db->sql_query($sql)) {
 					$g2h_admin->errorHandler(CRITICAL_ERROR, $lang['INSERT_USERDATA_FAILED'], __LINE__, __FILE__, $sql);
 				}

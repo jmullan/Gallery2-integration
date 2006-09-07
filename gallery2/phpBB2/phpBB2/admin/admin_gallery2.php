@@ -34,7 +34,7 @@ if (!empty($setmodules))
 	return;
 }
 
-$currentIntegrationVersion = '0.5.6';
+$currentIntegrationVersion = '0.5.7';
 $integrationVersionUrl = 'http://nukedgallery.sourceforge.net/phpbbupgrade.txt';
 $integrationChangeLog = 'http://www.nukedgallery.net/postp11212.html#11212';
 $integrationDownload = 'http://www.nukedgallery.net/downloads-cat12.html';
