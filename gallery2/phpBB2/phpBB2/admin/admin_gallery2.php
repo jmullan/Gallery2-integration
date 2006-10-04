@@ -34,7 +34,7 @@ if (!empty($setmodules))
 	return;
 }
 
-$currentIntegrationVersion = '0.5.7';
+$currentIntegrationVersion = '0.5.8';
 $integrationVersionUrl = 'http://nukedgallery.sourceforge.net/phpbbupgrade.txt';
 $integrationChangeLog = 'http://www.nukedgallery.net/postp11212.html#11212';
 $integrationDownload = 'http://www.nukedgallery.net/downloads-cat12.html';
@@ -53,7 +53,24 @@ else {
 	include($phpbb_root_path . 'language/lang_english/lang_gallery2.' . $phpEx);
 }
 
-$mode = ($_POST['save']) ? 'save' : (($_POST['config']) ? 'config' : (($_POST['sync_intro']) ? 'sync_intro' : ''));
+if (isset($_POST['save'])) {
+	$mode = 'save';
+}
+elseif (isset($_POST['config'])) {
+	$mode = 'config';
+}
+elseif (isset($_POST['sync_intro'])) {
+	$mode = 'sync_intro';
+}
+elseif (isset($_POST['unmap'])) {
+	$mode = 'unmap';
+}
+elseif (isset($_POST['stats'])) {
+	$mode = 'stats';
+}
+else {
+	$mode = '';
+}
 
 switch ($mode) {
 
@@ -94,7 +111,7 @@ switch ($mode) {
 		}
 
 		if (!$result = $db->sql_query($sql)) {
-			message_die(GENERAL_ERROR, $lang['INSERT_QUERY_FAILED'], __LINE__, __FILE__, $sql);
+			message_die(GENERAL_ERROR, $lang['INSERT_QUERY_FAILED'], '', __LINE__, __FILE__, $sql);
 		}
 
 		require('./g2helper_admin.inc');
@@ -247,33 +264,116 @@ switch ($mode) {
 		include('./page_footer_admin.' . $phpEx);
     	break;
 
+	case 'unmap':
+		$template->set_filenames(array(
+			'body' => './admin/gallery2_unmap_confirm.tpl')
+		);
+
+		$template->assign_vars(array(
+			'S_G2_ACTION' => append_sid("./gallery2_unmap.$phpEx"),
+			'L_CONFIRM_TITLE' => $lang['GALLERY2_UNMAP_TITLE'],
+			'L_CONFIRM_EXPLAIN1' => $lang['GALLERY2_CONFIRM_EXPLAIN1'],
+			'L_CONFIRM_EXPLAIN2' => $lang['GALLERY2_CONFIRM_EXPLAIN2'],
+			'L_CONFIRM_EXPLAIN3' => $lang['GALLERY2_CONFIRM_EXPLAIN3'],
+			'L_CONFIRM_BUTTON' => $lang['GALLERY2_OPTIONS_CONFIRM'])
+		);
+
+		$template->pparse('body');
+
+		include('./page_footer_admin.' . $phpEx);
+    	break;
+
+	case 'stats':
+		$sql = 'SELECT exportData FROM ' . GALLERY2_TABLE . ' LIMIT 1';
+		if (!$row = $db->sql_fetchrow($db->sql_query($sql))) {
+			message_die(CRITICAL_ERROR, $lang['FETCH_EXPORTDATA_FAILED'], '', __LINE__, __FILE__, $sql);
+		}
+
+		if (!empty($row['exportData'])) {
+			$export = unserialize($row['exportData']);
+		}
+		else {
+			$export = (object) true;
+
+			foreach (array('processed', 'existing', 'imported') as $key) {
+				$export->groups[$key] = 0;
+			}
+			$export->groups['failures'] = array();
+
+			foreach (array('processed', 'existing', 'nonactive', 'guest', 'admin', 'imported') as $key) {
+				$export->users[$key] = 0;
+			}
+			$export->users['failures'] = array();
+		}
+
+		$message = '<p>' . sprintf($lang['GALLERY2_EXPORT_G_PROCESSED'], $export->groups['processed']) . '</p>' . "\n";
+
+		if ($export->groups['existing'] > 0) {
+			$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_G_EXISTING'], $export->groups['existing']) . '</p>' . "\n";
+		}
+
+		$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_G_IMPORTED'], $export->groups['imported']) . '</p>' . "\n";
+
+		if (count($export->groups['failures']) > 0) {
+			$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_G_FAILED1'], count($export->groups['failures'])) . '</p>' . "\n"
+			. '<p>' . $lang['GALLERY2_EXPORT_G_FAILED2'] . '</p>' . "\n"
+			. implode('<br />', $export->groups['failures']);
+		}
+
+		$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_U_PROCESSED'], $export->users['processed']) . '</p>' . "\n";
+
+		if ($export->users['existing'] > 0) {
+			$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_U_EXISTING'], $export->users['existing']) . '</p>' . "\n";
+		}
+
+		if ($export->users['nonactive'] > 0) {
+			$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_U_NONACTIVE'], $export->users['nonactive']) . '</p>' . "\n";
+		}
+
+		if ($export->users['guest'] > 0) {
+			$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_U_GUEST'], $export->users['guest']) . '</p>' . "\n";
+		}
+
+		if ($export->users['admin'] > 0) {
+			$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_U_ADMIN'], $export->users['admin']) . '</p>' . "\n";
+		}
+
+		$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_U_IMPORTED'], $export->users['imported']) . '</p>' . "\n";
+
+		if (count($export->users['failures']) > 0) {
+			$message .= '<p>' . sprintf($lang['GALLERY2_EXPORT_U_FAILED1'], count($export->users['failures'])) . '</p>' . "\n"
+			. '<p>' . $lang['GALLERY2_EXPORT_U_FAILED2'] . '</p>' . "\n"
+			. implode('<br />', $export->users['failures'])
+			. '<p>' . $lang['GALLERY2_EXPORT_REASON1'] . "\n"
+			. '<ul><li>' . $lang['GALLERY2_EXPORT_REASON2'] . '</li>' . "\n"
+			. '<li>' . $lang['GALLERY2_EXPORT_REASON3'] . '</li>' . "\n"
+			. '<li>' . $lang['GALLERY2_EXPORT_REASON4'] . '</li></ul>' . "\n"
+			. $lang['GALLERY2_EXPORT_REASON5'] . '</p>' . "\n";
+		}
+
+		message_die(GENERAL_MESSAGE, $message);
+    	break;
+
 	default:
 		if ($fp = @fopen($integrationVersionUrl, 'r')) {
 			$versionData = fread($fp, 4096);
 			fclose($fp);
 
 			$versionData = explode("\n", $versionData);
-			$latestHeadRevision = intval($versionData[0]);
-			$latestMajorRevision = intval($versionData[1]);
-			$latestMinorRevision = intval($versionData[2]);
-			$latestVersion = "$latestHeadRevision.$latestMajorRevision.$latestMinorRevision";
 
 			$integrationVersion = explode('.', $currentIntegrationVersion);
-			$integrationHeadVersion = intval($integrationVersion[0]);
-			$integrationMajorVersion = intval($integrationVersion[1]);
-			$integrationMinorVersion = intval($integrationVersion[2]);
 
-			if ($latestHeadRevision == $integrationHeadVersion && $latestMajorRevision == $integrationMajorVersion && $latestMinorRevision == $integrationMinorVersion) {	
+			if ($versionData[0] == $integrationVersion[0] && $versionData[1] == $integrationVersion[1] && $versionData[2] == $integrationVersion[2]) {	
 				$versionText = $lang['GALLERY2_TO_DATE'];
 			}
 			else {
-				$versionText = sprintf($lang['GALLERY2_NOT_TO_DATE'], $latestVersion) . sprintf($lang['GALLERY2_VIEW_CHANGES'], $integrationChangeLog, $integrationDownload);
+				$versionText = sprintf($lang['GALLERY2_NOT_TO_DATE'], "$versionData[0].$versionData[1].$versionData[2]") . sprintf($lang['GALLERY2_VIEW_CHANGES'], $integrationChangeLog, $integrationDownload);
 			}
 		}
 		else {
 			$versionText = sprintf($lang['GALLERY2_URL_FAILED'], $integrationVersionUrl);
 		}
-		
+
 		$template->set_filenames(array(
 			'body' => './admin/gallery2_show_body.tpl')
 		);
@@ -282,6 +382,8 @@ switch ($mode) {
 			'S_G2_ACTION' => append_sid("admin_gallery2.$phpEx"),
 			'L_CONFIG' => $lang['GALLERY2_OPTIONS_CONFIG'],
 			'L_SYNC' => $lang['GALLERY2_OPTIONS_SYNC'],
+			'L_UNMAP' => $lang['GALLERY2_OPTIONS_CONFIRM'],
+			'L_RESULTS' => $lang['GALLERY2_OPTIONS_RESULTS'],
 			'G2_TITLE' => $lang['GALLERY2_ADMIN_TITLE'],
 			'G2_ADMIN_TASK' => $lang['GALLERY2_ADMIN_TITLE'],
 			'G2_VERSION_TITLE' => $lang['GALLERY2_VERSION_TITLE'],

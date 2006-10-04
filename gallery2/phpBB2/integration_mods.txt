@@ -3,13 +3,14 @@
 ## MOD Author: dari <dari@nukedgallery.net> (Dariush Molavi) http://nukedgallery.net 
 ## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
 ## MOD Description: This mod integrates phpBB2 and Gallery2. See the Readme.
-## MOD Version: 0.5.7
+## MOD Version: 0.5.8
 ##
 ## Installation Level: Intermediate
 ## Installation Time: 45 Minutes
 ## Files To Edit: groupcp.php,
 ##       login.php,
 ##       posting.php,
+##       admin/admin_db_utilities.php,
 ##       admin/admin_groups.php,
 ##       admin/admin_ug_auth.php,
 ##       admin/admin_users.php,
@@ -30,6 +31,7 @@
 ##       phpBB2/g2helper.inc,
 ##       phpBB2/admin/admin_gallery2.php,
 ##       phpBB2/admin/gallery2_export.php,
+##       phpBB2/admin/gallery2_unmap.php,
 ##       phpBB2/admin/g2helper_admin.inc,
 ##       phpBB2/admin/G2EmbedDiscoveryUtilities.class,
 ##       phpBB2/g2image/g2image.php,
@@ -42,6 +44,7 @@
 ##       phpBB2/templates/subSilver/admin/gallery2_export.tpl,
 ##       phpBB2/templates/subSilver/admin/gallery2_show_body.tpl,
 ##       phpBB2/templates/subSilver/admin/gallery2_sync_intro_body.tpl,
+##       phpBB2/templates/subSilver/admin/gallery2_unmap_confirm.tpl,
 ##       phpBB2/templates/subSilver/images/exif_parser.gif
 ## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
 ##############################################################
@@ -68,7 +71,8 @@ CREATE TABLE `phpbb_gallery2` (
 `embedUri` VARCHAR( 255 ) NOT NULL ,
 `g2Uri` VARCHAR( 255 ) NOT NULL ,
 `activeAdminId` INT NOT NULL ,
-`utf8_translate` TINYINT( 1 ) NOT NULL
+`utf8_translate` TINYINT( 1 ) NOT NULL,
+`exportData` TEXT NULL
 );
 
 #
@@ -180,6 +184,26 @@ posting.php
 #-----[ AFTER, ADD ]------------------------------------------
 #
 	'L_BBCODE_G_HELP' => $lang['bbcode_g_help'], 
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+admin/admin_db_utilities.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			$tables = array('auth_access', 'banlist', 'categories', 'config', 'disallow', 'forums', 'forum_prune', 'groups', 'posts', 'posts_text', 'privmsgs', 'privmsgs_text', 'ranks', 'search_results', 'search_wordlist', 'search_wordmatch', 'sessions', 'smilies', 'themes', 'themes_name', 'topics', 'topics_watch', 'user_group', 'users', 'vote_desc', 'vote_results', 'vote_voters', 'words', 'confirm', 'sessions_keys');
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------------
+#
+, 'sessions_keys'
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+#
+, 'gallery2'
 
 #
 #-----[ OPEN ]------------------------------------------
@@ -538,17 +562,17 @@ font-family:
 #
 #-----[ IN-LINE BEFORE, ADD ]-----------------------------
 #
-font-size: 10px;
+font-size: {T_FONTSIZE1}px;
 
 #
 #-----[ FIND ]------------------------------------------
 # 
-<img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" />{L_LOGIN_LOGOUT}</a>&amp;nbsp;
+<img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" />{L_LOGIN_LOGOUT}</a>&nbsp;
 
 #
 #-----[ IN-LINE AFTER, ADD ]------------------------------------------
 # 
-&amp;nbsp;<a href="{U_GALLERY2}" class="mainmenu"><img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" />{L_GALLERY2}</a>&amp;nbsp;
+&nbsp;<a href="{U_GALLERY2}" class="mainmenu"><img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" />{L_GALLERY2}</a>&nbsp;
 
 #
 #-----[ OPEN ]------------------------------------------

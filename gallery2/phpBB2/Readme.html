@@ -281,7 +281,6 @@
 		<p><b>Standard Disclaimer: Back up all files/folders/databases 
 		related to Gallery 2 and phpBB2 before attempting this integration.</b>
 		</p></div>
-		<br />
 		<div class="important">
 		<h3>NOTICE</h3>
 		<p>
@@ -289,7 +288,6 @@
 		proceed with this integration, you <b>must</b> install and configure Gallery 2 and you must 
 		already have phpBB2 installed and configured.
 		</p></div>
-		<br />
 		<div class="important">
 		<h3>IMPORTANT</h3>
 		<p>
@@ -297,7 +295,13 @@
 		recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration.  You 
 		can then try activating it once everything else is working properly.
 		</p></div>
-		<br />
+		<div class="important">
+		<h3>IMPORTANT</h3>
+		<p>
+		In order for the image selector to work so that Gallery 2 images can be included in phpBB posts, the 
+		Image Block module must be installed and activated in Gallery 2.  This can be done in the Gallery 2 
+		Admin Options. 
+		</p></div>
 		<div class="important">
 		<h3>IMPORTANT</h3>
 		<p>
@@ -309,10 +313,10 @@
 		This package contains these folders:
 		</p>
 		<ul>
-		<li>/add-ons<br>&nbsp;&nbsp;/all_gallery_links_in_profile<br>&nbsp;&nbsp;&nbsp;&nbsp;/images<br>&nbsp;&nbsp;/gallery_link_in_profile<br>&nbsp;&nbsp;&nbsp;&nbsp;/images</li>
-		<li>/gallery2<br>&nbsp;&nbsp;/modules<br>&nbsp;&nbsp;&nbsp;&nbsp;/core<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/templates<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/blocks<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/local</li>
+		<li>/add-ons<br />&nbsp;&nbsp;/all_gallery_links_in_profile<br />&nbsp;&nbsp;&nbsp;&nbsp;/images<br />&nbsp;&nbsp;/gallery_link_in_profile<br />&nbsp;&nbsp;&nbsp;&nbsp;/images</li>
+		<li>/gallery2<br />&nbsp;&nbsp;/modules<br />&nbsp;&nbsp;&nbsp;&nbsp;/core<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/templates<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/blocks<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/local</li>
 		<li>/images</li>
-		<li>/phpbb2<br>&nbsp;&nbsp;/admin<br>&nbsp;&nbsp;/g2image<br>&nbsp;&nbsp;/language<br>&nbsp;&nbsp;&nbsp;&nbsp;/lang_english<br>&nbsp;&nbsp;/templates<br>&nbsp;&nbsp;&nbsp;&nbsp;/subSilver<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/admin<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/images</li>
+		<li>/phpbb2<br />&nbsp;&nbsp;/admin<br />&nbsp;&nbsp;/g2image<br />&nbsp;&nbsp;/language<br />&nbsp;&nbsp;&nbsp;&nbsp;/lang_english<br />&nbsp;&nbsp;/templates<br />&nbsp;&nbsp;&nbsp;&nbsp;/subSilver<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/admin<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/images</li>
 		</ul>
 		<p>
 		To install, create a folder named "g2image" in your phpBB2 installation. Then upload the contents of 
@@ -393,12 +397,13 @@ C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</p
 		incorrectly set, your integration will not succeed.  Fear not though, as you 
 		should really only have to fill in one value, making it fairly painless.
 		</p>
-		<h3>Gallery 2 Integration Settings</h3>
+		<h3>Configure Settings</h3>
 		<ol>
+		<li>
 		<i>The following value depends on your particular installation and you must ensure it is 
 		entered correctly.</i>
 		<br />
-		<li><b>URL path to the gallery2 directory</b> - This should be the only setting 
+		<b>URL path to the gallery2 directory</b> - This should be the only setting 
 		that you really have to worry about. It is the URL you installed Gallery in and 
 		the same as you'd use to view your gallery in standalone mode.  Proper examples 
 		would be: <br />
@@ -407,33 +412,36 @@ C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</p
 		/phpbb2/gallery2/&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;/gallery2/</p>
 		</div>
 		</li>
-		<br />
+		<li>
 		<i>The next value will be auto-detected based on the file location the script is 
 		running at and should be correct, however, you should double check it.</i>
 		<br />
-		<li><b>URL path to gallery2.php</b> - This is the URL that would take you 
+		<b>URL path to gallery2.php</b> - This is the URL that would take you 
 		to your Gallery 2 installation when it is integrated.  For example:<br />
 		<div class="instructions">
 		<p>http://www.yoursite.com/phpbb2/gallery2.php&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;
 		/phpbb2/gallery2.php</p>
 		</div>
 		</li>
+		<li>
+		<i>The integration package will attempt to automatically generate this value. 
+		It will not contain any information until after you've saved the config settings. 
+		This is normal.</i>
 		<br />
-		<i>The next 2 values will be automatically generated and managed by the integration 
-		package. Do not alter them. They will not contain any information until 
-		after you've saved the config settings and run the user integration at 
-		least once. This is normal.</i>
-		<br />
-		<li><b>Full file path to embed.php</b> - This setting is the complete path to your embed.php file. For example:<br />
+		<b>Full file path to embed.php</b> - This setting is the complete path to your embed.php file. For example:<br />
 		<div class="instructions">
 		<p>/home/myuser/public_html/gallery2/embed.php</p>
 		</div>
 		</li>
-		<li><b>Active Admin ID</b> - This setting is the gallery external id of a valid admin.<br />
-		</li>
+		<li>
+		<i>The integration package will automatically generate this value. 
+		It will not contain any information until after you've run the user export at least once. 
+		This is normal.</i>
 		<br />
+		<b>Active Admin ID</b> - This setting is the gallery external id of a valid admin.<br />
+		</li>
 		<li><b>UTF-8 Translation</b> - This setting controls utf-8 translation. This is only needed 
-		for non-english installations that require special extended charaters such as é, ö, etc.
+		for non-english installations that require special extended charaters such as &#233;, &#246;, etc.
 		</li>
 		</ol>
 		<p>
@@ -441,7 +449,7 @@ C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</p
 		This will save your configuration to the phpBB2 database and will 
 		verify that your Gallery 2 installation has been properly set up.  
 		</p>
-		<h3>Export Users to Gallery 2</h3>
+		<h3>Synchronize Users</h3>
 		<p>
 		This will export all your phpBB2 users and create a G2 account for them 
 		if they do not have one.  The phpBB2 admin accounts will also be 
@@ -451,6 +459,19 @@ C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</p
 		run at least once.  This will fill in the Active Admin ID field and map 
 		the admin and guest accounts, along with the users if you elect to export 
 		all users at config time.
+		</p>
+		<h3>Un-Synchronize Users</h3>
+		<p>
+		This will remove all groups, admins, guests and users, including all items 
+		belonging to these users, that have an external id mapping in Gallery 2. 
+		All Gallery 2 albums and photos belonging to these users will be deleted 
+		and cannot be undone.  The admin defined by activeAdminId will remian as 
+		an admin in Gallery 2, but will be removed from the external id map.  <b>
+		Use	with caution!</b>
+		</p>
+		<h3>Latest Export Results</h3>
+		<p>
+		This allows you to view the results from the latest export run
 		</p>
 		<h2>
 		<a name="getting_help">

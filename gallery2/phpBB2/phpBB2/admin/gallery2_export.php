@@ -238,15 +238,27 @@ if (count($_POST['user']) != 0)	{
 	$g2h_admin->done();
 }
 
+// initialize export object
+$export = (object) true;
+
+foreach (array('processed', 'existing', 'imported') as $key) {
+	$export->groups[$key] = 0;
+}
+$export->groups['failures'] = array();
+
+foreach (array('processed', 'existing', 'nonactive', 'guest', 'admin', 'imported') as $key) {
+	$export->users[$key] = 0;
+}
+$export->users['failures'] = array();
+
 // handle existing phpBB user groups
-$groups_processed = $groups_existing = $groups_imported = 0;
-	
+
 if (count($phpbbGroups) > 0) {
 	$g2h_admin->init();
 
 	$group_flag = $failed = false;
 
-	$groupG2List = $externalEntityIdMap = $group_failures = array();
+	$groupG2List = $externalEntityIdMap = array();
 
 	$query = 'SELECT [Group::id], [Group::groupName] FROM [Group]';
 	list ($ret, $results) = $gallery->search($query, array());
@@ -278,19 +290,19 @@ if (count($phpbbGroups) > 0) {
 			if ($groupName == $groupG2List[$i]['groupName']) {
 				for ($j = 0; $j < count($externalEntityIdMap); $j++) {
 					if ($groupG2List[$i]['groupId'] == $externalEntityIdMap[$j]['entityId']) {
-						$groups_existing++;
+						$export->groups['existing']++;
 						$group_flag = true;
 						break 2;
 					}
 				}
 				$ret = GalleryEmbed::addExternalIdMapEntry($groupName, $groupG2List[$i]['groupId'], 'GalleryGroup');
 				if (empty($ret)) {
-					$groups_imported++;
+					$export->groups['imported']++;
 					$group_flag = true;
 					break;
 				}
 				else {
-					$group_failures[] = $group_name;
+					$export->groups['failures'][] = $group_name;
 					$failed = true;
 					break;
 				}
@@ -299,14 +311,14 @@ if (count($phpbbGroups) > 0) {
 		if (empty($group_flag) && empty($failed)) {
 			$ret = GalleryEmbed::createGroup($groupName, $groupName);
 			if (empty($ret)) {
-				$groups_imported++;
+				$export->groups['imported']++;
 			}
 			else {
-				$group_failures[] = $group_name;
+				$export->groups['failures'][] = $group_name;
 			}
 		}
 
-		$groups_processed++;
+		$export->groups['processed']++;
 		$group_flag = $failed = false;
 	}
 
@@ -326,9 +338,7 @@ if (!$result = $db->sql_query($sql)) {
 
 $ucount = $db->sql_numrows($result);
 
-$users_processed = $users_existing = $users_nonactive = $users_imported = $users_guest = $users_admin = 0;
-
-$failures = $admins = array();
+$admins = array();
 
 $failed = $guestIsSet = false;
 
@@ -345,7 +355,7 @@ while($row = $db->sql_fetchrow($result)) {
 	if ($user_id != ANONYMOUS) {
 		$ret = GalleryEmbed::isExternalIdMapped($user_id, 'GalleryUser');
 		if (empty($ret)) {
-			$users_existing++;
+			$export->users['existing']++;
 		}
 		elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 			if ($row['user_active'] > 0) {
@@ -353,14 +363,14 @@ while($row = $db->sql_fetchrow($result)) {
 				if (empty($ret)) {
 					$ret = GalleryEmbed::addExternalIdMapEntry($user_id, $userId->getId(), 'GalleryUser');
 					if (isset($ret)) {
-						$failures[] = $user_id . ' : ' . $row['username'];
+						$export->users['failures'][] = $user_id . ' : ' . $row['username'];
 						$failed = true;
 					}
 				}
 				elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 					$ret = GalleryEmbed::createUser($user_id, $args);
 					if (isset($ret)) {
-						$failures[] = $user_id . ' : ' . $row['username'];
+						$export->users['failures'][] = $user_id . ' : ' . $row['username'];
 						$failed = true;
 					}
 				}
@@ -377,7 +387,7 @@ while($row = $db->sql_fetchrow($result)) {
 					while ($g_row = $db->sql_fetchrow($g_result)) {
 						$ret = GalleryEmbed::addUserToGroup($user_id, $g2h_admin->utf8Translate($g_row['group_name']));
 						if (isset($ret)) {
-							$failures[] = sprintf($lang['GALLERY2_EXPORT_ADDTOGROUP'], $user_id, $g_row['group_name']);
+							$export->users['failures'][] = sprintf($lang['GALLERY2_EXPORT_ADDTOGROUP'], $user_id, $g_row['group_name']);
 						}
 					}
 
@@ -386,11 +396,11 @@ while($row = $db->sql_fetchrow($result)) {
 					}
 				}
 
-				$users_imported++;
+				$export->users['imported']++;
 				$failed = false;
 			}
 			else {
-				$users_nonactive++;
+				$export->users['nonactive']++;
 			}
 		}
 		else {
@@ -401,7 +411,7 @@ while($row = $db->sql_fetchrow($result)) {
 		if (empty($guestIsSet)) {
 			$ret = GalleryEmbed::isExternalIdMapped('guest', 'GalleryUser');
 			if (empty($ret)) {
-				$users_existing++;
+				$export->users['existing']++;
 			}
 			elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 				list ($ret, $guestUserId) = GalleryCoreApi::fetchUserByUserName('guest');
@@ -414,8 +424,8 @@ while($row = $db->sql_fetchrow($result)) {
 					$g2h_admin->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ADDEXTERNALMAPENTRY_FAILED'], 'guest') . $lang['G2_ERROR'] . $ret->getAsHtml(), __LINE__, __FILE__);
 				}
 
-				$users_guest++;
-				$users_imported++;
+				$export->users['guest']++;
+				$export->users['imported']++;
 			}
 			else {
 				$g2h_admin->errorHandler(GENERAL_ERROR, sprintf($lang['G2_ISEXTERNALIDMAPPED_FAILED'], 'guest'), __LINE__, __FILE__);
@@ -425,11 +435,11 @@ while($row = $db->sql_fetchrow($result)) {
 		}
 	}
 
-	$users_processed++;
+	$export->users['processed']++;
 
-	$percentInDecimal = $users_processed / $ucount;
-	if ($users_processed % 100 == 0)	{
-		print '<script type="text/javascript">updateProgressBar("' . $users_processed . $lang['GALLERY2_EXPORT_PROCESSED'] . '", $percentInDecimal);</script>' . "\n";
+	$percentInDecimal = $export->users['processed'] / $ucount;
+	if ($export->users['processed'] % 100 == 0)	{
+		print '<script type="text/javascript">updateProgressBar("' . $export->users['processed'] . ' ' . $lang['GALLERY2_EXPORT_PROCESSED'] . '", $percentInDecimal);</script>' . "\n";
 		flush();
 	}
 }
@@ -440,7 +450,6 @@ $g2h_admin->done();
 if (count($admins) > 0) {
 	$g2h_admin->init();
 	$adminIsSet = false;
-	$users_admin = 0;
 
 	if (!GalleryCoreApi::isUserInSiteAdminGroup()) {
 		list ($ret, $adminUser) = GalleryCoreApi::fetchUsersForGroup($adminGroupId, 1);
@@ -481,59 +490,23 @@ if (count($admins) > 0) {
 			$adminIsSet = true;
 		}
 
-		$users_admin++;
+		$export->users['admin']++;
 	}
 
 	$g2h_admin->done();
 }
 
-echo '<script type="text/javascript"> updateProgressBar("Export Complete", 1);</script>' . "\n";
+echo '<script type="text/javascript">updateProgressBar("' . $export->users['processed'] . ' ' . $lang['GALLERY2_EXPORT_PROCESSED'] . '", 1);</script>' . "\n";
 flush();
 
-echo '<p>' . sprintf($lang['GALLERY2_EXPORT_G_PROCESSED'], $groups_processed) . '</p>' . "\n";
-
-if ($groups_existing > 0) {
-	echo '<p>' . sprintf($lang['GALLERY2_EXPORT_G_EXISTING'], $groups_existing) . '</p>' . "\n";
+$sql = 'UPDATE ' . GALLERY2_TABLE . " SET exportData = '" . serialize($export) . "'";
+if (!$db->sql_query($sql)) {
+	$g2h_admin->errorHandler(CRITICAL_ERROR, $lang['UPDATE_EXPORTDATA_FAILED'], __LINE__, __FILE__, $sql);
 }
 
-echo '<p>' . sprintf($lang['GALLERY2_EXPORT_G_IMPORTED'], $groups_imported) . '</p>' . "\n";
-
-if (count($group_failures) > 0) {
-	echo '<p>' . sprintf($lang['GALLERY2_EXPORT_G_FAILED1'], count($group_failures)) . '</p>' . "\n"
-	. '<p>' . $lang['GALLERY2_EXPORT_G_FAILED2'] . '</p>' . "\n"
-	. implode('<br />', $group_failures);
-}
-
-echo '<p>' . sprintf($lang['GALLERY2_EXPORT_U_PROCESSED'], $users_processed) . '</p>' . "\n";
-
-if ($users_existing > 0) {
-	echo '<p>' . sprintf($lang['GALLERY2_EXPORT_U_EXISTING'], $users_existing) . '</p>' . "\n";
-}
-
-if ($users_nonactive > 0) {
-	echo '<p>' . sprintf($lang['GALLERY2_EXPORT_U_NONACTIVE'], $users_nonactive) . '</p>' . "\n";
-}
-
-if ($users_guest > 0) {
-	echo '<p>' . sprintf($lang['GALLERY2_EXPORT_U_GUEST'], $users_guest) . '</p>' . "\n";
-}
-
-if ($users_admin > 0) {
-	echo '<p>' . sprintf($lang['GALLERY2_EXPORT_U_ADMIN'], $users_admin) . '</p>' . "\n";
-}
-
-echo '<p>' . sprintf($lang['GALLERY2_EXPORT_U_IMPORTED'], $users_imported) . '</p>' . "\n";
-
-if (count($failures) > 0) {
-	echo '<p>' . sprintf($lang['GALLERY2_EXPORT_U_FAILED1'], count($failures)) . '</p>' . "\n"
-	. '<p>' . $lang['GALLERY2_EXPORT_U_FAILED2'] . '</p>' . "\n"
-	. implode('<br />', $failures)
-	. '<p>' . $lang['GALLERY2_EXPORT_REASON1'] . "\n"
-	. '<ul><li>' . $lang['GALLERY2_EXPORT_REASON2'] . '</li>' . "\n"
-	. '<li>' . $lang['GALLERY2_EXPORT_REASON3'] . '</li>' . "\n"
-	. '<li>' . $lang['GALLERY2_EXPORT_REASON4'] . '</li></ul>' . "\n"
-	. $lang['GALLERY2_EXPORT_REASON5'] . '</p>' . "\n";
-}
+echo '<p><form method="post" action="' . append_sid("./admin_gallery2.$phpEx") . '">' . "\n"
+. '  <input type="submit" name="stats" value="' . $lang['GALLERY2_EXPORT_CONTINUE'] . '" class="mainoption" />' . "\n"
+. '</form></p>' . "\n";
 
 include('./page_footer_admin.' . $phpEx);
 

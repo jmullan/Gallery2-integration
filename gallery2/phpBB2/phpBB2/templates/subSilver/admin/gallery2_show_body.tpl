@@ -37,6 +37,12 @@
 	<tr>
 		<td align="center" class="catBottom">{S_HIDDEN_FIELDS}<input type="submit" name="sync_intro" value="{L_SYNC}" class="mainoption" /></td>
 	</tr>
+	<tr>
+		<td align="center" class="catBottom">{S_HIDDEN_FIELDS}<input type="submit" name="unmap" value="{L_UNMAP}" class="mainoption" /></td>
+	</tr>
+	<tr>
+		<td align="center" class="catBottom">{S_HIDDEN_FIELDS}<input type="submit" name="stats" value="{L_RESULTS}" class="mainoption" /></td>
+	</tr>
 </table></form>
 
 <p>&nbsp;</p>

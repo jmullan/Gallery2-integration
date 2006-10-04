@@ -48,7 +48,19 @@ function updateProgressBar(description, percentComplete) {
 <style type="text/css">
 <!--
 
- /* General page style. The scroll bar colours only visible in IE5.5+ */
+/* Form elements */
+input,textarea, select {
+	color : #000000;
+	font: normal 11px Verdana, Arial, Helvetica, sans-serif;
+	border-color : #000000;
+}
+
+/* Copyright and bottom info */
+.copyright		{ font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; color: #444444; letter-spacing: -1px;}
+a.copyright		{ color: #444444; text-decoration: none;}
+a.copyright:hover { color: #000000; text-decoration: underline;}
+
+/* General page style. The scroll bar colours only visible in IE5.5+ */
 body {
 	background-color: #E5E5E5;
 	scrollbar-face-color: #DEE3E7;

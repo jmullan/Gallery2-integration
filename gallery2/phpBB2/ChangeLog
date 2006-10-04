@@ -1,18 +1,36 @@
+2006-09-27  Dariush Molavi  <dari@nukedgallery.net> 0.5.8
+	* Fix: Made Readme file xhtml compliant again
+	* Update: Added statement in Readme that the Image Block module is
+	  required for the image selector to work properly.
+	* Update: Fixed minor errors in integration_mods.txt (Thanks to Emanuelle82)
+	* New: Added mod instruction that allows gallery2 table to be saved and
+	  restored along with the other phpBB tables. (Thanks to Emanuelle82)
+	* New: Added unmapping capability (includes 2 new files,
+	  admin/gallery2_unmap.php and
+	  templates/subSilver/admin/gallery2_unmap_confirm.tpl)
+	* Fix: Improper rendering of gallery2_export.tpl caused by the progress bar 
+	  css conflict. The result is the display of a second page to display export 
+	  results.
+	* New: Ability to view latest export results at any time.
+	* Update: Several minor tweaks/fixes to code (Thanks to Emanuelle82 for some
+	  fixes/suggestions)
+	* Update: More blurbs in Readme about unmapping users and viewing latest 
+	  export results
+
 2006-08-31  Dariush Molavi  <dari@nukedgallery.net> 0.5.7
-	* New: Added calls to utf8Untranslate() for all error messages 
-	  to filter any messages returned from gallery since they are 
-	  utf-8 encoded and will be displayed by phpBB error handler as 
-	  ISO-8859 encoded.
+	* New: Added calls to utf8Untranslate() for all error messages to filter
+	  any messages returned from gallery since they are utf-8 encoded and will
+	  be displayed by phpBB error handler as ISO-8859 encoded.
 	* Update: Made base tag part of overall_header.tpl any time gallery is
 	  embedded to fix broken phpBB header images regardless if url rewrite
 	  module is enabled or not.
-	* Fix: User names imported from gallery to phpBB properly escaped 
-	  before db insertion in gallery2_export.php. 
+	* Fix: User names imported from gallery to phpBB properly escaped before db
+	  insertion in gallery2_export.php. 
 
 2006-08-28  Dariush Molavi  <dari@nukedgallery.net> 0.5.6
-	* Fix: Broken admin functions introduced in version 0.5.5 as a result 
-	  of trying to load the language file in g2helper_admin before config 
-	  setup is complete.
+	* Fix: Broken admin functions introduced in version 0.5.5 as a result of
+	  trying to load the language file in g2helper_admin before config setup
+	  is complete.
 
 2006-08-21  Dariush Molavi  <dari@nukedgallery.net> 0.5.5
 	* New: Added capability to include Gallery 2 images in phpBB2 posts 

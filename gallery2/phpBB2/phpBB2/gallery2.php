@@ -44,9 +44,8 @@ if ($g2data['isDone']) {
 elseif (isset($g2data['headHtml'])) {
 	list($page_title, $css, $javascript) = GalleryEmbed::parseHead($g2data['headHtml']);
 }
-$css = (isset($css)) ? implode("\n", $css) . "\n" : '';
-$javascript = (isset($javascript)) ? implode("\n", $javascript) . "\n" : '';
-$bodyHtml = (isset($g2data['bodyHtml'])) ? $g2data['bodyHtml'] : '';
+
+$page_title = $g2h->utf8Untranslate($page_title);
 
 $template->set_filenames(array(
 	'body' => 'gallery2.tpl')
@@ -57,10 +56,10 @@ $template->assign_block_vars('switch_phpbb_base', array(
 );
 
 $template->assign_vars(array(
-	'PAGE_TITLE' => $g2h->utf8Untranslate($page_title),
-	'GALLERY2_BODY' => $g2h->utf8Untranslate($bodyHtml),
-	'GALLERY2_CSS' => $css,
-	'GALLERY2_JAVASCRIPT' => $javascript)
+	'PAGE_TITLE' => $page_title,
+	'GALLERY2_BODY' => (isset($g2data['bodyHtml'])) ? $g2h->utf8Untranslate($g2data['bodyHtml']) : '',
+	'GALLERY2_CSS' => (isset($css)) ? implode("\n", $css) . "\n" : '',
+	'GALLERY2_JAVASCRIPT' => (isset($javascript)) ? implode("\n", $javascript) . "\n" : '')
 );
 
 include($phpbb_root_path . 'includes/page_header.' . $phpEx);

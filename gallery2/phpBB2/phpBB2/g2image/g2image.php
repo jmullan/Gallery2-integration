@@ -15,7 +15,7 @@ define('IN_PHPBB', true);
 $phpbb_root_path = './../';
 require($phpbb_root_path . 'extension.inc');
 require($phpbb_root_path . 'common.' . $phpEx);
-$userdata = session_pagestart($user_ip, PAGE_INDEX);
+$userdata = session_pagestart($user_ip, PAGE_POSTING);
 init_userprefs($userdata);
 
 require($phpbb_root_path . 'g2helper.inc');
@@ -46,14 +46,6 @@ if (isset($_REQUEST['g2ic_field'])){
 }
 elseif (isset($_SESSION['g2ic_field'])) {
 	$g2ic_field = $_SESSION['g2ic_field'];
-}
-
-if (isset($_REQUEST['g2ic_host'])) {
-	$g2ic_host = $_REQUEST['g2ic_host'];
-	$_SESSION['g2ic_host'] = $_REQUEST['g2ic_host'];
-}
-elseif (isset($_SESSION['g2ic_host'])) {
-	$g2ic_host = $_SESSION['g2ic_host'];
 }
 
 $g2ic_last_album = (isset($_SESSION['g2ic_last_album_visited'])) ? $_SESSION['g2ic_last_album_visited'] : '/';
@@ -158,7 +150,7 @@ function g2ic_get_g2_id_title_by_path($path) {
 			$g2item_title = $item->getTitle() . "\n";
 		}
 		else {
-			sprintf($lang['G2_LOADENTITIESBYID_FAILED'], $g2itemid) . $lang['G2_ERROR'] . $ret->getAsHtml()
+			echo sprintf($lang['G2_LOADENTITIESBYID_FAILED'], $g2itemid) . $lang['G2_ERROR'] . $ret->getAsHtml()
 			. '</body>' . "\n\n"
 			. '</html>';
 			exit;
@@ -371,7 +363,7 @@ function g2ic_imageblock($g2itemid) {
 		GalleryEmbed::done();
 	}
 	else {
-		sprintf($lang['g2_id_not_found_error'], $g2itemid) . $lang['G2_ERROR'] . $ret->getAsHtml()
+		echo sprintf($lang['g2_id_not_found_error'], $g2itemid) . $lang['G2_ERROR'] . $ret->getAsHtml()
 		. '</body>' . "\n\n"
 		. '</html>';
 		exit; // Die if file not found.  Should not be able to get to here.
@@ -387,7 +379,7 @@ function g2ic_imageblock($g2itemid) {
 // 	Purpose:	Include image from gallery based on path
 //---------------------------------------------------------------------
 
-function g2ic_imagebypathblock($g2itempath ) {
+function g2ic_imagebypathblock($g2itempath) {
 	global $lang;
 
 	// Make Sure Item Path does not contain a + as it should instead be a space
@@ -602,7 +594,7 @@ function g2ic_make_html_header() {
 //---------------------------------------------------------------------
 
 function g2ic_make_html_image_navigation() {
-	global $g2ic_image_files, $g2ic_current_page, $g2ic_images_per_page, $g2ic_rel_path, $g2ic_sortby, $g2ic_g2thumbnail_src, $g2ic_thumbnail_width, $g2ic_thumbnail_height, $g2ic_thumbnail_alt_text, $g2ic_image_url, $g2ic_album_url, $g2ic_custom_url, $g2ic_display_filenames, $g2ic_class_mode, $g2ic_form, $g2ic_field, $g2ic_host, $lang, $phpEx;
+	global $g2ic_image_files, $g2ic_current_page, $g2ic_images_per_page, $g2ic_rel_path, $g2ic_sortby, $g2ic_g2thumbnail_src, $g2ic_thumbnail_width, $g2ic_thumbnail_height, $g2ic_thumbnail_alt_text, $g2ic_image_url, $g2ic_album_url, $g2ic_custom_url, $g2ic_display_filenames, $g2ic_class_mode, $g2ic_form, $g2ic_field, $lang, $phpEx;
 
 	reset($g2ic_image_files);
 
