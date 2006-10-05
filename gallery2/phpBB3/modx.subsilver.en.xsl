@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- MODX by the phpBB MOD Team XSL file v1.0 copyright 2005-2006 the phpBB MOD Team. 
-	$Id: modx.subsilver.en.xsl,v 1.3 2006/05/08 22:29:29 wgeric Exp $ -->
+	$Id$ -->
 <!DOCTYPE xsl:stylesheet[
 	<!ENTITY nbsp "&#160;">
 ]>
@@ -27,7 +27,7 @@
    The following software licensing rules apply:
    http://www.w3.org/Consortium/Legal/copyright-software */
 
-/* $Id: modx.subsilver.en.xsl,v 1.3 2006/05/08 22:29:29 wgeric Exp $ */
+/* $Id$ */
 
 /* Updated by Jon Stanley for use in phpBB XML MOD */
 
