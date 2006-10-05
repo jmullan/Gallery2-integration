@@ -1,0 +1,535 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" />
+		<title>
+		README: Gallery 2 phpBB3 Integration Package
+		</title>
+		<style type="text/css">
+		html {
+		font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+		font-size: 62.5%;
+		}
+		body {
+		font-size: 1.2em;
+		margin: 16px 16px 0px 16px;
+		background: white;
+		}
+		a {
+		text-decoration: none;
+		}
+		p {
+		line-height: 1.5em;
+		}
+		h2 {
+		font-family: "Gill Sans", Verdana, Arial, sans-serif;
+		font-size: 1.5em;
+		color: #333;
+		border-bottom: 1px solid #ddd;
+		margin: 0;
+		padding: 1.0em 0 0.15em 0;
+		}
+		ul, ol {
+		margin: 1.2em 0 1.2em 1.75em;
+		padding: 0;
+		}
+		li {
+		padding: 0.2em 0;
+		line-height: 1.5em;
+		}
+		ol ul {
+		margin-top: 0.4em;
+		margin-bottom: 0.4em;
+		}
+		a:link {
+		font-weight: 700;
+		color: #5D728E;
+		background-color: transparent;
+		}
+		a:visited {
+		font-weight: 700;
+		color: #5D728E;
+		background-color: transparent;
+		}
+		a:hover {
+		font-weight: 700;
+		color: #B30400;
+		text-decoration: underline;
+		}
+		div.instructions {
+		background: #ddd;
+		border: 1px solid #777;
+		width: 480px;
+		margin: 8px;
+		padding: 0px;
+		}
+		div.instructions h3 {
+		background: #ccc;
+		border-bottom: 1px solid #777;
+		font-size: 1.1em;
+		margin: 0px 0px 4px 0px;
+		padding: 4px;
+		}
+		div.instructions p {
+		margin: 0px 0px 0px 4px;
+		}
+		.fineprint {
+		font-size: .8em;
+		color: #ccc;
+		}
+		div.toc {
+		float: right;
+		border: 1px solid #F15D22;
+		background: #e9eff3;
+		padding: 2px 4px 2px 4px;
+		margin: 15px auto auto 15px;
+		}
+		div.toc h2 {
+		font-size: 1.1em;
+		margin-top: -8px;
+		}
+		p.toc-link {
+		margin: 0px;
+		}
+		ul.toc-level-1 {
+		margin: 0px 16px 0px 16px;
+		list-style-type: none;
+		}
+		ul.toc-level-1 li {
+		margin: auto;
+		font-weight: bold;
+		}
+		ul.toc-level-2 {
+		margin: auto 0px auto 15px;
+		list-style-type: none;
+		}
+		ul.toc-level-2 li {
+		margin: auto;
+		}
+		ul.toc-level-3 {
+		margin: auto 0px auto 20px;
+		list-style-type: none;
+		}
+		ul.toc-level-3 li {
+		margin: auto;
+		}
+		pre.CodeSnippet	{
+		background-color: #f0f0f0;
+		padding: 1em;
+		margin: 0px;
+		border: 1px solid gray;
+		font-family: "Lucida Console";
+		font-size: 1em ;
+		width: 800px ;
+		color: #000000;
+		overflow:auto;
+		}
+		pre.Console	{
+		width: auto ;
+		background-color: #000000; 
+		color: #00ff00;
+		}
+		div.codecontainer {
+		margin: 0px;
+		width:800px;
+		padding: 1em;
+		}
+		div.codecontainer h3 {
+		background: #ccc;
+		font-size: 1.1em;
+		margin: 0px 0px 0px 0px;
+		padding: 4px;
+		}
+		.important {
+		background: #FACA61;
+		border: 2px;
+		width: 480px;
+		margin: 0.6em 0 0.6em 0;
+		padding: 0.6em;
+		color: #C00;
+		text-align: center;
+		}
+		.important .email {
+		font-size: 1.3em;
+		color: black;
+		font-weight: 700;
+		margin: 0.6em 0 0 0;
+		}
+		.important h3 {
+		color: #eee;
+		background: #f00;
+		font-size: 1.3em;
+		margin: -0.2em -0.2em 0.2em -0.2em;
+		padding: 0.2em 0.2em;
+		}
+	</style>
+	</head>
+	<body>
+		<div class="toc">
+		<h2>
+		<a name="toc">Contents</a>
+		</h2>
+		<ul class="toc-level-1">
+			<li>
+			Introduction
+				<ul class="toc-level-2">
+					<li>
+					<a href="#description">
+					Description
+					</a>
+					</li>
+					<li>
+					<a href="#dodont">
+					What this package does
+					</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+			Installation
+				<ul class="toc-level-2">
+					<li>
+					<a href="#installing">
+					Installing
+					</a>
+					</li>
+					<li>
+					<a href="#configuration">
+					Configuration
+					</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+			Help!
+				<ul class="toc-level-2">
+					<li>
+					<a href="#getting_help">
+					Getting Help
+					</a>
+					</li>
+					<li>
+					<a href="#known_issues">
+					Known Issues / Bugs
+					</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		</div>
+		<div>
+		<img alt="Gallery 2" src="./g2Logo.gif" />
+		</div>
+		<p>
+		Welcome to Gallery 2.1.  This integration package is part of the 
+		ongoing effort to seamlessly integrate Gallery 2 in phpBB3.  
+		Please read through this document carefully
+		before integrating Gallery 2 and before asking for help.  We have
+		taken care to try to answer as many of your questions here as
+		possible.  If you don't read this and have problems, we may
+		refer you back to this document as a first resource.
+		</p>
+		<p>
+		<div class="important">
+		<h3>NOTICE</h3>
+		<p>
+		<i>This integration is in beta stage and will likely change as phpBB3 
+		evolves during it's path to final release.  The use of this package in a 
+		live production environment is <b>not</b> recommended!</i>
+		</p></div>
+		<br />
+		<h2>
+		<a name="description">
+		Description
+		</a>
+		</h2>
+		<p>
+		This package contains all the files and directories you will need 
+		in order to integrate Gallery 2 into your phpBB3 website.  This integration package 
+		is still under very heavy development and is being released as a beta package.  It's 
+		limitations are many, bugs (probably) numerous.  But, we rely on you, the user, to locate 
+		them and make us aware of them.	<b>Standard Disclaimer: Back up all files/folders/databases 
+		related to Gallery 2 before attempting this integration.</b>
+		</p>
+		<h2>
+		<a name="dodont">
+		What this package does
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Simply put, this package allows you to integrate Gallery 2 into phpBB3.  Among 
+		it's many features, it:
+		</p>
+		<ol>
+			<li>Creates a Gallery 2 integration administration module in the phpBB3 Administration Control Panel.</li>
+			<li>Allows you to export your existing phpBB3 users and groups to Gallery 2.</li>
+			<li>Maintains synchronization between phpBB3 and Gallery 2 user databases.</li>
+			<li>Allows users to link Gallery 2 images directly into phpBB3 posts.<br />
+			<a href="./sample-g2image_selector.jpg">Sample post screenshot with Gallery 2 Image Selector</a></li>
+			<li>Has capability of adding Gallery 2 links and features in users posts and profiles.<br />
+			<a href="./sample-gallery_link.jpg">Sample post screenshot with Gallery 2 Link Button</a><br />
+			<a href="./sample-gallery_memberlist.jpg">Sample memberlist screenshot with Gallery 2 Link Button</a><br />
+			<a href="./sample-gallery_profile.jpg">Sample profile screenshot with Gallery 2 Link Button and Gallery 2 Item Links</a></li>
+		</ol>
+		<h2>
+		<a name="installing">
+		Installation
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<div class="important">
+		<h3>NOTICE</h3>
+		<p>
+		This integration package <b>does not</b> install or configure Gallery 2 for you.  Before you 
+		proceed with this integration, you <b>must</b> install and configure Gallery 2.
+		</p></div>
+		<br />
+		<div class="important">
+		<h3>IMPORTANT</h3>
+		<p>
+		The use of the Gallery 2 rewrite module in an integrated environment has proven to be a tricky task.  It is highly 
+		recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration.
+		</p></div>
+		<p>
+		There is a css issue with the integration that causes the Gallery fonts to be unreadably small.  
+		The fix for this is in the mod files, but before you can apply the mod to the Gallery 2 css file, you need to 
+		create a directory called "local" within gallery2/themes/matrix and copy the file gallery2/themes/matrix/theme.css 
+		into the newly created "local" directory.
+		</p>
+		<div class="codecontainer"><h3>Unix Example</h3>
+		<pre class="CodeSnippet Console">$ mkdir ~/public_html/gallery2/themes/matrix/local
+$ cp ~/public_html/gallery2/themes/matrix/theme.css ~/public_html/gallery2/themes/matrix/local</pre></div>
+		<div class="codecontainer"><h3>Windows Example</h3>
+		<pre class="CodeSnippet Console">C:\> mkdir c:\web\gallery2\themes\matrix\local
+C:\> copy  c:\web\gallery2\themes\matrix\theme.css c:\web\gallery2\themes\matrix\local</pre></div>
+		<p>Next follow the instructions in one of the mod files.  You have a choice of using the plain text version 
+		or the xml version.  It doesn't matter which one, they are both the same.</p>
+		<p><a href="./integration_mods.xml">
+		MOD instructions in new modx xml format
+		</a></p>
+		<p><a href="./integration_mods.txt">
+		MOD instructions in plain mod txt format
+		</a></p>
+		<p>
+		The gallery2 folder contains a customized breadcrumb navigation file that will include 
+		a link back to your forum's index page.  To use this feature, create a directory called 
+		"local" within gallery2/modules/core/templates/blocks and copy this version of BreadCrumb.tpl 
+		into your new "local" directory:
+		</p>
+		<div class="codecontainer"><h3>Unix Example</h3>
+		<pre class="CodeSnippet Console">$ mkdir ~/public_html/gallery2/modules/core/templates/blocks/local
+$ cp BreadCrumb.tpl ~/public_html/gallery2/modules/core/templates/blocks/local/</pre></div>
+		<div class="codecontainer"><h3>Windows Example</h3>
+		<pre class="CodeSnippet Console">C:\> mkdir c:\web\gallery2\modules\core\templates\blocks\local
+C:\> copy BreadCrumb.tpl c:\web\gallery2\modules\core\templates\blocks\local\</pre></div>
+		<p>Note that you may want to alter the following line in the included BreadCrumb.tpl file to 
+		reflect the actual home page of your forums:</p>
+		<div class="instructions">
+		<p><span class="code">&lt;a href="/" class="BreadCrumb-1"&gt;Forum Index&lt;/a&gt;</span></p></div>
+		<p>After applying the mods, the font size will be normal in embedded mode, but oversized in the standalone Gallery.  
+		After verifying the mods and the embedded Gallery are working, it is recommended that standalone Gallery be disabled 
+		as there will no longer be a need to access Gallery in this way.  To disable standalone Gallery, open the file 
+		/gallery2/config.php and find this line:</p>
+		<div class="instructions">
+		<p><span class="code">$gallery->setConfig('mode.embed.only', false);</span></p></div>
+		<p>Then change to:</p>
+		<div class="instructions">
+		<p><span class="code">$gallery->setConfig('mode.embed.only', true);</span></p></div>
+		<h2>
+		<a name="configuration">
+		Configuration
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		Before you can view your Gallery 2 installation in phpBB3, you must 
+		first configure this integration package.  To do this, navigate to the 
+		phpBB3 Administration Control Panel.  Then click on the System tab.  Under 
+		Module Management, click Administration Control Panel.  In the list of modules, 
+		click General, then Board Configuration.  In the Add module drop-down 
+		list, select Gallery2 Settings, then click Add module.  At the Add module 
+		confirmation screen, click Yes.  After the module is added, click Back to 
+		previous page.  Finally, once back at the Module Management page, click Enable 
+		at the Gallery2 Settings module. You have now successfully installed and 
+		enabled the Gallery2 Settings module and can continue with the integration 
+		settings.
+		</p>
+		<p>
+		Now click the General tab and under Board Configuration, click Gallery2 Settings 
+		and you should presented with the Gallery 2 Integration page containing four 
+		choices under Administration Options.
+		</p>
+		<p>The first area is the primary integration settings.  If these are 
+		incorrectly set, your integration will not succeed.  Fear not though, as you 
+		should really only have to fill in one value, making it fairly painless.
+		</p>
+		<h3>Configure Settings</h3>
+		<ol>
+		<i>The following value depends on your particular installation and you must ensure it is 
+		entered correctly.</i>
+		<br />
+		<li><b>URL path to the gallery2 directory</b> - This should be the only setting 
+		that you really have to worry about. It is the URL you installed Gallery in and 
+		the same as you'd use to view your gallery in standalone mode.  Proper examples 
+		would be: <br />
+		<div class="instructions">
+		<p>http://example.com/gallery2/&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;
+		/phpbb2/gallery2/&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;/gallery2/</p>
+		</div>
+		</li>
+		<br />
+		<i>The next value will be auto-detected based on the file location the script is 
+		running at and should be correct, however, you should double check it.</i>
+		<br />
+		<li><b>URL path to gallery2.php</b> - This is the URL that would take you 
+		to your Gallery 2 installation when it is integrated.  For example:<br />
+		<div class="instructions">
+		<p>http://www.yoursite.com/phpbb2/gallery2.php&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;
+		/phpbb2/gallery2.php</p>
+		</div>
+		</li>
+		<br />
+		<i>The next 2 values will be automatically generated and managed by the integration 
+		package. Do not alter them. They will not contain any information until 
+		after you've saved the config settings and run the user integration at 
+		least once. This is normal.</i> (Try clicking Submit at this point and see if 
+		the next value is filled in automatically.  If not, you will have to manually enter it.)
+		<br />
+		<li><b>Full file path to embed.php</b> - This setting is the 
+		complete file path to the embed.php file in your Gallery 2 directory.  For example:<br />
+		<div class="instructions">
+		<p>/home/user/public_html/gallery2/embed.php</p>
+		</div>
+		</li>
+		<li><b>Active Admin ID</b> - This setting is the gallery external id of a 
+		valid admin and will remain blank until the user export is successfully run.<br />
+		</li>
+		</ol>
+		<p>
+		Click Submit to save the settings, then click Gallery2 Settings again to get 
+		back to the four configuration options.
+		</p>
+		<h3>Link Settings</h3>
+		<p>
+		These settings control if and how Gallery 2 links are displayed in users posts and profiles.
+		</p>
+		<ol>
+		<li><b>Gallery profile links</b> - Select Yes to enable a Gallery link button to 
+		show in the users posts and profiles.  This is a button similar to the instant messnger, 
+		pm, email, etc. buttons.  Select No to disable this feature.
+		</li>
+		<li><b>Gallery show all item links</b> - Select Yes to enable a list of thumbnails 
+		with links to the original items in Gallery to be displayed in the users profiles.  
+		Select No to disable this feature.
+		</li>
+		<li><b>Gallery show only album item links</b> - If Gallery show all item links is 
+		enabled, this determines if a list of photos or only a list of albums is displayed.  
+		If users have multiple albums, you may want to enable this.
+		</li>
+		<li><b>Gallery show all item links limit</b> - If Gallery show all item links is 
+		enabled, this limits the number of items returned in the users profiles.
+		</li>
+		</ol>
+		<p>
+		Click Submit to save the settings, then click Gallery2 Settings again to get 
+		back to the four configuration options.
+		</p>
+		<h3>Synchronize Users</h3>
+		<p>
+		This will export your phpBB3 users and create a Gallery 2 account for them 
+		if they do not have one. You can select whether the export occurs immediately 
+		or when the user first visits Gallery 2. For forums with more than one or two 
+		thousand users, it is highly recommended to select Export User At Gallery 2 Access 
+		or you will likely encounter a timeout before the export completes.  The phpBB3 
+		admin accounts will also be	mapped to the Gallery 2 admin accounts.  Therefore, 
+		if you're logged as an admin in phpBB3, you will also be logged as an admin in 
+		Gallery 2.  During the export process you will see a progress bar showing the 
+		export progress.  After the export completes, you will see a status page displaying 
+		the results of the export.
+		</p>
+		<p>
+		Click Gallery2 Settings to get back to the four configuration options.
+		</p>
+		<h3>Un-Synchronize Users</h3>
+		<p>
+		Only use this if you wish to remove all externally mapped users and their 
+		items from Gallery 2.  Use this carefully, as it cannot be undone!
+		</p>
+		<p>In addition to these settings, you can control which users have admin permissions 
+		in Gallery 2 from within phpBB3.  In the permissions areas of the Administrator 
+		Control Panel under Admin Permissions, you will find an option in the Settings list 
+		that says Can be administrator in Gallery 2.  You can set this to Yes or No for any user.</p>
+		<h2>
+		<a name="getting_help">
+		Getting Help
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		If you are having problems getting your integration completed successfully, 
+		start out by searching the Forums at <a href="http://www.nukedgallery.net">
+		NukedGallery.net</a>.  Gallery2 specific help is offered in <a href="http://www.nukedgallery.net/forum18.html">
+		this forum</a> on NukedGallery.</p>
+		<p>If you are having general Gallery 2 problems,  you should start by looking in the <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22">Gallery 2 Support Forum</a> on the <a href="http://gallery.sourceforge.net">Gallery
+		  Website</a>.  Search the forum to see if somebody else has
+		  posted a similar problem and maybe there's an answer
+		  there, otherwise start a new topic to get help.  If the problem
+		  seems like a bug in the Gallery 2 software you can <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130">file a bug</a> in our bug tracker on
+		  SourceForge.  Please read our <a href="http://gallery.sourceforge.net/wiki.php?page=Feature%20Requests%20and%20Bug%20Reports">tracker guidelines</a> before filing a bug so
+		  that we can cut down on the number of spurious reports.  If
+		  you're unsure whether to file a bug you can always post in the
+		  forums first and we'll ask you to file a bug if needed.  If you
+		  want to chat in real time, you can talk on our user-to-user irc
+		  support channel, <a href="irc://irc.freenode.net/#gallery-support">#gallery-support on irc.freenode.net</a>.
+		</p>
+
+		<p>
+		  Remember - reporting bugs is <b>good</b>.  Even if you think
+		  it's silly, go ahead and report it.  We can always close the bug
+		  or refile it (please don't be offended in this case) but it's
+		  harder to find bugs than it is to fix them so we're counting on
+		  you to help us with the finding part.
+		</p>
+		<h2>
+		<a name="known_issues">
+		Known Issues
+		</a>
+		</h2>
+		<p class="toc-link">
+		<a href="#toc">
+		[table of contents]
+		</a>
+		</p>
+		<p>
+		The following are known issues with this integration package:
+		</p>
+		<ol>
+		<li><b>None at this time.</b></li>
+		</ol>
+		<p>
+		For a list of known issues with Gallery 2, view the <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/gallery/gallery2/README.html#known_issues">
+		Gallery 2 README</a>.
+		</p>
+    <hr />
+	<p class="fineprint">
+	%Id%
+	</p>
+	</body>
+	</html>

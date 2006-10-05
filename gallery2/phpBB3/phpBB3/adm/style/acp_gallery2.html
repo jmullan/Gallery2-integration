@@ -1,0 +1,239 @@
+<!--
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
+ * Gallery 2 integration for phpBB3.
+ * @version $Revision$ $Date$
+ * @author Scott Gregory <jettyrat@jettyfishing.com>
+ */
+ -->
+
+<!-- INCLUDE overall_header.html -->
+<h1>{L_INTEGRATION_TITLE}</h1>
+
+<!-- IF S_OPTIONS -->
+<fieldset>
+	<legend>{L_ADMIN_TITLE}</legend>
+	<form method="post" action="{S_G2_CONFIG}">
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" name="config" value="{L_OPTIONS_CONFIG}" />
+	</fieldset>
+	</form>
+	<form method="post" action="{S_G2_LINKS}">
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" name="links" value="{L_OPTIONS_LINKS}" />
+	</fieldset>
+	</form>
+	<form method="post" action="{S_G2_SYNC}">
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" name="sync" value="{L_OPTIONS_SYNC}" />
+	</fieldset>
+	</form>
+	</form>
+	<form method="post" action="{S_G2_CONFIRM}">
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" name="confirm" value="{L_OPTIONS_CONFIRM}" />
+	</fieldset>
+	</form>
+</fieldset>
+
+<p>&nbsp;</p>
+<p><h2>{L_VERSION_TITLE}</h2><br />
+{L_VERSION_MSG}</p>
+<p>&nbsp;</p>
+
+<!-- ELSEIF S_CONFIG -->
+	<!-- IF S_ERROR -->
+<p style="color: red; font-weight: bold;">{L_MESSAGE}</p>
+	<!-- ELSE -->
+<p style="font-weight: bold;">{L_MESSAGE}</p>
+	<!-- ENDIF -->
+
+<form method="post" action="{S_G2_SAVE}" name="configForm">
+	<fieldset>
+		<legend>{L_CONFIG_TITLE}</legend>
+		<dl>
+			<dt><label for="g2uri">{L_G2URI}</label><br /><span>{L_CONFIG_EXPLAIN1}</span></dt>
+			<dd><input type="text" size="40" name="g2uri" value="{S_G2URI}" onchange="document.configForm.fullpath.value='';"  /></dd>
+		</dl>
+		<dl>
+			<dt><label for="embeduri">{L_EMBEDURI}</label><br /><span>{L_CONFIG_EXPLAIN2}</span></dt>
+			<dd><input type="text" size="40" name="embeduri" value="{S_EMBEDURI}"  /></dd>
+		</dl>
+		<dl>
+			<dt><label for="fullpath">{L_FULLPATH}</label><br /><span>{L_CONFIG_EXPLAIN3}</span></dt>
+			<dd><input type="text" size="40" name="fullpath" value="{S_FULLPATH}"  /></dd>
+		</dl>
+		<dl>
+			<dt><label for="activeadminid">{L_ACTIVEADMINID}</label><br /><span>{L_CONFIG_EXPLAIN4}</span></dt>
+			<dd><input type="text" name="activeadminid" value="{S_ACTIVEADMINID}"  /></dd>
+		</dl>
+	</fieldset>
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="save" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</fieldset>
+</form>
+
+<!-- ELSEIF S_LINKS -->
+	<!-- IF L_MESSAGE -->
+<p style="font-weight: bold;">{L_MESSAGE}</p>
+	<!-- ENDIF -->
+<form method="post" action="{S_G2_LINKS}" name="linksForm">
+	<fieldset>
+		<legend>{L_LINKS_TITLE}</legend>
+		<dl>
+			<dt><label for="link">{L_LINK}</label><br /><span>{L_LINKS_EXPLAIN1}</span></dt>
+			<dd><input class="radio" type="radio" name="link" value="1" {S_LINKS1}/>&nbsp;{L_LINKS_YES}&nbsp;&nbsp;<input class="radio" type="radio" name="link" value="0" {S_LINKS0}/>&nbsp;{L_LINKS_NO}</dd>
+		</dl>
+	</fieldset>
+	<fieldset>
+		<legend>{L_ALLLINKS_TITLE}</legend>
+		<dl>
+			<dt><label for="all_links">{L_ALL_LINKS}</label><br /><span>{L_LINKS_EXPLAIN2}</span></dt>
+			<dd><input class="radio" type="radio" name="all_links" value="1" {S_ALL_LINKS1}/>&nbsp;{L_LINKS_YES}&nbsp;&nbsp;<input class="radio" type="radio" name="all_links" value="0" {S_ALL_LINKS0}/>&nbsp;{L_LINKS_NO}</dd>
+		</dl>
+		<dl>
+			<dt><label for="showalbums">{L_ALL_SHOWALBUMS}</label><br /><span>{L_LINKS_EXPLAIN3}</span></dt>
+			<dd><input class="radio" type="radio" name="showalbums" value="1" {S_SHOWALBUMS1}/>&nbsp;{L_LINKS_YES}&nbsp;&nbsp;<input class="radio" type="radio" name="showalbums" value="0" {S_SHOWALBUMS0}/>&nbsp;{L_LINKS_NO}</dd>
+		</dl>
+		<dl>
+			<dt><label for="limit_links">{L_LIMIT_LINKS}</label><br /><span>{L_LINKS_EXPLAIN4}</span></dt>
+			<dd><input type="text" name="limit_links" value="{S_LIMIT_LINKS}"  /></dd>
+		</dl>
+	</fieldset>
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="save" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</fieldset>
+</form>
+
+<!-- ELSEIF S_SYNC -->
+<p>{L_SYNC_EXPLAIN1}</p>
+<p>{L_SYNC_EXPLAIN2}</p>
+
+	<!-- IF S_EXPLAIN -->
+<p>{L_SYNC_EXPLAIN3}</p>
+<p>{L_SYNC_EXPLAIN4}</p>
+<p>{L_SYNC_EXPLAIN5}</p>
+<p>{L_SYNC_EXPLAIN6}</p>
+	<!-- ENDIF -->
+
+<p>{L_SYNC_EXPLAIN7}</p>
+
+<form method="post" action="{S_G2_EXPORT}">
+	<!-- IF S_EXPLAIN -->
+	<fieldset>
+		<legend>{L_SYNC_EXISTING}</legend>
+		<table cols="7">
+			<tr>
+				<th style="text-align: center;" colspan="4" width="60%">{L_SYNC_ACTION}</th>
+				<th style="text-align: center;" width="13%">{L_SYNC_USER}</th>
+				<th style="text-align: center;" width="13%">{L_SYNC_USERID}</th>
+				<th style="text-align: center;" width="13%">{L_SYNC_GROUPS}</th>
+			</tr>
+		<!-- BEGIN users -->
+			<tr>
+				<td style="text-align: center;" class="row3" width="15%"><input class="radio" type="radio" name="user[{users.USER_ID}]" value="1" checked="checked" /><br />{L_SYNC_IMPORT}</td>
+				<td style="text-align: center;" class="row3" width="15%"><input class="radio" type="radio" name="user[{users.USER_ID}]" value="2" /><br />{L_SYNC_DELETEALL}</td>
+				<td style="text-align: center;" class="row3" width="15%"><input class="radio" type="radio" name="user[{users.USER_ID}]" value="3" /><br />{L_SYNC_DELETE}</td>
+				<td style="text-align: center;" class="row3" width="15%"><input class="radio" type="radio" name="user[{users.USER_ID}]" value="4" /><br />{L_SYNC_LEAVE}</td>
+				<td style="text-align: center;" class="row3" width="13%">{users.USER_NAME}</td>
+				<td style="text-align: center;" class="row3" width="13%">{users.USER_ID}</td>
+				<td style="text-align: center;" class="row3" width="13%">{users.USER_GROUPS}</td>
+			</tr>
+		<!-- END users -->
+		</table>
+	</fieldset>
+	<!-- ENDIF -->
+	<fieldset>
+		<legend>{L_SYNC_TITLE}</legend>
+		<fieldset class="submit-buttons">
+			<p><input class="radio" type="radio" name="export" value="now" />&nbsp;{L_SYNC_NOW}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input class="radio" type="radio" name="export" value="later" checked="checked" />&nbsp;{L_SYNC_LATER}</p>
+		</fieldset>
+	</fieldset>
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="save" value="{L_SYNC_BUTTON}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</fieldset>
+</form>
+
+<!-- ELSEIF S_EXPORT -->
+<fieldset>
+	<legend>{L_EXPORT_TITLE}</legend>
+	<p>{L_GROUPS_PROCESSED}</p>
+	<!-- IF S_G_EXISTING -->
+	<p>{L_GROUPS_EXISTING}</p>
+	<!-- ENDIF -->
+	<p>{L_GROUPS_IMPORTED}</p>
+	<!-- IF S_G_FAILURES -->
+	<p>{L_GROUPS_FAILURES1}</p>
+	<p>{L_GROUPS_FAILURES2}<br />
+	{L_GROUPS_FAILURES3}
+	</p>
+	<!-- ENDIF -->
+	<p>{L_USERS_PROCESSED}</p>
+	<!-- IF S_U_EXISTING -->
+	<p>{L_USERS_EXISTING}</p>
+	<!-- ENDIF -->
+	<!-- IF S_U_NONACTIVE -->
+	<p>{L_USERS_NONACTIVE}</p>
+	<!-- ENDIF -->
+	<!-- IF S_U_GUEST -->
+	<p>{L_USERS_GUEST}</p>
+	<!-- ENDIF -->
+	<p>{L_USERS_ADMIN}</p>
+	<p>{L_USERS_IMPORTED}</p>
+	<!-- IF S_U_FAILURES -->
+	<p>{L_USERS_FAILURES1}</p>
+	<p>{L_USERS_FAILURES2}<br />
+	{L_USERS_FAILURES3}
+	</p>
+	<p>{L_USERS_REASON1}
+	<ul><li>{L_USERS_REASON2}</li>
+	<li>{L_USERS_REASON3}</li>
+	<li>{L_USERS_REASON4}</li></ul>
+	{L_USERS_REASON5}</p>
+	<!-- ENDIF -->
+</fieldset>
+
+<!-- ELSEIF S_CONFIRM -->
+<form method="post" action="{S_G2_CONFIRM}">
+	<fieldset>
+		<legend>{L_CONFIRM_TITLE}</legend>
+		<p>{L_CONFIRM_EXPLAIN1}</p>
+		<p>{L_CONFIRM_EXPLAIN2}</p>
+		<p>{L_CONFIRM_EXPLAIN3}</p>
+	</fieldset>
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="save" value="{L_CONFIRM_BUTTON}" />
+	</fieldset>
+</form>
+
+<!-- ELSEIF S_UNMAP -->
+<fieldset>
+	<legend>{L_UNMAP_TITLE}</legend>
+	<p>{L_GROUPS_PROCESSED}</p>
+	<p>{L_USERS_PROCESSED}</p>
+	<p>{L_USERS_UNMAPPED}</p>
+</fieldset>
+
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->
