@@ -43,23 +43,23 @@ else {
 switch($op) {
 
     case "gallery2":
-    include("modules/$module_name/admin/index.php");
+    include_once("modules/$module_name/admin/index.php");
     break;
     
     case "gallery2_update_embed":
-    include("modules/$module_name/admin/index.php");
+    include_once("modules/$module_name/admin/index.php");
     break;
     
     case "gallery2_update_main":
-    include("modules/$module_name/admin/index.php");
+    include_once("modules/$module_name/admin/index.php");
     break;
     
     case "gallery2_user_export":
-    include("modules/$module_name/admin/export.php");
+    include_once("modules/$module_name/admin/export.php");
     break;
     
 	case "gallery2_update_database":
-    include("modules/$module_name/admin/index.php");
+    include_once("modules/$module_name/admin/index.php");
     break;
 }
 

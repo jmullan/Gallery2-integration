@@ -1,3 +1,6 @@
+2006-10-30  Dariush Molavi  <dari@nukedgallery.net> 0.5.13
+        * Fix: include -> include_once in case files. Thanks to BigD.
+
 2006-05-15  Dariush Molavi  <dari@nukedgallery.net> 0.5.12
 	* Fix: Modified SQL query to create config table. This should
 	  resolve the "blank screen" issue that users have complained
