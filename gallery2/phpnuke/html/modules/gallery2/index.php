@@ -257,7 +257,6 @@ if ($g2bodyHtml==null) {
             }
         }
     }
-    eval($header);
 
     // show error message if isDone is not defined
     if (!isset($g2moddata['isDone'])) {
@@ -279,6 +278,8 @@ if ($g2bodyHtml==null) {
     $g2bodyHtml = $updateCheck;
     $g2bodyHtml .= $g2moddata['bodyHtml'];
 }
+
+eval($header);
 
 OpenTable();
 echo $g2bodyHtml;

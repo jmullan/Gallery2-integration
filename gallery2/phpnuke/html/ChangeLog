@@ -1,3 +1,7 @@
+2006-11-14  Dariush Molavi  <dari@nukedgallery.net> 0.5.14
+        * Fix: Moved eval($header) below isDone() check. Registry files and
+          image downloads are now correct.
+
 2006-10-30  Dariush Molavi  <dari@nukedgallery.net> 0.5.13
         * Fix: include -> include_once in case files. Thanks to BigD.
 
