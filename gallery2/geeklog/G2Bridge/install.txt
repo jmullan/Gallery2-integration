@@ -1,0 +1,12 @@
+For install instructions please read the readme.html in the admin directory.
+
+
+If you are upgrading from GL_Gallery2:
+
+You must uninstall GL_Gallery2 which will remove your users from gallery.
+
+To avoid this, use the included functions_upgrade_to_G2Bridge.inc file.
+
+Just upload to your path_to_geeklog/plugins/GL_Gallery2 directory and rename it to functions.inc replacing the original.
+
+Then run your uninstall.
