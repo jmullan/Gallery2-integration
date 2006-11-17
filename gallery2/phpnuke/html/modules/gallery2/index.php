@@ -118,7 +118,7 @@ function checkVersion() {
 $phpnuke2G2Lang = array('danish' => 'da','dutch' => 'nl','german' => 'de','greek' => 'el','english'    => 'en','american' => 'en','spanish' => 'es','finnish' => 'fi','french' => 'fr','irish' => 'ga','italian' => 'it','japanese' => 'ja','norwegian' => 'no','polish' => 'pl','portuguese' => 'pt','swedish' => 'sv','chinese' => 'zh');
 
 
-global $currentlang, $g2bodyHtml, $db, $user_prefix, $prefix;
+global $currentlang, $g2bodyHtml, $db, $user_prefix, $prefix, $g2moddata;
 
 if(!defined('NUKE_EVO')) {
     require_once("mainfile.php");
@@ -149,7 +149,7 @@ else {
     }
 }
 
-if ($g2bodyHtml==null) {
+if ($g2moddata==null) {
     $config_sql = "SELECT * FROM ".$prefix."_g2config";
     $config_result = $db->sql_query($config_sql);
     list($embedUri, $g2Uri, $activeUserId, $cookiepath, $showSidebar, $g2configurationDone, $embedVersion) = $db->sql_fetchrow($config_result);

@@ -29,7 +29,7 @@ if (eregi("block-G2_Sidebar.php", $_SERVER['SCRIPT_NAME'])) {
     die();
 }
 
-global $admin, $user, $cookie,$db,$prefix;
+global $admin, $user, $cookie,$db,$prefix, $g2moddata;
 
 define("_G2_EMBED_PHP_FILE","embed.php");
 define("_G2_CONFIGURATION_NOT_DONE","The module has not yet been configured.");
@@ -70,7 +70,11 @@ if ($showSidebar) {
 }
 
 GalleryCapabilities::set('showSidebarBlocks', false);
-$g2moddata = GalleryEmbed::handleRequest();
+
+if(!isset($g2moddata)) {
+	$g2moddata = GalleryEmbed::handleRequest();
+	$newG2 = 1;
+}
 
 if (isset($g2moddata['headHtml'])) {
 	list($title, $css, $javascript) = GalleryEmbed::parseHead($g2moddata['headHtml']);
@@ -78,7 +82,7 @@ if (isset($g2moddata['headHtml'])) {
 
 if(!isset($g2moddata['sidebarBlocksHtml'])) {
 	$content = "You need to enable sidebar blocks in your Gallery 2 configuration.";
-}
+} 
 else { 
 	$num_blocks = count($g2moddata['sidebarBlocksHtml']) - 1;
 	foreach($css as $stylesheet) {
@@ -94,6 +98,10 @@ else {
 		}
 	}
 	$content .= "</div>";
+}
+
+if(!isset($newG2)) {
+	$ret = GalleryEmbed::done();
 }
 
 ?>

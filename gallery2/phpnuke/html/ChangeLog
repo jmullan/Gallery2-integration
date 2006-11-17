@@ -1,3 +1,11 @@
+2006-11-17  Dariush Molavi  <dari@nukedgallery.net> 0.6.0
+	* Fix: Corrections in Readme.html
+	* Fix: New global var for G2's html.
+	* Fix: Corrected block files to check for G2 html, and if present,
+	  use it, instead of calling handleRequest() again. This solves the
+	  double album/comment problem that's been plaguing this 
+	  integration.  
+
 2006-11-14  Dariush Molavi  <dari@nukedgallery.net> 0.5.14
         * Fix: Moved eval($header) below isDone() check. Registry files and
           image downloads are now correct.
