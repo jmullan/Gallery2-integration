@@ -124,22 +124,24 @@ else {
    list($ret,$html, $head) = GalleryEmbed::getImageBlock(array('blocks'=>$blockType, 'show'=>$display,'itemFrame'=>'solid','albumFrame'=>'solid'));
 }
 
+$block_css = "";
+$block_script = "";
+
 if (isset($head)) {
 	list($title, $css, $javascript) = GalleryEmbed::parseHead($head);
+	foreach($css as $stylesheet) {
+	   $block_css .= $stylesheet."\n";
+	}
+
+	foreach($javascript as $script) {
+	   $block_script .= $script."\n";
+	}
 }
 
 $ret = GalleryEmbed::done();
 
 if(!empty($ret)) {
    $content = "The G2 Imageblock request failed. Here's the error:<br>".$ret->getAsHtml();
-}
-
-foreach($css as $stylesheet) {
-   $block_css .= $stylesheet.'\n';
-}
-
-foreach($javascript as $script) {
-   $block_script .= $script.'\n';
 }
 
 $content = $block_css."\n".$block_script."\n<center>".$html."</center>";

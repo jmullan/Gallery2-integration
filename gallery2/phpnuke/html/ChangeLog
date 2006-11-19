@@ -1,3 +1,7 @@
+2006-11-19  Dariush Molavi  <dari@nukedgallery.net> 0.6.2
+	* Fix: Sigh, shouldn't code and play with baby at the 
+	  same time.
+
 2006-11-19  Dariush Molavi  <dari@nukedgallery.net> 0.6.1
 	* Fix: Oops, forgot to pull the CSS out of the array.
 
