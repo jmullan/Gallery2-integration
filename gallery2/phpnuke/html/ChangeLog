@@ -1,3 +1,6 @@
+2006-11-19  Dariush Molavi  <dari@nukedgallery.net> 0.6.1
+	* Fix: Oops, forgot to pull the CSS out of the array.
+
 2006-11-17  Dariush Molavi  <dari@nukedgallery.net> 0.6.0
 	* Fix: Corrections in Readme.html
 	* Fix: New global var for G2's html.

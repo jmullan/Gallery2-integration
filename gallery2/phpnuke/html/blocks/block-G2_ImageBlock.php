@@ -134,7 +134,15 @@ if(!empty($ret)) {
    $content = "The G2 Imageblock request failed. Here's the error:<br>".$ret->getAsHtml();
 }
 
-$content = $css."\n".$javascript."\n<center>".$html."</center>";
+foreach($css as $stylesheet) {
+   $block_css .= $stylesheet.'\n';
+}
+
+foreach($javascript as $script) {
+   $block_script .= $script.'\n';
+}
+
+$content = $block_css."\n".$block_script."\n<center>".$html."</center>";
 
 
 ?>
