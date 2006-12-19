@@ -1,0 +1,308 @@
+<?php 
+/**
+ * User API.
+ * 
+ * @package g2bridge
+ * @author Michiel Bijland
+ * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
+ * @version $Id$
+ */
+defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
+
+/**
+ * This class holds all user functions
+ *
+ * @package g2bridge
+ * @subpackage Classes
+ */
+class user {
+
+	/**
+	 * Add a new user to Gallery2
+	 *
+	 * $par = array('username' => $my->username, 
+	 *			   'email' => $row->email,
+	 *			   'fullname' => $row->name, 
+	 *	           'hashedpassword' => $row->password,
+	 *			   'hashmethod' => 'md5')
+	 *
+	 * @note use mambo ids
+	 *
+	 * @param integer $userId
+	 * @param array $par
+	 * @return object Gallery status object
+	 */
+	function newUser($userId, $par){
+		/* utf-8 encode for some params */
+		$par['username'] = core::encoded($par['username']);
+		$par['fullname'] = core::encoded($par['fullname']);
+
+		return GalleryEmbed::createUser($userId, $par);
+	}
+
+
+	/**
+	 * Update a Gallery2 user profile
+	 *
+	 * $userId = joomla userid
+	 * $par = array('username' => $my->username, 
+	 *			   'email' => $row->email,
+	 *			   'fullname' => $row->name, 
+	 *	           'hashedpassword' => $row->password,
+	 *			   'hashmethod' => 'md5')
+	 *
+	 * @param integer $uid
+	 * @param array $param
+	 * @return object Gallery status object
+	 */
+	function updateUser($uid, $param){
+		/* utf-8 encode for some params */
+		$param['username'] = core::encoded($param['username']);
+		$param['fullname'] = core::encoded($param['fullname']);
+		/* update */
+		return GalleryEmbed::updateUser($uid, $param);
+	}
+
+	/**
+	 * Delete a Joomla user from Gallery2
+	 *
+	 * @note use Joomla id
+	 *
+	 * @param integer $uid
+	 * @return object Gallery status object
+	 */
+	function deleteUser($uid){
+		return GalleryEmbed::deleteUser($uid);
+	}
+
+
+
+	/**
+	 * add a user to a Gallery2 group
+	 *
+	 * @note use joomla ids 
+	 *
+	 * @param integer $uid
+	 * @param interger $gid
+	 * @return object Gallery status object
+	 */
+	function addUserToGroup($uid, $gid){
+		core::classRequireOnce('group');
+		$ignore = group::_getIgnoredGroups();
+		if(isset($ignore[$gid])){
+			return null;
+		}
+		/* first check if group exists */
+		$ret = GalleryEmbed::isExternalIdMapped($gid, 'GalleryGroup');
+		if($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT){
+			/* fetch group name and add the group */
+			global $database;
+			$sql = "SELECT name FROM #__core_acl_aro_groups WHERE group_id = " . (int) $gid;
+			$database->setQuery($sql,0,1);
+			$name = $database->loadResult();
+			
+			if($name) {
+				$ret = group::newGroup($gid, $name);
+				if($ret){
+					return $ret;
+				}
+			} else {
+				/* error group doesn't exist */
+				/** @todo add error for this case and not the global one */
+				return $ret;
+			}
+		} else if($ret){
+			/* different error */
+			return $ret;
+		}
+		return GalleryEmbed::addUserToGroup($uid, $gid);
+	}
+
+	/**
+	 * Removes a user from a Gallery group
+	 *
+	 * @note use Joomla ids 
+	 *
+	 * @param integer $uid
+	 * @param integer $gid
+	 * @return object Gallery status object
+	 */
+	function removeUserFromGroup($uid, $gid){
+		core::classRequireOnce('group');
+		$ignore = group::_getIgnoredGroups();
+		if(isset($ignore[$gid])){
+			return null;
+		}
+		return GalleryEmbed::removeUserFromGroup($userId, $groupId);
+	}
+	
+	/**
+     * Compare a G2 user with an integration app user by user properties.
+     * 
+     * Set any or all of the array params to true to compare by those properties.
+     * If 'case' is true, then compare will be case-sensitive.
+     * 
+     * Function copied from gallery.menalto.com, adjusted for Joomla
+     * 
+     * @param object GalleryUser
+     * @param array ('userName' => string the user name, 'fullName' => string full name,
+     *              'email' => string user's e-mail, 'language' => string user's language,
+     *              'hashedPassword' => string user's hashed password)
+     * @return array Optional array('userName' => 1, 'email' => 1, etc.)
+     */
+	function compareUsers($g2User, $emAppUser, $params = false) {
+		$conflicts = array();
+		
+		if(!$params){
+			/* load default params */
+			$case = core::getParam('user','check');
+			switch($case){
+				case 0:
+					$params = array('byUserName' => true);
+					break;
+				case 1:
+					$params = array('byUserName' => true, 'byEmail' => true);
+					break;
+				case 2:
+					$params = array('byUserName' => true, 'byEmail' => true, 'byHashedPassword' => true);
+					break;
+				case 3:
+					$params = array('byUserName' => true, 'byEmail' => true, 'byHashedPassword' => true, 'byFullName' => true);
+					break;
+			}
+			$params['case'] = core::getParam('user','caseSensitive');
+		}
+
+		/*
+		* This needs to be done for highest compatibility, otherwise may spew errors on certain
+		* PHP configurations
+		*/
+		foreach (array('byUserName', 'byEmail', 'byLanguage', 'byFullName',
+		'byHashedPassword', 'case') as $key) {
+			if (!isset($params[$key])) {
+				$params[$key] = false;
+			}
+		}
+
+		if ($params['byUserName']) {
+			$cmpResult = ($params['case'])
+			? strcmp($g2User->getuserName(), $emAppUser['username'])
+			: strcasecmp($g2User->getuserName(), $emAppUser['username']);
+			if ($cmpResult != 0) {
+				$conflicts['userName'] = 1;
+			}
+		}
+
+		if ($params['byEmail']) {
+			if (strcasecmp($g2User->getEmail(), $emAppUser['email']) != 0) {
+				$conflicts['email'] = 1;
+			}
+		}
+
+
+		if ($params['byFullName']) {
+			$cmpResult = ($params['case'])
+			? strcmp($g2User->getfullName(), $emAppUser['fullname'])
+			: strcasecmp($g2User->getfullName(), $emAppUser['fullname']);
+			if ($cmpResult != 0) {
+				$conflicts['fullName'] = 1;
+			}
+		}
+
+		/* If everything is true, $conflicts will simply return an empty array. */
+		return $conflicts;
+	}
+
+	/**
+	 * Get the albumId from User.
+	 *
+	 * @param integer $uid
+	 * @return mixed integer or null if failed.
+	 */
+	function getUserAlbumId($uid){
+		/* first check init and plugin */
+		if(!core::isInitiated() || !core::isModuleActive('useralbum')){
+			return null;
+		}
+		/* check user */
+		$ret = GalleryEmbed::isExternalIdMapped($uid, 'GalleryUser');
+		if($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT){
+			/* user doesn't exist or isn't synced */
+			return null;
+		}
+		/* get the Gallery 2 user */
+		list($ret, $user) =
+		GalleryCoreApi::loadEntityByExternalId($uid, 'GalleryUser');
+		if($ret){
+			return null;
+		}
+		/* get useralbum itemId */
+		list ($ret, $albumId) =
+		GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $this->_user_profile->getId());
+		if ($ret) {
+			return null;
+		}
+		return $albumId;
+	}
+	
+	/**
+	 * Gets the useralbum url for given userid.
+	 *
+	 * @param integer Joomla userId
+	 * @return string or null
+	 */
+	function getUrlToUserAlbum($uid){
+		/* get album id */
+		$albumId = user::getUserAlbumId($uid);
+		if(!$albumId){
+			return null;
+		}
+		/* check permission */
+		list ($ret, $canSee) = GalleryCoreApi::hasItemPermission($albumId, 'core.view');
+		if ($ret) {
+			return null;
+		}
+		if($canSee){
+			global $gallery;
+			$urlGenerator = $gallery->getUrlGenerator();
+			$urlParams = array('view' => 'core.ShowItem', 'itemId' => $albumId);
+			return $urlGenerator->generateUrl($urlParams);
+		}
+		return null;
+	}
+	
+	/**
+	 * Get user Album image
+	 *
+	 * @param integer $uid
+	 * @return mixed integer or null if failed.
+	 */
+	function getUserAlbumImage($uid){
+		/* get album id */
+		$albumId = user::getUserAlbumId($uid);
+		if(!$albumId){
+			return null;
+		}
+		/* check permission */
+		list ($ret, $canSee) = GalleryCoreApi::hasItemPermission($albumId, 'core.view');
+		if ($ret) {
+			return null;
+		}
+		if($canSee){
+			global $gallery;
+			$urlGenerator = $gallery->getUrlGenerator();
+			/* fetch thumbnail */
+			list($ret, $thumb) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
+			if($ret){
+				return null;
+			}
+			if($thumb[$albumId]){
+				$urlParams = array('view' => 'core.DownloadItem', 'itemId' => $thumb[$albumId]->getId());
+				$url = $urlGenerator->generateUrl($urlParams);
+				return sprintf('<img src="%s" />', $url);
+			}
+		}
+		return null;
+	}
+}
+?>

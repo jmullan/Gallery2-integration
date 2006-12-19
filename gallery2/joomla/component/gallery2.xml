@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<mosinstall type="component" version="4.5">
+    <name>Gallery2</name>
+    <creationDate>4-Dec-2006</creationDate>
+    <author>Michiel Bijland</author>
+    <copyright>4 The Web</copyright>
+    <authorEmail>contact-g2bridge@4hteweb.nl</authorEmail>
+    <authorUrl>www.4theweb.nl</authorUrl>
+    <version>2.0.14 Beta</version>
+    <description>Component to Bridge Gallery 2.</description>
+    <files>
+    	<filename>index.html</filename>
+        <filename>gallery2.php</filename>
+        <filename>init.inc</filename>
+		<filename>version.php</filename>
+		<filename>classes/index.html</filename>
+		<filename>classes/g2stats.class</filename>
+		<filename>classes/core.class</filename>
+		<filename>classes/user.class</filename>
+		<filename>classes/group.class</filename>
+		<filename>classes/utility.class</filename>
+		<filename>classes/g2embeddiscoveryutilities.class</filename>
+		<filename>classes/g2bridge.jlconf.class</filename>
+    </files>
+    <installfile>
+        <filename>install.gallery2.php</filename>
+    </installfile>
+    <administration>
+    	<menu>Gallery 2</menu>
+    	<submenu>
+			<menu act="conf">Settings</menu>
+			<menu act="user">User Management</menu>
+			<menu act="help">About and Help</menu>
+	   	</submenu>
+        <files>
+        	<filename>index.html</filename>
+            <filename>admin.gallery2.php</filename>
+	    	<filename>admin.gallery2.html.php</filename>
+	    	<filename>admin.gallery2.css</filename>
+            <filename>toolbar.gallery2.php</filename>
+            <filename>toolbar.gallery2.html.php</filename>
+            <filename>language/index.html</filename>
+	    	<filename>language/english.php</filename>
+	    	<filename>help/index.html</filename>
+	    	<filename>help/screen.config.html</filename>
+	    	<filename>help/screen.user.html</filename>
+	    	<filename>help/screen.user.edit.html</filename>
+	    	<filename>help/screen.wizzard.html</filename>
+	    	<filename>help/css/index.html</filename>
+	    	<filename>help/css/help.css</filename>
+        </files>
+        <images>
+        	<filename>images/index.html</filename>
+        	<filename>images/4theweb.png</filename>
+        	<filename>images/g2bridge_logo.png</filename>
+        	<filename>images/logo-228x67.png</filename>
+        	<filename>images/logo44x44bg.png</filename>
+        </images>
+    </administration>
+</mosinstall>

@@ -1,0 +1,90 @@
+<?php
+/**
+ * Our Group API.
+ * 
+ * @package g2bridge
+ * @author Michiel Bijland
+ * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
+ * @version $Id$
+ */
+defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
+
+/**
+ * This class holds all group functions
+ *
+ * @package g2bridge
+ * @subpackage Classes
+ */
+class group {
+	
+	/**
+	 * Add a group to Gallery2
+	 *
+	 * @param integer $gid
+	 * @param string $name
+	 * @return object Gallery status object
+	 */
+	function newGroup($gid, $name){
+		$ignore = group::_getIgnoredGroups();
+		if(isset($ignore[$gid]) || isset($ignore[$name])){
+			return null;
+		}
+		/* utf8 */
+		$name = core::encoded($name);
+		/* link or add */
+		return GalleryEmbed::createGroup($gid, $name);
+	}
+	
+	/**
+	 * Remove a group from Gallery2
+	 *
+	 * @param integer $gid
+	 * @return object Gallery status object
+	 */
+	function removeGroup($gid){
+		$ignore = group::_getIgnoredGroups();
+		if(isset($ignore[$gid])){
+			return null;
+		}
+
+		return GalleryEmbed::deleteGroup($gid);
+	}
+	
+	/**
+	 * Update a group name
+	 *
+	 * @param integer $gid
+	 * @param string $newName
+	 * @return object Gallery status object
+	 */
+	function updateGroupName($gid, $newName){
+		$ignore = group::_getIgnoredGroups();
+		if(isset($ignore[$gid]) || isset($ignore[$newName])){
+			return null;
+		}
+		/* utf8 */
+		$newName = core::encoded($newName);
+		
+		return GalleryEmbed::updateGroup($gid, array('groupname' => $newName));
+	}
+	
+	/**
+	 * This holds the to be ignored User groups by name and id.
+	 *
+	 * @return array
+	 */
+	function _getIgnoredGroups(){
+		static $cache;
+		if(!isset($cache)){
+			/* Ignore the Nodes */
+			$cache = array('ROOT' => true, 17 => true, 'USERS' => true, 28 => true,
+						   'Public Frontend' => true, 29 => true, 'Public Backend' => true,
+						   30 => true);
+			/* Registered, every User is already in there and shouldn't be deleted */
+			$cache['Registered'] = true;
+			$cache[18] = true;
+		}
+		return $cache;
+	}
+}
+?>

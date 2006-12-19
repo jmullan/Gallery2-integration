@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall version="1.0.0" type="mambot" group="search">
+	<name>Gallery2 Bridge searchbot</name>
+	<author>Michiel Bijland</author>
+	<creationDate>6 Jan 2006</creationDate>
+	<copyright>(C) 2006 4 The Web. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>michiel@bijland.net</authorEmail>
+	<authorUrl>opebsource.4theweb.nl</authorUrl>
+	<version>1.0.0</version>
+	<description>Allows Searching of Gallery2 Bridge</description>
+	<files>
+		<filename mambot="gallery2.searchbot">gallery2.searchbot.php</filename>
+	</files>
+	<params>
+		<param name="search_limit" type="text" size="5" default="50" label="Search Limit" description="Nmber of Search items to return"/>		
+	</params>
+</mosinstall>

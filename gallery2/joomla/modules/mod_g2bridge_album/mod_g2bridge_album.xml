@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall type="module" version="4.5.2">
+	<name>Gallery 2 album block</name>
+	<author>Michiel Bijland</author>
+	<creationDate>17-11-2006</creationDate>
+	<copyright>6 The Web</copyright>
+	<license>This module is released under the GNU/GPL License</license>
+	<authorEmail></authorEmail>
+	<authorUrl>http://www.4theweb.nl</authorUrl>
+	<version>2.0</version>
+	<description>This module displays a album picture from Gallery 2. </description>
+	<files>
+		<filename module="mod_g2bridge_album">mod_g2bridge_album.php</filename>
+	</files>
+	<params>
+		<param name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="A suffix to be applied to the css class of the module (element.moduletable), this allows individual module styling" />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="cache" type="radio" default="0" label="Enable Cache" description="Select whether to cache the content of this module">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="count" type="text" size="3" label="How many" description="how many pictures to show"/>
+		<param name="align" type="list" default="center" label="Alignment" description="Should it be left, right or in the middle.">
+			<option value="left">left</option>
+			<option value="center">center</option>
+			<option value="right">right</option>
+		</param>
+		<param name="block" type="list" default="randomAlbum" label="Block type" description="What kind of picture you want to show.">
+			<option value="recentAlbum">last Added Album</option>
+			<option value="viewedAlbum">Most Viewed Album</option>
+			<option value="randomAlbum">Random Album</option>
+			<option value="dailyAlbum">Daily Album</option>
+			<option value="weeklyAlbum">Weekly Album</option>
+			<option value="monthlyAlbum">Monthly Album</option>
+		</param>
+		<param name="header" type="radio" default="1" label="Show Header">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+		<param name="title" type="radio" default="1" label="Show title">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+		<param name="date" type="radio" default="1" label="Show date">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+		<param name="views" type="radio" default="1" label="Show views">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+		<param name="owner" type="radio" default="1" label="Show owner">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+		<param name="itemId" type="text" size="3" label="itemId" description="Limit the item selection to the subtree of the gallery under the album with the given id.">
+		</param>
+		<param name="maxSize" type="text" size="3" label="Maximum Size" description="Scale images to this maximum size">
+		</param>
+		<param name="link_target" type="list" label="Link target" description=" Add a link target (for example, to open links in a new browser window)">
+			<option value="_self">self</option>
+			<option value="_blank">blank</option>
+		</param>
+		<param name="frame" type="list" label="album frame" description="Select Album frame to use">
+			<option value="none">none</option>
+			<option label="Solid" value="solid">Solid</option>
+			<option label="Book" value="book">Book</option>
+			<option label="Dots" value="dots">Dots</option>
+			<option label="Gold" value="gold">Gold</option>
+			<option label="Wood" value="wood">Wood</option>
+			<option label="Spiral Notebook" value="notebook">Spiral Notebook</option>
+			<option label="Branded Wood" value="brand">Branded Wood</option>
+			<option label="Gold 2" value="gold2">Gold 2</option>
+			<option label="Shells" value="shell">Shells</option>
+			<option label="Slide" value="slide">Slide</option>
+			<option label="Polaroid" value="polaroid">Polaroid</option>
+			<option label="Polaroids" value="polaroids">Polaroids</option>
+			<option label="Bamboo" value="bamboo">Bamboo</option>
+			<option label="Shadow" value="shadow">Shadow</option>
+		</param>
+		<param name="strip_anchor" type="radio" default="0" label="Remove link to image">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+	</params>
+</mosinstall>

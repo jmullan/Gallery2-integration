@@ -1,0 +1,110 @@
+<?php 
+defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
+/**
+ * Utility class file
+ *
+ * @package g2bridge
+ * @author Michiel Bijland
+ * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
+ * @version $Id$
+ */
+
+/**
+ * This class contains some usefull functions
+ *
+ * @package g2bridge
+ * @subpackage Classes
+ */
+class utility {
+
+	/**
+	 * Will confert a Gallery2 date to a Joomla date
+	 *
+	 * @param integer $date
+	 * @param string $format
+	 * @return string
+	 */
+	function formatDate($date, $format=''){
+		$date = date("Y-m-d H:i:s", $date);
+		return empty($format) ? mosFormatDate($date) : mosFormatDate($date, $format);
+	}
+	
+	/**
+	 * Will return component version
+	 *
+	 * @return string component version
+	 */
+	function getVersion(){
+		core::relativeRequireOnce( 'version.php' );
+		$version = new g2BridgeVersion();
+		return $version->getShortVersion();
+	}
+	
+	/**
+	 * Will return the gallery2 core version number
+	 *
+	 * @return string Gallery2 core number
+	 */
+	function getGalleryVersion(){
+		if(!core::isInitiated()){
+			core::init(true,false);
+		}
+		list ($ret, $version) = GalleryCoreApi::getPluginParameter('module', 'core', '_version');
+		if ($ret){ 
+			return array($ret, null);
+		}
+		return array(null, $version);
+	}
+     
+     /**
+      * Get all array keys, recursive
+      *
+      * @param array $array
+      * @return array
+      */
+     function arrayKeysRecursive($array){
+     	$keys = array();
+     	foreach($array as $key => $val){
+     		$keys[] = $key;
+     		if(is_array($val) && !empty($val)){
+     			$keys = array_merge($keys, utility::arrayKeysRecursive($val));	
+     		}	
+     	}
+     	return $keys;	
+     }
+     
+     	/**
+	 * Retrieves the corresponding Joomla Id from a user or group
+	 *
+	 * @param integer $uid
+	 * @return array object gallery status, integer
+	 */
+	function getJoomlaId($id){
+		if(!core::isInitiated()){
+			core::init(true,false);
+		}
+		list($ret, $map) = GalleryEmbed::getExternalIdMap('entityId');
+		if ($ret){ 
+			return array($ret, null);
+		}
+		return array(null, $map[$id]['externalId']);
+	}
+	
+	/**
+	 * Gets the Gallery Id from a user or group
+	 *
+	 * @param integer $id
+	 * @return array object gallery status, integer
+	 */
+	function getGalleryId($id){
+		if(!core::isInitiated()){
+			core::init(true,false);
+		}
+		list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($extUserId, 'GalleryUser');
+		if ($ret) {
+		    return array($ret, null);
+		}
+		return array(null, $user->getId());
+	}
+}
+?>

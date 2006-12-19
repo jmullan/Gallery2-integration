@@ -1,0 +1,145 @@
+<?php
+/**
+ * Enter description here...
+ * 
+ * @package g2bridge
+ * @subpackage core
+ * @author Michiel Bijland
+ * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
+ * @version $Id$
+ */
+
+JLCoreApi::import('jlconf');
+JLCoreApi::import('jllog');
+/**
+ * JoomlaLib Configuration class.
+ * 
+ * @package g2bridge
+ * @subpackage JLConf
+ */
+class g2bridgeJLConf {
+	/** @var JLConf */
+	var $_jlConf = null;
+	/** @var JLConfSerializerDatabase */
+	var $_dbSerializer = null;
+	/** @var JLConfSerializerHTMLAdminForm */
+	var $_formSerializer = null;
+	/** @var string */
+	var $_appHandle = '';
+	/** @var string */
+	var $_varName = '';
+	
+	/** @var boolean */
+	var $_setValuesToDefaultOnFail = false;
+	
+	/**
+	 * Constructor. Parameters are standard Joomla variables
+	 */
+	function g2bridgeJLConf(){	
+		global $option, $act, $task;
+		$this->_appHandle = 'g2bridge';
+		$this->_varName   = 'G2B';
+		
+		$this->createStructure();
+		$this->_dbSerializer = new JLConfSerializerDatabase();
+		$this->_formSerializer = new JLConfSerializerHTMLAdminForm($this->_appHandle, $option, $act, $task);
+	}
+	
+	/**
+	 * Create the configuration structure for JoomlaLib. Define config parameters here
+	 *
+	 *
+	 * @return boolean true if OK. False if failed for some reason
+	 */
+	function createStructure()
+	{
+		$this->_jlConf = new JLConf($this->_appHandle);
+		
+		$sectionHandle = 'core';
+		$this->_jlConf->addSection($sectionHandle, 'Core');
+		$this->_jlConf->addParam('path',  $sectionHandle, new JLConfString('Run Wizzard','Run Wizzard',3,255), 'Gallery 2 Path', 'Prefered way of adjusting this value is using the wizard.(Only none fsockopen capable servers should use direct editing.)');
+		$this->_jlConf->addParam('url',   $sectionHandle, new JLConfString('Run Wizzard','Run Wizzard',3,255), 'Gallery 2 Url',  'Prefered way of adjusting this value is using the wizard.(Only none fsockopen capable servers should use direct editing.)');
+		//$this->_jlConf->addParam('hash',  $sectionHandle, new JLConfStringReadOnly('Run Wizzard','Run Wizzard'), 'Hash', 'Ignore');
+		$this->_jlConf->addParam('login', $sectionHandle, new JLConfString('/index.php?option=com_login','/index.php?option=com_login',1,255), 'Login URL', 'Login URL to redirect too if login is required.');
+
+		$sectionHandle = 'user';
+		$this->_jlConf->addSection($sectionHandle, 'User');
+		$this->_jlConf->addParam('mirror',   $sectionHandle, new JLConfYesNo(1,1), 'Mirror Users', 'Joomla userbase will be mirrored to Gallery 2.');
+		$userOpt = array();
+	    $userOpt[0] = 'username';
+	    $userOpt[1] = 'email';
+	    $userOpt[2] = 'password';
+	    $userOpt[3] = 'fullname';
+	    $this->_jlConf->addParam('check', $sectionHandle, new JLConfEnumInteger(1, 1, $userOpt), 'User compare level', 'Please read documentation for this before changing this.');
+		$this->_jlConf->addParam('caseSensitive',   $sectionHandle, new JLConfYesNo(0,0), 'Case Sensitive', '');
+		
+		$sectionHandle = 'display';
+		$this->_jlConf->addSection($sectionHandle, 'Display');
+		$this->_jlConf->addParam('login',   $sectionHandle, new JLConfYesNo(0,0), 'Display Login', 'This only removes the login url from Gallery not the registration link.');
+		$this->_jlConf->addParam('sidebar', $sectionHandle, new JLConfYesNo(1,1), 'Display Sidebar', 'This must be set to yes if you want to use Sidebar Module.');
+		$this->_jlConf->addParam('utf8',    $sectionHandle, new JLConfYesNo(0,0), 'utf-8', 'Should we utf-8 decode/encode');
+		
+		/* finished */
+    	return true;
+	}
+	
+	/**
+	 * Loads the the configuration values from the database. 
+	 *
+	 * @return boolean True if loading from the database went ok. False if it failed.
+	 */
+	function loadFromDB() 
+	{
+		$result = $this->_dbSerializer->load($this->_appHandle, $this->_jlConf, $this->_setValuesToDefaultOnFail);
+		if (!is_array($result)) {
+			return true;
+		}
+		
+		foreach ($result as $errStr) {
+			echo "<font color=\"red\">$errStr</font><br />\n";
+			$this->_jllog->l(10, "jlCfg->loadFromDb(): %s", $errStr);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Loads the configuration values from posted form values
+	 *
+	 * @return boolean True if loading from the from went ok. False if it failed.
+	 */
+	function loadFromForm()
+	{
+		$result = $this->_formSerializer->load($this->_appHandle, $this->_jlConf, $this->_setValuesToDefaultOnFail);
+		
+		if (!is_array($result)) {
+			return true;
+		}
+		
+		foreach ($result as $errStr) {
+			echo "<font color=\"red\">$errStr</font><br />\n";
+			$this->_jllog->l(10, "jlCfg->loadFromForm(): %s", $errStr);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Display the administration form used for saving values 
+	 *
+	 * @return boolean True if showing the form went ok. False if not
+	 */
+	function showAdminForm() {
+		return $this->_jlConf->write($this->_formSerializer);
+	}
+	
+	/**
+	 * Save the configuration to the database.
+	 * 
+	 * @return boolean true if OK. False if failed
+	 */
+	function saveConfiguration() {	
+		return $this->_jlConf->write($this->_dbSerializer);
+	}
+}
+?>

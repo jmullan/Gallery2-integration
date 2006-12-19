@@ -1,0 +1,156 @@
+<?php
+class g2stats{
+		/**
+	 * Get's the total item count of gallery2
+	 *
+	 * @param integer, should be viewing gallery2 user else defaults to admin acess
+	 * @return intger
+	 */
+	function getTotal($userId = 6){
+		global $gallery;
+		$aclIds = core::getAclIds(array('core.view'), $userId);
+
+		if (empty($aclIds)) {
+		    return 0;
+		}
+		$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+	
+	        $query = sprintf('
+	        SELECT
+	          COUNT([GalleryItem::id])
+	        FROM
+		  	  [GalleryItem], [GalleryAccessSubscriberMap]
+			WHERE
+	          [GalleryAccessSubscriberMap::itemId] = [GalleryItem::id]
+	          AND
+	          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+		', $aclMarkers);
+	
+		list ($ret, $searchResults) = $gallery->search($query, $aclIds);
+	        if ($ret->isError()) {
+	            return array($ret->wrap(__FILE__, __LINE__), null);
+	        }
+	
+		$result = $searchResults->nextResult();
+	        $numItems = (int)$result[0];
+	        return $numItems;
+		}
+		
+	/**
+	 * Get's the album count of gallery2
+	 *
+	 * @param integer, should be viewing gallery2 user else defaults to admin acess
+	 * @return intger
+	 */
+	function getAlbums($userId = 6){
+		global $gallery;
+		$aclIds = core::getAclIds(array('core.view'), $userId);
+
+		if (empty($aclIds)) {
+		    return 0;
+		}
+		$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+	
+	        $query = sprintf('
+	        SELECT
+	          COUNT([GalleryItem::id])
+	        FROM
+		  	  [GalleryItem], [GalleryAccessSubscriberMap]
+			WHERE
+	          [GalleryAccessSubscriberMap::itemId] = [GalleryItem::id]
+	          AND
+	          [GalleryItem::canContainChildren] = 1
+	          AND
+	          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+		', $aclMarkers);
+	
+		list ($ret, $searchResults) = $gallery->search($query, $aclIds);
+	        if ($ret->isError()) {
+	            return array($ret->wrap(__FILE__, __LINE__), null);
+	        }
+	
+		$result = $searchResults->nextResult();
+	        $numItems = (int)$result[0];
+	        return $numItems;
+		}
+		
+	/**
+	 * Get's the Photo count of gallery2
+	 *
+	 * @param integer, should be viewing gallery2 user else defaults to admin acess
+	 * @return intger
+	 */
+	function getPhotos($userId = 6){
+		global $gallery;
+		$aclIds = core::getAclIds(array('core.view'), $userId);
+
+		if (empty($aclIds)) {
+		    return 0;
+		}
+		$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+	
+	        $query = sprintf('
+	        SELECT
+	          COUNT([GalleryDataItem::id])
+	        FROM
+		  	  [GalleryAccessSubscriberMap], [GalleryDataItem]
+			WHERE
+	          [GalleryAccessSubscriberMap::itemId] = [GalleryDataItem::id]
+	          AND
+	          [GalleryDataItem::mimeType] LIKE ?
+	          AND
+	          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+		',$aclMarkers);
+		
+	    $data = array();
+	    	$data[] = 'image%';
+	    $data = array_merge($data, $aclIds);
+	   
+		list ($ret, $searchResults) = $gallery->search($query, $data);
+	        if ($ret->isError()) {
+	            return array($ret->wrap(__FILE__, __LINE__), null);
+	        }
+		
+		$result = $searchResults->nextResult();
+	        $numItems = (int)$result[0];
+	        return $numItems;
+		}
+		
+	/**
+	 * Get's the Comment count of gallery2
+	 *
+	 * @param integer, should be viewing gallery2 user else defaults to admin acess
+	 * @return intger
+	 */
+	function getComments($userId = 6){
+		global $gallery;
+		$aclIds = core::getAclIds(array('core.view', 'comment.view'), $userId);
+
+		if (empty($aclIds)) {
+		    return 0;
+		}
+		$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+		$countQuery = sprintf('
+		SELECT
+		  COUNT([GalleryChildEntity::id])
+		FROM
+		  [GalleryChildEntity], [GalleryComment], [GalleryAccessSubscriberMap]
+		WHERE
+		  [GalleryChildEntity::id] = [GalleryComment::id]
+		  AND
+	          [GalleryChildEntity::parentId] = [GalleryAccessSubscriberMap::itemId]
+	          AND
+	          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	        ', $aclMarkers);
+		
+	    
+	list ($ret, $results) = $gallery->search($countQuery, $aclIds);
+	if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$result = $results->nextResult();
+	$numRows = (int)$result[0];
+		 return $numRows;
+	}		
+}
+?>

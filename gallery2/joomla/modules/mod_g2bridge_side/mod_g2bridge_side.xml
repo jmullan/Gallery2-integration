@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall type="module" version="4.5.2">
+	<name>Gallery2 Sidebar module</name>
+	<author>Michiel Bijland</author>
+	<creationDate>17-11-2006</creationDate>
+	<copyright>6 The Web</copyright>
+	<license>This module is released under the GNU/GPL License</license>
+	<authorEmail></authorEmail>
+	<authorUrl>http://www.4theweb.nl</authorUrl>
+	<version>2.6</version>
+	<description>This module displays the Gallery 2 sidebar in a module position.</description>
+	<files>
+		<filename module="mod_g2bridge_side">mod_g2bridge_side.php</filename>
+	</files>
+	<params>
+		<param name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="A suffix to be applied to the css class of the module (element.moduletable), this allows individual module styling" />
+	</params>
+</mosinstall>

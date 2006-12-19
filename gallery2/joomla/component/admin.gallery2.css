@@ -1,0 +1,61 @@
+/**
+ * Administrator css
+ */
+table.adminheading th.g2bridge {
+	background: url(images/logo44x44bg.png) no-repeat left;
+}
+
+/**
+ * Progressbar css
+ */
+ #gallery h2, #gallery h3, #gallery h4, #gallery form {
+    margin: 0;
+    padding: 0;
+}
+
+#gallery p {
+    margin: 0.6em 0;
+    padding: 0;
+}
+
+.gbBlock {
+    padding: 0.7em;
+    border-width: 0 0 1px 0;
+    border-style: inherit;
+    border-color: inherit;
+    /* IE can't inherit these */
+    border-style: expression(parentElement.currentStyle.borderStyle);
+    border-color: expression(parentElement.currentStyle.borderColor);
+}
+
+.gbBlock ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.gbBlock ul ul {
+    margin: 0 0 0.5em 1.0em;
+}
+
+.gbBlock li {
+    padding: 6px 0 0 0;
+}
+
+#gallery .gbBlock h3 {
+    margin-bottom: 0.5em;
+}
+
+#gallery .gbBlock h4 {
+    margin-top: 0.5em;
+}
+
+#ProgressBar #progressDone {
+    background-color: #fd6704;
+    border: thin solid #ddd;
+}
+
+#ProgressBar #progressToGo {
+    background-color: #eee;
+    border: thin solid #ddd;
+}

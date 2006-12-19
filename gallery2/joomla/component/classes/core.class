@@ -1,0 +1,509 @@
+<?php
+/**
+ * Our Core API.
+ * 
+ * @package g2bridge
+ * @author Michiel Bijland
+ * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
+ * @version $Id$
+ */
+defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
+
+/**
+ * This is the core class for com_gallery2 component.
+ *
+ * @author Michiel Bijland
+ * @package g2bridge
+ * @subpackage Classes
+ */
+class core {
+	/**
+	 * Check if we are configured
+	 *
+	 * @param none [$newValue]
+	 * @return boolean
+	 */
+	function isConfigured($newValue = null){
+		static $isConfigured;
+		if (!isset($isConfigured)) {
+			$isConfigured = false;
+		}
+		if (isset($newValue) && (is_bool($newValue) || is_int($newValue))) {
+			$isConfigured = $newValue;
+		}
+		return $isConfigured;
+	}
+	
+	/**
+	 * Check if we are initiated.
+	 *
+	 * @param none [$newValue]
+	 * @return boolean
+	 */
+	function isInitiated($newValue = null){
+		static $initiated;
+		if (!isset($initiated)) {
+			$initiated = false;
+		}
+		if (isset($newValue) && (is_bool($newValue) || is_int($newValue))) {
+			$initiated = $newValue;
+		}
+		return $initiated;
+	}
+	
+	/**
+     * Get the static cache
+     *
+     * @return array the cache
+     * @staticvar cache the singleton cache
+     * @access private
+     */
+    function &_getCache() {
+		static $cache;
+		if (!isset($cache)) {
+			$cache = array();
+		}
+		return $cache;
+    }
+	
+	/**
+	 * Get a param from the database.
+	 *
+	 * @param string $section
+	 * @param string $handle
+	 * @param boolean $ignoreCache
+	 * @return string
+	 */
+	function getParam($section, $handle, $ignoreCache = false){
+		global $database;
+		
+		/* this cache should be replaced by JLCache or JLConf should provide caching. */
+		$cache =& core::_getCache();
+		
+		/* get appId */
+		if(!isset($cache['appId'])){
+			JLCoreApi::import('jlapp');
+			$cache['appId'] = JLApp::getId('g2bridge');
+		}
+		$appId = $cache['appId'];
+		
+		/* this should load a complete section into the cache for now 1 on 1 */
+		if($ignoreCache || !isset($cache[$section][$handle])){
+			/* load from database */
+			$query =   "SELECT param, value FROM #__jl_conf WHERE appid='$appId'";
+			$database->setQuery($query);
+			$rows = $database->loadRowList();
+			if($rows){
+				foreach($rows as $row){
+					/* split on unserilize or not */
+					if($value = @unserialize($row[1])){
+						$cache[$section][$row[0]] = $value;
+					} else {
+						$cache[$section][$row[0]] = $row[1];	
+					}
+				}
+			} else {
+				$cache[$section][$handle] = null;
+			}
+		}
+		return $cache[$section][$handle];
+	}
+	
+	/**
+	 * Store a Param into the database.
+	 *
+	 * @param string $section
+	 * @param string $handle
+	 * @param mixed $value
+	 * @param boolean optional should be replaced when we use JLConf
+	 */
+	function setParam($section, $handle, $value, $toDatabase = true){
+		global $database;
+
+		/* this cache should be replaced by JLCache or JLConf should provide caching. */
+		$cache =& core::_getCache();
+		
+		/* get appId */
+		if(!isset($cache['appId'])){
+			JLCoreApi::import('jlapp');
+			$cache['appId'] = JLApp::getId('g2bridge');
+		}
+		$appId = $cache['appId'];		
+
+		/* set cache */
+		$cache[$section][$handle] = $value;
+		
+		/* Store into DB */
+		if($toDatabase){
+			$query = "UPDATE #__jl_conf SET value='$value'
+			          WHERE appid='$appId' AND section='$section' AND param='$handle'";
+			$database->setQuery( $query );
+			return $database->query();
+		}
+	}
+
+	/**
+	 * Backwards compatible method
+	 *
+	 * @param boolean $fullInit
+	 * @return null or object gallery status object
+	 */
+	function initiatedG2($fullInit=true){
+		if(core::isInitiated()){
+			return true;
+		}
+		if(!core::isConfigured()){
+			return false;
+		}
+		return core::init(false,(core::getParam('user', 'mirror') == 1));
+	}
+	
+	/**
+	 * Will start a Gallery2 session, use param false if handel_request is called.
+	 *
+	 * @param boolean $fullInit
+	 * @param boolean $initAsUser
+	 * @return boolean
+	 */
+	function init($fullInit = true, $initAsUser = false){
+		global $my;
+		/* check if we already initiated */
+		if(core::isInitiated()){
+			return true;
+		}
+		/* check if we are configured */
+		if(!core::isConfigured()){
+			return false;
+		}
+		/* include embed.php */
+		$g2Path = core::getParam('core','path');
+		require_once($g2Path);
+		
+		/* get activeUserId */
+		if($initAsUser){
+			$userId = ($my->id > 0 ) ? $my->id : null;	
+		} else {
+			$userId = null;
+		}
+		/* get active language */
+		$activeLanguage = core::getJoomlaLanguage();
+		
+		/* init Gallery 2 with current params */
+		$initParams = array();
+		$initParams['g2Uri'] 		 	= core::getParam('core','url');
+		$initParams['embedUri'] 		= core::getParam('core','embedUri');
+		$initParams['loginRedirect'] 	= core::getParam('core','login');
+		$initParams['activeUserId']  	= $userId;
+		$initParams['fullInit']  	 	= $fullInit;
+		$initParams['activeLanguage']	= $activeLanguage;
+		$initParams['apiVersion']  		= array(1,0);
+		/*
+		$initParams['embedSessionString']  = null;
+		$initParams['gallerySessionId']    = null;
+		*/
+		
+		$ret = GalleryEmbed::init($initParams);
+		if($ret){
+			/* error check if user exists?*/
+			$retMap = GalleryEmbed::isExternalIdMapped($userId, 'GalleryUser');
+			if($retMap && $retMap->getErrorCode() & ERROR_MISSING_OBJECT){
+				/* the user didn't exist create it now */
+				core::classRequireOnce('user');
+				
+				$my->load($userId);
+				
+				$joomlaUser = array('username' => $my->username, 'email' => $my->email,
+									'fullname' => $my->name, 'hashedpassword' => $my->password,
+									'hashmethod' => 'md5');
+				$ret = user::newUser($my->id, $joomlaUser);
+				if($ret){
+					if($ret->getErrorCode() & ERROR_COLLISION){
+						/* collision */
+						list ($ret, $galleryUser) = 
+						GalleryCoreApi::fetchUserByUserName($my->username);
+						if($ret){
+							if($ret->getErrorCode() & ERROR_MISSING_OBJECT){
+								/* no user just a corrupt mapping */
+								$data = array('externalId' => $my->id, 'entityType' => 'GalleryUser');
+								GalleryCoreApi::removeMapEntry('ExternalIdMap', $data);
+								$ret = user::newUser($my->id, $joomlaUser);
+								if($ret){
+									print "An error occurred during user creation <br>";
+							        print $ret->getAsHtml();
+							        exit;	
+								}
+							} else {
+								/* real error */
+								print "An error occurred trying to fetch a Gallery 2 username <br>";
+							    print $ret->getAsHtml();
+							    exit;	
+							}
+						} else {
+							/* compare user and link if it's safe */
+							core::classRequireOnce('user');
+							$ret = user::compareUsers($galleryUser, $joomlaUser);
+							if(count($ret) > 0){
+								/* not Safe error out */
+								print 'User Collision error, the same username is already in use and'
+									 .' cannot be linked together with the current settings.';
+								exit;
+							} else {
+								/* save to link up */
+								$ret = GalleryEmbed::addExternalIdMapEntry($my->id, $galleryUser->getId(), 
+																	'GalleryUser');
+								if($ret){
+									print "An error occurred during mapping of 2 users <br>";
+							        print $ret->getAsHtml();
+							        exit;
+								}
+							}
+						}
+					} else {
+						/* user error during creation */
+						print "An error occurred during the on-the-fly user creation <br>";
+				        print $ret->getAsHtml();
+				        exit;
+					}
+				}
+				
+				/* checkActiveUser after syncing or mapping */
+				GalleryEmbed::checkActiveUser($my->id);
+			} else {
+				 /* The error we got wasn't due to a missing user, it was a real error */
+		         if ($retMap) {
+		             print "An error occurred while checking if a user already exists<br>";
+		             print $retMap->getAsHtml();
+		         }
+		         print "An error occurred while trying to initialize G2<br>";
+		         print $ret->getAsHtml();
+		         exit;
+			}
+		} elseif($my->id > 0 ) {
+			/* user is good, update his credentials 5% of the time */
+			if(rand(0,100) <= 5){				
+				core::classRequireOnce('user');
+				$my->load($userId);
+				/* we do full update for now */
+				$joomlaUser = array('username' => $my->username, 'email' => $my->email,
+									'fullname' => $my->name, 'hashedpassword' => $my->password,
+									'hashmethod' => 'md5');
+				$ret = user::updateUser($userId,$joomlaUser);
+				if($ret){
+					print "An error occurred while trying to update your credentials <br>";
+		         	print $ret->getAsHtml();
+		         	exit;
+				}
+			}
+		}
+		
+		/* we made it, set isInitiated and return true */
+		return core::isInitiated(true);	
+	}
+
+	/**
+	 * Will switch language to mambo language or mambelfish
+	 *
+	 * @return string iso code of language
+	 */
+	function getJoomlaLanguage(){
+		global $iso_client_lang, $mosConfig_locale;
+		if(!empty($iso_client_lang)){
+			return $iso_client_lang;
+		}
+		return $mosConfig_locale;
+	}
+
+	/**
+	 * Parse head meta data
+	 *
+	 * @param string $headHtml
+	 */
+	function parseHead($headHtml){
+		global $mainframe;
+		
+		list ($title , $css, $js) = GalleryEmbed::parseHead($headHtml);
+		
+		$mainframe->setPageTitle($title);
+	
+		foreach($css as $cssFile){
+			$mainframe->addCustomHeadTag( $cssFile );
+		}
+
+		foreach($js as $javascript){
+			$mainframe->addCustomHeadTag( $javascript );
+		}
+	}
+
+	/**
+     * Require a file, but only once.
+     *
+     * @param the file name
+     */
+	function requireOnce($file) {
+		static $loaded;
+		if (!isset($loaded[$file])) {
+			require_once($file);
+			$loaded[$file] = 1;
+		}
+	}
+
+	/**
+     * Like requireOnce, but use a path relative from the com_gallery2 directory.
+     *
+     * @param the file name
+     */
+	function relativeRequireOnce($file) {
+		core::requireOnce(dirname(__FILE__) . '/../' . $file);
+	}
+
+	/**
+     * Like requireOnce, but includes class file.
+     *
+     * @param the file name
+     */
+	function classRequireOnce($file) {
+		$file = strtolower($file);
+		core::requireOnce(dirname(__FILE__) . '/'.$file.'.class');
+	}
+
+	/**
+	 * Populates the parents into the Joomla! pathway.
+	 *
+	 * @return mixed, null on succes and status object on failure.
+	 */
+	function setPathway(){
+		global $mainframe, $gallery;
+
+		$urlGenerator = $gallery->getUrlGenerator();
+
+		$itemId = (int) GalleryUtilities::getRequestVariables('itemId');
+		$userId = $gallery->getActiveUserId();
+
+		/* fetch parent sequence for current itemId or Root */
+		if ($itemId) {
+			list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+			if ($ret) {
+				return $ret;
+			}
+		} else {
+			list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
+			if ($ret) {
+				return $ret;
+			}
+			$parentSequence = array($rootId);
+		}
+
+		/* Add current item at the end */
+		$parentSequence[] = $itemId;
+		/* shift first parent off, as Joomla adds menu name already.*/
+		array_shift($parentSequence); 
+
+		/* study permissions */
+		if(sizeof($parentSequence) > 0 && $parentSequence[0] != 0){
+			$ret = GalleryCoreApi::studyPermissions($parentSequence);
+			if ($ret) {
+				return $ret;
+			}
+					
+			/* load the Entities */
+			list ($ret, $list) = GalleryCoreApi::loadEntitiesById($parentSequence);
+			if ($ret) {
+				return $ret;
+			}
+			foreach ($list as $it) {
+				$entities[$it->getId()] = $it;
+			}
+		}
+
+		/* check permissions and push */
+		$i = 1;
+		$limit = count($parentSequence);
+		foreach ($parentSequence as $id) {
+			list ($ret, $canSee) =
+			GalleryCoreApi::hasItemPermission($id, 'core.view', $userId);
+			if ($ret) {
+				return $ret;
+			}
+			if ($canSee) {
+				/* push them into pathway */
+				$urlParams = array('view' => 'core.ShowItem', 'itemId' => $id);
+
+				$title = $entities[$id]->getTitle()
+					   ? $entities[$id]->getTitle() : $entities[$id]->getPathComponent();
+				$title = preg_replace('/\r\n/', ' ', $title);
+				$title = core::decoded($title,true);
+	
+				$url = $urlGenerator->generateUrl($urlParams);
+				if($i < $limit) {
+					$mainframe->AppendPathway(' <a href="'.$url.'" class="pathway">'.$title.'</a>');
+				} else {
+					$mainframe->AppendPathway(' '.$title);
+					/* description */
+					$description = core::decoded($entities[$id]->getSummary(),true,true);
+					$mainframe->appendMetaTag( 'description', $description);
+					/* keywords */
+					$keywords = core::decoded($entities[$id]->getKeywords(),true,true);
+					$mainframe->appendMetaTag( 'keywords', $keywords);
+				}
+			}
+			$i++;
+		}
+		return null;
+	}
+	
+	/**
+	 * Complete Gallery 2 transaction
+	 *
+	 * @return object Gallery status object.
+	 */
+	function done(){
+		if(!core::isInitiated()){
+			return null;
+		}
+		return GalleryEmbed::done();
+	}
+	
+	function encoded($text){
+		/* now encode utf8 if needed */
+		if(core::getParam('display','utf8') == 0){
+			$text = utf8_encode($text);
+		}
+		return $text;
+	}
+	
+	function decoded($text, $bbCode = false, $stripTags = false){
+		if($bbCode || $stripTags){
+			GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
+			$text = ($stripTags) ? smarty_modifier_markup($text, 'strip') 
+								 : smarty_modifier_markup($text);
+		}
+
+		/* now decode utf8 if needed */
+		if(core::getParam('display','utf8') == 0){
+			$text = utf8_decode($text);
+		}
+		return $text;
+	}
+	
+	/**
+	 * Check if we can use a module
+	 *
+	 * @param string moduleId (imageblock, search, albumselect, comment, etc)
+	 * @param boolean ignore cache
+	 * @return boolean
+	 */
+	function isModuleActive($moduleId, $ignoreCache=false){
+		if (!core::isInitiated()) {
+			return false;
+		}
+		list($ret, $pluginList) = GalleryCoreApi::fetchPluginStatus('module', $ignoreCache);
+		if($ret){
+			/* error */
+		}
+		if(!isset($pluginList[$moduleId]) || $pluginList[$moduleId]['active'] != 1){
+			false;
+		}
+		return true;
+	}
+}
+?>
