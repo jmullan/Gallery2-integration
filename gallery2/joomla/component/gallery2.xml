@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <mosinstall type="component" version="4.5">
     <name>Gallery2</name>
-    <creationDate>4-Dec-2006</creationDate>
+    <creationDate>2-Jan-2006</creationDate>
     <author>Michiel Bijland</author>
     <copyright>4 The Web</copyright>
-    <authorEmail>contact-g2bridge@4hteweb.nl</authorEmail>
-    <authorUrl>www.4theweb.nl</authorUrl>
-    <version>2.0.14 Beta</version>
+    <authorEmail></authorEmail>
+    <authorUrl>http://www.4theweb.nl/</authorUrl>
+    <version>2.0.14</version>
     <description>Component to Bridge Gallery 2.</description>
     <files>
     	<filename>index.html</filename>
@@ -48,6 +48,7 @@
 	    	<filename>help/screen.wizzard.html</filename>
 	    	<filename>help/css/index.html</filename>
 	    	<filename>help/css/help.css</filename>
+	    	<filename>LICENSE</filename>
         </files>
         <images>
         	<filename>images/index.html</filename>

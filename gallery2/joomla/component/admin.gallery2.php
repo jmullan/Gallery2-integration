@@ -4,10 +4,12 @@
  * 
  * @package g2bridge
  * @subpackage core
- * @author Michiel Bijland
- * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
- * @version $Id$
+ * @version $Revision$
+ * @copyright Copyright (C) 2005 - 2007 4 The Web. All rights reserved.
+ * @license GNU General Public License either version 2 of the License, or (at
+ * your option) any later version.
  */
+
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
 /* check access */
@@ -411,7 +413,7 @@ function sync($option, $act) {
 	$jUserById = $jUserByUsername = array();
 
 	$i = 0;
-	$total = $database->getNumRows();
+	$total = count($joomlaUsers);
 	$increment = min(100, $total * 0.10);
 	$title = "Preprocessing Joomla Users.";
 

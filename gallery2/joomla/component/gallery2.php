@@ -4,9 +4,10 @@
  * 
  * @package g2bridge
  * @subpackage core
- * @author Michiel Bijland
- * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
- * @version $Id$
+ * @version $Revision$
+ * @copyright Copyright (C) 2005 - 2007 4 The Web. All rights reserved.
+ * @license GNU General Public License either version 2 of the License, or (at
+ * your option) any later version.
  */
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );	
 
@@ -59,7 +60,7 @@ if($ret){
 }
 
 /* Save sidebar in global so we can call it in the module */
-$GLOBALS['g2sidebar'] = $g2moddata['sidebarBlocksHtml'];
+$GLOBALS['g2sidebar'] = isset($g2moddata['sidebarBlocksHtml']) ? $g2moddata['sidebarBlocksHtml'] : null;
 
 /* Print gallery content */
 print core::decoded($g2moddata['bodyHtml']);
@@ -68,5 +69,5 @@ print core::decoded($g2moddata['bodyHtml']);
  * @todo Update footer and put in a new text, also add css file to be used by Modules and component.
  * If you want to remove the footer, please consider donating to support this component!
  */
-print '<div class="footer" align="center">Powered by <a href="http://www.4theweb.nl" target="_blank">4 The Web</a> V 2.0.14 alpha</div>';
+print '<div class="footer" align="center">Powered by <a href="http://trac.4theweb.nl/g2bridge" target="_blank">4 The Web</a> V 2.0.14</div>';
 ?>

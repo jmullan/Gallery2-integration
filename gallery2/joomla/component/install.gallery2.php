@@ -1,18 +1,19 @@
 <?php
 /**
- * Installation file.
+ * Installation File.
  * 
  * @package g2bridge
  * @subpackage core
- * @author Michiel Bijland
- * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
- * @version $Id$
+ * @version $Revision$
+ * @copyright Copyright (C) 2005 - 2007 4 The Web. All rights reserved.
+ * @license GNU General Public License either version 2 of the License, or (at
+ * your option) any later version.
  */
 
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
 /**
- * Joomla calls this function and start the installation.
+ * Joomla calls this function and starts the installation.
  *
  */
 function com_install(){

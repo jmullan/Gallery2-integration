@@ -1,12 +1,13 @@
 <?php
 /**
- * Enter description here...
+ * JLConf Object
  * 
  * @package g2bridge
  * @subpackage core
- * @author Michiel Bijland
- * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
- * @version $Id$
+ * @version $Revision$
+ * @copyright Copyright (C) 2005 - 2007 4 The Web. All rights reserved.
+ * @license GNU General Public License either version 2 of the License, or (at
+ * your option) any later version.
  */
 
 JLCoreApi::import('jlconf');
@@ -76,7 +77,7 @@ class g2bridgeJLConf {
 		$sectionHandle = 'display';
 		$this->_jlConf->addSection($sectionHandle, 'Display');
 		$this->_jlConf->addParam('login',   $sectionHandle, new JLConfYesNo(0,0), 'Display Login', 'This only removes the login url from Gallery not the registration link.');
-		$this->_jlConf->addParam('sidebar', $sectionHandle, new JLConfYesNo(1,1), 'Display Sidebar', 'This must be set to yes if you want to use Sidebar Module.');
+		$this->_jlConf->addParam('sidebar', $sectionHandle, new JLConfYesNo(1,1), 'Display Sidebar', 'This must be set to No if you want to use Sidebar Module.');
 		$this->_jlConf->addParam('utf8',    $sectionHandle, new JLConfYesNo(0,0), 'utf-8', 'Should we utf-8 decode/encode');
 		
 		/* finished */

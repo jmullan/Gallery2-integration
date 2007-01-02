@@ -3,10 +3,12 @@
  * This file contains the version of this component.
  * 
  * @package g2bridge
- * @author Michiel Bijland
- * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
- * @version $Id$
+ * @version $Revision$
+ * @copyright Copyright (C) 2005 - 2007 4 The Web. All rights reserved.
+ * @license GNU General Public License either version 2 of the License, or (at
+ * your option) any later version.
  */
+
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
 /**
@@ -27,15 +29,15 @@ class g2BridgeVersion {
 	/** @var int build Number */
 	var $BUILD	 	= '$Rev$';
 	/** @var string Codename */
-	var $CODENAME 	= 'A New Dawn';
+	var $CODENAME 	= 'Final Straw';
 	/** @var string Date */
-	var $RELDATE 	= '6 Dec 2006';
+	var $RELDATE 	= '2 Jan 2007';
 	/** @var string Time */
 	var $RELTIME 	= '12:00';
 	/** @var string Timezone */
 	var $RELTZ 		= 'CET';
 	/** @var string Copyright Text */
-	var $COPYRIGHT 	= "Copyright (C) 2005 - 2006 4 The Web. All rights reserved.";
+	var $COPYRIGHT 	= 'Copyright (C) 2005 - 2007 4 The Web. All rights reserved.';
 	/** @var string URL */
 	var $URL 		= '';
 	

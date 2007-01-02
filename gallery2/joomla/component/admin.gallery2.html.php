@@ -3,12 +3,20 @@
  * Backend html file.
  * 
  * @package g2bridge
- * @subpackage core
- * @author Michiel Bijland
- * @copyright Copyright (C) 2005 - 2006 4 The Web. All rights reserved.
- * @version $Id$
+ * @version $Revision$
+ * @copyright Copyright (C) 2005 - 2007 4 The Web. All rights reserved.
+ * @license GNU General Public License either version 2 of the License, or (at
+ * your option) any later version.
  */
+
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
+
+/**
+ * Class containing back-end html
+ * 
+ * @package g2bridge
+ * @subpackage core
+ */
 class HTML_content {
 	/**
 	 * About page with Link towards pages: project,forum,4 the web
@@ -296,11 +304,11 @@ class HTML_content {
             	</td>
             </tr>
             <tr>
-				<td align="left">URL To Gallery 2:</th>
+				<td align="left">URL To Gallery 2:</td>
 				<td align="left"><?php print $urlToGallery;?></td>
 			</tr>
 			<tr>
-				<th align="left">Server Path to Gallery 2:</th>
+				<td align="left">Server Path to Gallery 2:</td>
 				<td align="left"><?php print $pathToGallery;?></td>
 			</tr>
 		</table>
