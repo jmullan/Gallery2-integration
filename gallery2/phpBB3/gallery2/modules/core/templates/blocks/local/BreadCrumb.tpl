@@ -1,5 +1,5 @@
 {*
- * Custom phpBB3 breadcrumb template.
+ * Custom phpBB2 breadcrumb template.
  * Author: Dariush Molavi (dari@nukedgallery.net)
  *
  * $Revision$

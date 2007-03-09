@@ -1,11 +1,11 @@
 ##############################################################
 ## $Revision$
-## $Id$
+## $Date$
 ##
 ## MOD Title: Gallery2 Integration Mod 
 ## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
-## MOD Description: This mod integrates phpBB3 and Gallery2 
-## MOD Version: 1.0.0a
+## MOD Description: This mod integrates phpBB3b4 and Gallery2 
+## MOD Version: 0.0.2
 ##
 ## Installation Level: Intermediate
 ## Installation Time: 45 Minutes
@@ -29,7 +29,7 @@
 ##	     styles/subSilver/template/memberlist_body.html,
 ##	     styles/subSilver/template/memberlist_view.html,
 ##	     styles/subSilver/template/overall_header.html,
-##	     styles/subSilver/template/posting_body.html,
+##	     styles/subSilver/template/posting_buttons.html,
 ##	     styles/subSilver/template/viewtopic_body.html
 ## Included Files: gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl
 ##	     phpBB3/gallery2.php,
@@ -60,8 +60,8 @@
 ##############################################################
 ## MOD History:
 ##
-## 2006-06-27 - Version 1.0.0a 
-##      - Initial Developmental Release
+## 2006-12-16 - Version 0.0.2
+##      - Initial Beta Developmental Release
 ##
 ##############################################################
 ## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
@@ -86,9 +86,9 @@ INSERT INTO `phpbb_acl_options` ( `auth_option_id` , `auth_option` , `is_global`
 
 ALTER TABLE `phpbb_users` ADD `user_gallery` VARCHAR(10) NULL DEFAULT NULL; 
 
-ALTER TABLE `phpbb_styles_imageset` ADD `btn_gallery` VARCHAR(200) NOT NULL; 
+ALTER TABLE `phpbb_styles_imageset` ADD `icon_user_gallery` VARCHAR(200) NOT NULL; 
 
-UPDATE `phpbb_styles_imageset` SET `btn_gallery` = '{LANG}/btn_gallery.gif*18*59' WHERE `imageset_name` = 'subSilver' LIMIT 1;
+UPDATE `phpbb_styles_imageset` SET `icon_user_gallery` = '{LANG}/icon_user_gallery.gif*18*59' WHERE `imageset_name` = 'subSilver' LIMIT 1;
 
 #
 #-----[ COPY ]------------------------------------------
@@ -104,7 +104,7 @@ copy phpBB3/includes/acp/acp_gallery2.php to includes/acp/acp_gallery2.php
 copy phpBB3/includes/acp/info/acp_gallery2.php to includes/acp/info/acp_gallery2.php
 copy phpBB3/language/en/g2image.php to language/en/g2image.php
 copy phpBB3/language/en/acp/gallery2.php to language/en/acp/gallery2.php
-copy phpBB3/styles/subSilver/imageset/en/btn_gallery.gif to styles/subSilver/imageset/en/btn_gallery.gif
+copy phpBB3/styles/subSilver/imageset/en/icon_user_gallery.gif to styles/subSilver/imageset/en/icon_user_gallery.gif
 copy phpBB3/styles/subSilver/template/gallery2.html to styles/subSilver/template/gallery2.html
 copy phpBB3/styles/subSilver/theme/images/exif_parser.gif to styles/subSilver/theme/images/exif_parser.gif
 copy gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl to /gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl
@@ -157,10 +157,15 @@ memberlist.php
 #
 #-----[ BEFORE, ADD ]------------------------------------------
 #
+		// Grab Gallery link permission
+		$sql = 'SELECT link FROM ' . GALLERY2_TABLE;
+		$row = $db->sql_fetchrow($db->sql_query_limit($sql, 1));
+		$gallery_link = $row['link'];
+
 		// Fetch all gallery items for this user if allowed and they exist
 		$member['gallery_totalcount'] = $member['gallery_count'] = 0;
 
-		if (!empty($member['user_gallery']))
+		if (!empty($member['user_gallery']) && !empty($gallery_link))
 		{
 			$sql = 'SELECT link, allLinks, allLinksAlbums, allLinksLimit FROM ' . GALLERY2_TABLE;
 			$row = $db->sql_fetchrow($db->sql_query_limit($sql, 1));
@@ -177,7 +182,7 @@ memberlist.php
 					foreach($itemLinks as $id => $url)
 					{
 						$template->assign_block_vars('gallery', array(
-							'ITEM_LINK' => "{$phpbb_root_path}gallery2.$phpEx$SID&amp;g2_view=core.ShowItem&amp;g2_itemId=$id",
+							'ITEM_LINK' => append_sid("{$phpbb_root_path}gallery2.$phpEx", "g2_view=core.ShowItem&amp;g2_itemId=$id"),
 							'ITEM_THUMB' => $url)
 						);
 					}
@@ -188,39 +193,27 @@ memberlist.php
 #
 #-----[ FIND ]------------------------------------------
 #
-			'WWW_IMG'		=> $user->img('btn_www', $user->lang['WWW']),
+			'U_REMOVE_FOE'		=> ($foe) ? append_sid("{$phpbb_root_path}ucp.$phpEx", 'i=zebra&amp;remove=1&amp;usernames[]=' . $user_id) : '',
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
 #
-			'GALLERY_IMG'	=> $user->img('btn_gallery', $user->lang['GALLERY']),
-
-#
-#-----[ FIND ]------------------------------------------
-#
-			'S_SHOW_ACTIVITY'	=> ($config['load_user_activity']) ? true : false,
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-			'S_GALLERY'			=> (!empty($member['allLinks'])) ? true : false,
-			'S_GALLERY_MORE'	=> ($member['gallery_totalcount'] > $member['gallery_count']) ? true : false,
-
+			'GALLERY_IMG'		=> $user->img('icon_user_gallery', $user->lang['GALLERY']),
 			'L_GALLERY'			=> $user->lang['GALLERY'],
 			'L_GALLERY_HEADER'	=> (isset($member['gallery_count'])) ? sprintf($user->lang['GALLERY2_LINKMOD'], $member['username'], $member['gallery_count']) : '',
 			'L_GALLERY_MORE'	=> $user->lang['GALLERY_MORE'],
-
-			'U_GALLERY'				=> ($member['user_gallery'] && !empty($member['link'])) ? "{$phpbb_root_path}gallery2.$phpEx$SID&amp;g2_view=core.ShowItem&amp;g2_itemId=" . $member['user_gallery'] : '',
+			'S_GALLERY'			=> (!empty($member['allLinks'])) ? true : false,
+			'S_GALLERY_MORE'	=> ($member['gallery_totalcount'] > $member['gallery_count']) ? true : false,
+			'U_GALLERY'			=> ($member['user_gallery'] && !empty($member['link'])) ? append_sid("{$phpbb_root_path}gallery2.$phpEx", 'g2_view=core.ShowItem&amp;g2_itemId=' . $member['user_gallery']) : '',
 
 #
 #-----[ FIND ]------------------------------------------
 #
-			$session_times[$row['session_user_id']] = $row['session_time'];
-		}
-		$db->sql_freeresult($result);
+		$i = 0;
+		foreach ($id_cache as $user_id => $row)
 
 #
-#-----[ AFTER, ADD ]------------------------------------------
+#-----[ BEFORE, ADD ]------------------------------------------
 #
 		// Grab Gallery link permission
 		$sql = 'SELECT link FROM ' . GALLERY2_TABLE;
@@ -230,36 +223,36 @@ memberlist.php
 #
 #-----[ FIND ]------------------------------------------
 #
-				'S_GROUP_LEADER'	=> (isset($row['group_leader']) && $row['group_leader']) ? true : false,
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-				'S_GALLERY'			=> (!empty($gallery_link)) ? true : false,
-
-				'U_GALLERY'			=> ($row['user_gallery']) ? "{$phpbb_root_path}gallery2.$phpEx$SID&amp;g2_view=core.ShowItem&amp;g2_itemId=" . $row['user_gallery'] : '',
-
-#
-#-----[ FIND ]------------------------------------------
-#
-			'WWW_IMG'		=> $user->img('btn_www', $user->lang['WWW']),
-
-#
-#-----[ AFTER, ADD ]------------------------------------------
-#
-			'GALLERY_IMG'	=> $user->img('btn_gallery', $user->lang['GALLERY']),
-
-#
-#-----[ FIND ]------------------------------------------
-#
-			'S_SHOW_GROUP'		=> ($mode == 'group') ? true : false,
+			$memberrow = array_merge(show_profile($row), array(
 
 #
 #-----[ BEFORE, ADD ]------------------------------------------
 #
-			'L_GALLERY'			=> $user->lang['GALLERY'],
+			$row['gallery_link'] = $gallery_link;
 
-			'S_GALLERY'			=> (!empty($gallery_link)) ? true : false,
+#
+#-----[ FIND ]------------------------------------------
+#
+			'SEARCH_IMG'	=> $user->img('icon_user_search', $user->lang['SEARCH']),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+			'GALLERY_IMG'	=> $user->img('icon_user_gallery', $user->lang['GALLERY']),
+			'L_GALLERY'		=> $user->lang['GALLERY'],
+			'S_GALLERY'		=> (!empty($gallery_link)) ? true : false,
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		'L_VIEWING_PROFILE'	=> sprintf($user->lang['VIEWING_PROFILE'], $username),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		'GALLERY_IMG'	=> $user->img('icon_user_gallery', $user->lang['GALLERY']),
+		'S_GALLERY'		=> (!empty($data['gallery_link'])) ? true : false,
+		'U_GALLERY'		=> ($data['user_gallery'] && !empty($data['gallery_link'])) ? append_sid("{$phpbb_root_path}gallery2.$phpEx", 'g2_view=core.ShowItem&amp;g2_itemId=' . $data['user_gallery']) : '',
 
 #
 #-----[ OPEN ]------------------------------------------
@@ -270,7 +263,7 @@ posting.php
 #-----[ FIND ]------------------------------------------
 #
 	'FORUM_NAME'			=> $post_data['forum_name'],
-	'FORUM_DESC'			=> ($post_data['forum_desc']) ? generate_text_for_display($post_data['forum_desc'], $post_data['forum_desc_uid'], $post_data['forum_desc_bitfield']) : '',
+	'FORUM_DESC'			=> ($post_data['forum_desc']) ? generate_text_for_display($post_data['forum_desc'], $post_data['forum_desc_uid'], $post_data['forum_desc_bitfield'], $post_data['forum_desc_options']) : '',
 
 #
 #-----[ BEFORE, ADD ]------------------------------------------
@@ -299,12 +292,12 @@ $gallery_link = $row['link'];
 #
 #-----[ FIND ]------------------------------------------
 # 
-	'INFO_IMG' 			=> $user->img('btn_info', 'VIEW_INFO'),
+	'INFO_IMG' 			=> $user->img('icon_post_info', 'VIEW_INFO'),
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
 # 
-	'GALLERY_IMG' 		=> $user->img('btn_gallery', 'GALLERY'),
+	'GALLERY_IMG' 		=> $user->img('icon_user_gallery', 'GALLERY'),
 
 #
 #-----[ FIND ]------------------------------------------
@@ -371,7 +364,7 @@ define('E_G2_ERROR', 255);
 #
 #-----[ FIND ]------------------------------------------
 # 
-define('ZEBRA_TABLE',				$table_prefix . 'zebra');
+// Additional tables
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
@@ -468,7 +461,7 @@ includes/functions.php
 #
 #-----[ AFTER, ADD ]------------------------------------------
 # 
-		'U_GALLERY2'			=> "{$phpbb_root_path}gallery2.$phpEx$SID",
+		'U_GALLERY2'			=> append_sid("{$phpbb_root_path}gallery2.$phpEx"),
 
 #
 #-----[ OPEN ]------------------------------------------
@@ -543,15 +536,17 @@ includes/functions_user.php
 #
 #-----[ FIND ]------------------------------------------
 #
-			default:
-				foreach ($add_id_ary as $user_id)
-				{
-					$sql = 'INSERT INTO ' . USER_GROUP_TABLE . " (user_id, group_id, group_leader, user_pending)
-						VALUES ($user_id, $group_id, $leader, $pending)";
-					$db->sql_query($sql);
-				}
-				break;
+		foreach ($add_id_ary as $user_id)
+		{
+			$sql_ary[] = array(
+				'user_id'		=> $user_id,
+				'group_id'		=> $group_id,
+				'group_leader'	=> $leader,
+				'user_pending'	=> $pending,
+			);
 		}
+
+		$db->sql_multi_insert(USER_GROUP_TABLE, $sql_ary);
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
@@ -566,7 +561,7 @@ includes/functions_user.php
 #
 	$sql = 'DELETE FROM ' . USER_GROUP_TABLE . "
 		WHERE group_id = $group_id
-			AND user_id IN (" . implode(', ', $user_id_ary) . ')';
+			AND " . $db->sql_in_set('user_id', $user_id_ary);
 	$db->sql_query($sql);
 
 #
@@ -606,7 +601,6 @@ includes/acp/acp_users.php
 								SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
 								WHERE user_id = ' . $user_id;
 							$db->sql_query($sql);
-
 #
 #-----[ AFTER, ADD ]------------------------------------------
 # 
@@ -637,28 +631,28 @@ includes/acp/auth.php
 #
 #-----[ FIND ]------------------------------------------
 #
-						$db->sql_query("INSERT INTO $table " . $db->sql_build_array('INSERT', $ary));
-					}
-				break;
-			}
+		if ($clear_prefetch)
+		{
+			$this->acl_clear_prefetch();
+		}
 
 #
-#-----[ AFTER, ADD ]------------------------------------------
+#-----[ BEFORE, ADD ]------------------------------------------
 # 
-			if ($auth['a_gallery2'] === 0) 
-			{
-				// Strip admin permissions from user in Gallery
-				require($phpbb_root_path . 'g2helper.inc');
-				$g2h = new g2helper($db);
-				$g2h->mapAdminToUser($ug_id);
-			}
-			elseif ($auth['a_gallery2'] === 1)
-			{
-				// Grant admin permissions to user in Gallery
-				require($phpbb_root_path . 'g2helper.inc');
-				$g2h = new g2helper($db);
-				$g2h->mapUserToAdmin($ug_id);
-			}
+		if ($auth['a_gallery2'] === 0) 
+		{
+			// Strip admin permissions from user in Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->mapAdminToUser($ug_id);
+		}
+		elseif ($auth['a_gallery2'] === 1)
+		{
+			// Grant admin permissions to user in Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->mapUserToAdmin($ug_id);
+		}
 
 #
 #-----[ OPEN ]------------------------------------------
@@ -726,7 +720,7 @@ language/en/posting.php
 	'BBCODE_F_HELP'				=> 'Font size: [size=x-small]small text[/size]',
 
 #
-#-----[ BEFORE, ADD ]------------------------------------------
+#-----[ AFTER, ADD ]------------------------------------------
 #
 	'BBCODE_G_HELP'				=> 'Insert Gallery2 image',
 
@@ -813,15 +807,15 @@ styles/subSilver/template/memberlist_body.html
 #
 #-----[ FIND ]------------------------------------------
 #
-		<td class="row1" colspan="<!-- IF S_SEARCH_USER and S_FORM_NAME -->9<!-- ELSE -->8<!-- ENDIF -->" height="28" align="center">
+		<td class="row1" colspan="<!-- IF S_SEARCH_USER and S_FORM_NAME -->9<!-- ELSE -->8<!-- ENDIF -->" align="center">
 
 #
 #-----[ REPLACE WITH ]------------------------------------------
 #
 		<!-- IF memberrow.S_GALLERY -->
-		<td class="row1" colspan="<!-- IF S_SEARCH_USER and S_FORM_NAME -->10<!-- ELSE -->9<!-- ENDIF -->" height="28" align="center">
+		<td class="row1" colspan="<!-- IF S_SEARCH_USER and S_FORM_NAME -->10<!-- ELSE -->9<!-- ENDIF -->" align="center">
 		<!-- ELSE -->
-		<td class="row1" colspan="<!-- IF S_SEARCH_USER and S_FORM_NAME -->9<!-- ELSE -->8<!-- ENDIF -->" height="28" align="center">
+		<td class="row1" colspan="<!-- IF S_SEARCH_USER and S_FORM_NAME -->9<!-- ELSE -->8<!-- ENDIF -->" align="center">
 		<!-- ENDIF -->
 
 #
@@ -846,7 +840,7 @@ styles/subSilver/template/memberlist_view.html
 #
 #-----[ FIND ]------------------------------------------
 #
-				<td><b><!-- IF U_WWW --><a class="genmed" href="{U_WWW}" target="_userwww">{U_WWW}</a><!-- ENDIF --></b></td>
+				<td><!-- IF U_WWW --><b><a class="genmed" href="{U_WWW}" target="_userwww">{U_WWW}</a></b><!-- ENDIF --></td>
 			</tr>
 
 #
@@ -862,8 +856,9 @@ styles/subSilver/template/memberlist_view.html
 #
 #-----[ FIND ]------------------------------------------
 # 
-		<td class="row1" colspan="2"><div class="postbody" style="padding: 10px;">{SIGNATURE}</div></td>
-	</tr>
+			<td class="row1" colspan="2"><div class="postbody" style="padding: 10px;">{SIGNATURE}</div></td>
+		</tr>
+	<!-- ENDIF -->
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
@@ -883,6 +878,7 @@ styles/subSilver/template/memberlist_view.html
 		</div></td>
 	</tr>
 	<!-- ENDIF -->
+
 #
 #-----[ OPEN ]------------------------------------------
 # 
@@ -917,7 +913,7 @@ styles/subSilver/template/overall_header.html
 #
 #-----[ FIND ]------------------------------------------
 # 
-			<td class="genmed" align="right"><a href="{U_FAQ}"><img src="{T_THEME_PATH}/images/icon_mini_faq.gif" width="12" height="13" border="0" alt="{L_FAQ}" /> {L_FAQ}</a><!-- IF S_DISPLAY_SEARCH -->&nbsp; &nbsp;<a href="{U_SEARCH}"><img src="{T_THEME_PATH}/images/icon_mini_search.gif" width="12" height="13" border="0" alt="{L_SEARCH}" /> {L_SEARCH}</a><!-- ENDIF --><!-- IF S_DISPLAY_MEMBERLIST -->&nbsp; &nbsp;<a href="{U_MEMBERLIST}"><img src="{T_THEME_PATH}/images/icon_mini_members.gif" width="12" height="13" border="0" alt="{L_MEMBERLIST}" /> {L_MEMBERLIST}</a><!-- ENDIF --><!-- IF S_USER_LOGGED_IN -->&nbsp; &nbsp;<a href="{U_PROFILE}"><img src="{T_THEME_PATH}/images/icon_mini_profile.gif" width="12" height="13" border="0" alt="{L_PROFILE}" /> {L_PROFILE}</a><!-- ENDIF --></td>
+			<td class="genmed" align="right"><a href="{U_FAQ}"><img src="{T_THEME_PATH}/images/icon_mini_faq.gif" width="12" height="13" alt="{L_FAQ}" /> {L_FAQ}</a><!-- IF S_DISPLAY_SEARCH -->&nbsp; &nbsp;<a href="{U_SEARCH}"><img src="{T_THEME_PATH}/images/icon_mini_search.gif" width="12" height="13" alt="{L_SEARCH}" /> {L_SEARCH}</a><!-- ENDIF --><!-- IF S_DISPLAY_MEMBERLIST -->&nbsp; &nbsp;<a href="{U_MEMBERLIST}"><img src="{T_THEME_PATH}/images/icon_mini_members.gif" width="12" height="13" alt="{L_MEMBERLIST}" /> {L_MEMBERLIST}</a><!-- ENDIF --><!-- IF S_USER_LOGGED_IN -->&nbsp; &nbsp;<a href="{U_PROFILE}"><img src="{T_THEME_PATH}/images/icon_mini_profile.gif" width="12" height="13" alt="{L_PROFILE}" /> {L_PROFILE}</a><!-- ENDIF --></td>
 
 #
 #-----[ IN-LINE FIND ]------------------------------------------
@@ -932,50 +928,50 @@ styles/subSilver/template/overall_header.html
 #
 #-----[ OPEN ]------------------------------------------
 # 
-styles/subSilver/template/posting_body.html
+styles/subSilver/template/posting_buttons.html
 
 #
 #-----[ FIND ]------------------------------------------
 #
-e_help = "{LA_BBCODE_E_HELP}";
+					e: '{LA_BBCODE_E_HELP}',
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
 #
-g_help = "{LA_BBCODE_G_HELP}";
+					g: '{LA_BBCODE_G_HELP}',
 
 #
 #-----[ FIND ]------------------------------------------
 #
-<script language="javascript" type="text/javascript" src="{T_TEMPLATE_PATH}/editor.js"></script>
+				<script language="javascript" type="text/javascript" src="{T_TEMPLATE_PATH}/editor.js"></script>
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
 #
-<script language="javascript" type="text/javascript">
-<!--
-function g2ic_open(form, field) {
-	var url = './g2image/g2image.php?g2ic_form='+form+'&g2ic_field='+field+'&g2ic_host={G2IC_HOST}';
-	var name = 'g2image';
-	var w = 600;
-	var h = 600;
-	var valLeft = (screen.width) ? (screen.width-w)/2 : 0;
-	var valTop = (screen.height) ? (screen.height-h)/2 : 0;
-	var features = 'width='+w+',height='+h+',left='+valLeft+',top='+valTop+',resizable=1,scrollbars=1';
-	window.open(url, name, features);
-}
-//-->
-</script>
+				<script language="javascript" type="text/javascript">
+				<!--
+				function g2ic_open(form, field) {
+					var url = './g2image/g2image.php?g2ic_form='+form+'&g2ic_field='+field+'&g2ic_host={G2IC_HOST}';
+					var name = 'g2image';
+					var w = 600;
+					var h = 600;
+					var valLeft = (screen.width) ? (screen.width-w)/2 : 0;
+					var valTop = (screen.height) ? (screen.height-h)/2 : 0;
+					var features = 'width='+w+',height='+h+',left='+valLeft+',top='+valTop+',resizable=1,scrollbars=1';
+					window.open(url, name, features);
+				}
+				//-->
+				</script>
 
 #
 #-----[ FIND ]------------------------------------------
 #
-				<!-- IF S_BBCODE_IMG --><input type="button" class="btnbbcode" accesskey="p" name="addbbcode14" value="Img" style="width: 40px"  onclick="bbstyle(14)" onmouseover="helpline('p')" /><!-- ENDIF -->
+					<input type="button" class="btnbbcode" accesskey="p" name="addbbcode14" value="Img" style="width: 40px"  onclick="bbstyle(14)" onmouseover="helpline('p')" onmouseout="helpline('tip')" />
 
 #
 #-----[ AFTER, ADD ]------------------------------------------
 #
-				<!-- IF S_BBCODE_IMG -->&nbsp;<input type="button" class="btnbbcode" name="g2image" value="g2Img" onclick="g2ic_open('post', 'message');" onmouseover="helpline('g')" /><!-- ENDIF -->
+					<input type="button" class="btnbbcode" name="g2image" value="g2Img" onclick="g2ic_open('post', 'message');" onmouseover="helpline('g')" onmouseout="helpline('tip')" />
 
 #
 #-----[ OPEN ]------------------------------------------
@@ -985,7 +981,7 @@ styles/subSilver/template/viewtopic_body.html
 #
 #-----[ FIND ]------------------------------------------
 # 
-			<td><div class="gensmall" style="float: left;">&nbsp;<!-- IF postrow.U_PROFILE --><a href="{postrow.U_PROFILE}">{PROFILE_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_PM --><a href="{postrow.U_PM}">{PM_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_EMAIL --><a href="{postrow.U_EMAIL}">{EMAIL_IMG}</a> <!-- ENDIF -->&nbsp;</div> <div class="gensmall" style="float:right"><!-- IF postrow.U_QUOTE --><a href="{postrow.U_QUOTE}">{QUOTE_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_EDIT --><a href="{postrow.U_EDIT}">{EDIT_IMG}</a> <!-- ENDIF -->&nbsp;</div></td>
+			<td><div class="gensmall" style="float: left;">&nbsp;<!-- IF postrow.U_PROFILE --><a href="{postrow.U_PROFILE}">{PROFILE_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_PM --><a href="{postrow.U_PM}">{PM_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_EMAIL --><a href="{postrow.U_EMAIL}">{EMAIL_IMG}</a> <!-- ENDIF -->&nbsp;</div> <div class="gensmall" style="float:right"><!-- IF postrow.U_EDIT --><a href="{postrow.U_EDIT}">{EDIT_IMG}</a> <!-- ENDIF --> <!-- IF postrow.U_QUOTE --><a href="{postrow.U_QUOTE}">{QUOTE_IMG}</a> <!-- ENDIF --> &nbsp;</div></td>
 
 #
 #-----[ IN-LINE FIND ]------------------------------------------

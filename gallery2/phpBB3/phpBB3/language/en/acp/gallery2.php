@@ -72,6 +72,7 @@ $lang = array_merge($lang, array(
 	'GALLERY2_OPTIONS_LINKS'		=> 'Link Settings',
 	'GALLERY2_OPTIONS_SYNC'			=> 'Synchronize Users',
 	'GALLERY2_OPTIONS_CONFIRM'		=> 'Un-Synchronize Users',
+	'GALLERY2_OPTIONS_RESULTS'		=> 'Latest Export Results',
 	'GALLERY2_VERSION_TITLE'		=> 'Integration Version Information',
 
 	// sync

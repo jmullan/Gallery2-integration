@@ -26,7 +26,7 @@
 
 class acp_gallery2
 {
-	var $_integrationVersion = '0.0.1';
+	var $_integrationVersion = '0.0.2';
 	var $_integrationVersionUrl = 'http://nukedgallery.sourceforge.net/phpbb3upgrade.txt';
 	var $_integrationChangeLog = 'http://www.nukedgallery.net/postp18006.html#18006';
 	var $_integrationDownload = 'http://www.nukedgallery.net/downloads-cat13.html';
@@ -43,11 +43,8 @@ class acp_gallery2
 		return str_replace('\\', '/', $value);
 	}
 
-	function main($id, $mode)
-	{
-		global $db, $user, $auth, $template;
-		global $config, $SID, $phpbb_root_path, $phpbb_admin_path, $phpEx;
-
+	function main($id, $mode) {
+		global $cache, $db, $user, $auth, $template, $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
 		$user->add_lang('acp/gallery2');
 		$this->tpl_name = 'acp_gallery2';
 
@@ -73,9 +70,10 @@ class acp_gallery2
 
 					$fullPath = $this->_fix_slashes($fullPath);
 
-					$sql = 'SELECT * FROM ' . GALLERY2_TABLE;
-					$result = $db->sql_query_limit($sql, 1);
-					if(!$db->sql_numrows($result)) {
+					$sql = 'SELECT COUNT(embedUri) AS records FROM ' . GALLERY2_TABLE;
+					$result = $db->sql_query($sql);
+					$records_count = (int) $db->sql_fetchfield('records');
+					if($records_count == 0) {
 						$sql = 'INSERT INTO ' . GALLERY2_TABLE . " (fullPath, embedUri, g2Uri, activeAdminId, link, allLinks, allLinksAlbums, allLinksLimit) VALUES ('$fullPath', '$embedUri', '$g2Uri', $activeAdminId, 0, 0, 0, 0)";
 					}
 					else {
@@ -107,9 +105,10 @@ class acp_gallery2
 					$activeadminid = $activeAdminId;
 				}
 				else {
-					$sql = 'SELECT fullPath, embedUri, g2Uri, activeAdminId FROM ' . GALLERY2_TABLE;
-					$result = $db->sql_query_limit($sql, 1);
-					if (!$db->sql_numrows($result)) {
+					$sql = 'SELECT COUNT(embedUri) AS records FROM ' . GALLERY2_TABLE;
+					$result = $db->sql_query($sql);
+					$records_count = (int) $db->sql_fetchfield('records');
+					if($records_count == 0) {
 						$url_path = $_SERVER['SCRIPT_NAME'];
 						$url_path = explode('/', $url_path);
 						$working_url_path = '/';
@@ -122,6 +121,8 @@ class acp_gallery2
 						$fullpath = '';
 					}
 					else {
+						$sql = 'SELECT fullPath, embedUri, g2Uri, activeAdminId FROM ' . GALLERY2_TABLE;
+						$result = $db->sql_query_limit($sql, 1);
 						$row = $db->sql_fetchrow($result);
 						$fullpath = $row['fullPath'];
 						$embeduri = $row['embedUri'];
@@ -223,7 +224,7 @@ class acp_gallery2
     			break;
 
 			case 'options':
-/*				if ($fp = @fopen($this->_integrationVersionUrl, 'r')) {
+				if ($fp = @fopen($this->_integrationVersionUrl, 'r')) {
 					$versionData = fread($fp, 4096);
 
 					fclose($fp);
@@ -232,7 +233,7 @@ class acp_gallery2
 
 					$integrationVersion = explode('.', $this->_integrationVersion);
 
-					if ($$versionData[0] == $integrationVersion[0] && $versionData[1] == $integrationVersion[1] && $versionData[2] == $integrationVersion[2]) {	
+					if ($versionData[0] == $integrationVersion[0] && $versionData[1] == $integrationVersion[1] && $versionData[2] == $integrationVersion[2]) {	
 						$versionText = $user->lang['GALLERY2_TO_DATE'];
 					}
 					else {
@@ -242,7 +243,7 @@ class acp_gallery2
 				else {
 					$versionText = sprintf($user->lang['GALLERY2_URL_FAILED'], $this->_integrationVersionUrl);
 				}
-*/		
+		
 				$this->page_title = $user->lang['ACP_GALLERY2_INTEGRATION'] . ' :: ' . $user->lang['GALLERY2_ADMIN_TITLE'];
 
 				$template->assign_vars(array(
@@ -252,6 +253,7 @@ class acp_gallery2
 					'L_OPTIONS_LINKS' => $user->lang['GALLERY2_OPTIONS_LINKS'],
 					'L_OPTIONS_SYNC' => $user->lang['GALLERY2_OPTIONS_SYNC'],
 					'L_OPTIONS_CONFIRM' => $user->lang['GALLERY2_OPTIONS_CONFIRM'],
+					'L_OPTIONS_RESULTS' => $user->lang['GALLERY2_OPTIONS_RESULTS'],
 					'L_VERSION_TITLE' => $user->lang['GALLERY2_VERSION_TITLE'],
 					'L_VERSION_MSG' => (isset($versionText)) ? $versionText : '',
 
@@ -260,6 +262,7 @@ class acp_gallery2
 					'S_G2_LINKS' => $this->u_action . '&amp;action=links',
 					'S_G2_SYNC' => $this->u_action . '&amp;action=sync',
 					'S_G2_CONFIRM' => $this->u_action . '&amp;action=confirm',
+					'S_G2_RESULTS' => $this->u_action . '&amp;action=stats',
 					'S_INTEGRATION_VERSION' => $this->_integrationVersion)
 				);
 
@@ -323,20 +326,10 @@ class acp_gallery2
 				break;
 
 			case 'export':
-				$export = (object) true;
-
-				foreach(array('processed', 'existing', 'imported') as $key) {
-					$export->groups[$key] = 0;
-				}
-				$export->groups['failures'] = array();
-
-				foreach(array('processed', 'existing', 'nonactive', 'guest', 'admin', 'imported') as $key) {
-					$export->users[$key] = 0;
-				}
-				$export->users['failures'] = array();
+				$export = $this->_resetExportData();
 
 				// grab list of phpBB groups for use later
-				$phpbbDefaultGroups = array('GUESTS', 'INACTIVE', 'INACTIVE_COPPA', 'REGISTERED', 'REGISTERED_COPPA', 'GLOBAL_MODERATORS', 'ADMINISTRATORS', 'BOTS');
+				$phpbbDefaultGroups = array('GUESTS', 'REGISTERED', 'REGISTERED_COPPA', 'GLOBAL_MODERATORS', 'ADMINISTRATORS', 'BOTS');
 
 				$phpbbGroupNames = array();
 
@@ -411,15 +404,19 @@ class acp_gallery2
 								$sql = 'INSERT INTO ' . USERS_TABLE . ' ' . $db->sql_build_array('INSERT', array(
 									'user_type'	=> USER_NORMAL,
 									'group_id' => (int) $group_id,
-									'user_regdate' => time(),
+									'user_permissions' => '',
 									'username' => $entityId->getuserName(),
+									'username_clean' => utf8_clean_string($entityId->getuserName()),
 									'user_password'	=> $user_password,
 									'user_email' => $entityId->getemail(),
 									'user_email_hash' => (int) crc32(strtolower($entityId->getemail())) . strlen($entityId->getemail()),
 									'user_lastmark'	=> time(),
 									'user_lang'	=> ($entityId->getlanguage()) ? $entityId->getlanguage() : 'en',
 									'user_style' => $config['default_style'],
-									'user_allow_pm' => 1)
+									'user_allow_pm' => 1,
+									'user_sig' => '',
+									'user_occ' => '',
+									'user_interests' => '')
 								);
 								if (!$db->sql_query($sql)) {
 									$db->sql_transaction('rollback');
@@ -581,17 +578,22 @@ class acp_gallery2
 				}
 
 				// handle phpBB user import to G2
+				$count_sql = 'SELECT COUNT(user_id) AS sql_count FROM ' . USERS_TABLE . " WHERE group_id <> $botsGroupId";
 				$sql = 'SELECT user_id, group_id, user_regdate, username, user_password, user_email, user_lastvisit, user_lang FROM ' . USERS_TABLE . " WHERE group_id <> $botsGroupId";
 
 				if (request_var('export', '') == 'later') {
+					$count_sql .= " AND group_id = $administratorsGroupId OR group_id = $guestsGroupId";
 					$sql .= " AND group_id = $administratorsGroupId OR group_id = $guestsGroupId";
 				}
 
+				$result = $db->sql_query($count_sql);
+				$ucount = (int) $db->sql_fetchfield('sql_count');
+
 				if (!$result = $db->sql_query($sql)) {
-					msg_handler(E_G2_ERROR, $user->lang['OBTAIN_USERINFO_FAILED'], __FILE__, __LINE__);
+					msg_handler(E_G2_ERROR, $user->lang['FETCH_USERINFO_FAILED'], __FILE__, __LINE__);
 				}
 
-				$ucount = $db->sql_numrows($result);
+				$ucount = sizeof($cache->sql_rowset);
 
 				$failed = $guestIsSet = false;
 
@@ -772,7 +774,13 @@ class acp_gallery2
 					msg_handler(E_G2_ERROR, $user->lang['FETCH_EXPORTDATA_FAILED'], __FILE__, __LINE__);
 				}
 
-				$export = unserialize($row['exportData']);
+				if (!empty($row['exportData'])) {
+					$export = unserialize($row['exportData']);
+				}
+				else {
+					$export = $this->_resetExportData();
+					$noExportData = true;
+				}
 
 				$this->page_title = $user->lang['ACP_GALLERY2_INTEGRATION'] . ' :: ' . $user->lang['GALLERY2_EXPORT_TITLE'];
 
@@ -873,7 +881,7 @@ class acp_gallery2
 
 				$this->_g2Done();
 
-				$sql = 'UPDATE ' . GALLERY2_TABLE . ' SET activeAdminId = 0';
+				$sql = 'UPDATE ' . GALLERY2_TABLE . ' SET activeAdminId = 0, exportData = NULL';
 				if (!$db->sql_query($sql)) {
 					msg_handler(E_G2_ERROR, $user->lang['UPDATE_ACTIVEADMINID_FAILED'], __FILE__, __LINE__);
 				}
@@ -894,6 +902,22 @@ class acp_gallery2
 				break;
 
 		}
+	}
+
+	function _resetExportData() {
+		$export = (object) true;
+
+		foreach (array('processed', 'existing', 'imported') as $key) {
+			$export->groups[$key] = 0;
+		}
+		$export->groups['failures'] = array();
+
+		foreach (array('processed', 'existing', 'nonactive', 'guest', 'admin', 'imported') as $key) {
+			$export->users[$key] = 0;
+		}
+		$export->users['failures'] = array();
+
+		return $export;
 	}
 
 	function _g2Init() {

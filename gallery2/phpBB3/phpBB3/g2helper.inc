@@ -264,14 +264,14 @@ class g2helper {
 			msg_handler(E_G2_ERROR, sprintf($user->lang['G2_CREATEUSER_FAILED'], $id) . $user->lang['G2_ERROR'] . $ret->getAsHtml(), __FILE__, __LINE__);
 		}
 
-		$sql = 'SELECT group_id, FROM ' . GROUPS_TABLE . " WHERE group_name = 'ADMINISTRATORS'";
+		$sql = 'SELECT group_id FROM ' . GROUPS_TABLE . " WHERE group_name = 'ADMINISTRATORS'";
 		if (!$row = $db->sql_fetchrow($db->sql_query_limit($sql, 1))) {
 			msg_handler(E_G2_ERROR, $user->lang['FETCH_GROUPDATA_FAILED'], __FILE__, __LINE__);
 		}
 
 		$administratorsGroupId = $row['group_id'];
 
-		$phpbbDefaultGroups = array('"GUESTS"', '"INACTIVE"', '"INACTIVE_COPPA"', '"REGISTERED"', '"REGISTERED_COPPA"', '"SUPER_MODERATORS"', '"ADMINISTRATORS"', '"BOTS"');
+		$phpbbDefaultGroups = array('"GUESTS"', '"REGISTERED"', '"REGISTERED_COPPA"', '"SUPER_MODERATORS"', '"ADMINISTRATORS"', '"BOTS"');
 
 		$g_sql = 'SELECT DISTINCT g.group_name FROM ' . GROUPS_TABLE . ' g, ' . USER_GROUP_TABLE . " ug WHERE ug.user_id = $id AND ug.group_id = g.group_id AND g.group_name NOT IN (" . implode(', ', $phpbbDefaultGroups) . ')';
 		if (!$g_result = $db->sql_query($g_sql)) {
@@ -480,7 +480,7 @@ class g2helper {
 
 			$this->done();
 		}
-		elseif (isset($ret) && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		elseif (isset($ret)) {
 			/*
 			* Group already exists in gallery, so do nothing!
 			*/
