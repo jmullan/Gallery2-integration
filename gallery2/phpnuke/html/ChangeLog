@@ -1,3 +1,7 @@
+2007-03-14  Dariush Molavi  <dari@nukedgallery.net> 0.6.3
+	* Update: Add NukedGallery.net badge to theme.tpl of 
+	  each included G2 theme.
+
 2006-11-19  Dariush Molavi  <dari@nukedgallery.net> 0.6.2
 	* Fix: Sigh, shouldn't code and play with baby at the 
 	  same time.
