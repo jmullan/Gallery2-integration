@@ -26,7 +26,7 @@
 
 class acp_gallery2
 {
-	var $_integrationVersion = '0.0.2';
+	var $_integrationVersion = '0.0.3';
 	var $_integrationVersionUrl = 'http://nukedgallery.sourceforge.net/phpbb3upgrade.txt';
 	var $_integrationChangeLog = 'http://www.nukedgallery.net/postp18006.html#18006';
 	var $_integrationDownload = 'http://www.nukedgallery.net/downloads-cat13.html';
