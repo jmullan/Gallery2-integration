@@ -3,7 +3,7 @@
 ## MOD Author: dari <dari@nukedgallery.net> (Dariush Molavi) http://nukedgallery.net 
 ## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
 ## MOD Description: This mod integrates phpBB2 and Gallery2. See the Readme.
-## MOD Version: 0.5.8
+## MOD Version: 0.5.10
 ##
 ## Installation Level: Intermediate
 ## Installation Time: 45 Minutes
@@ -74,7 +74,6 @@ CREATE TABLE `phpbb_gallery2` (
 `utf8_translate` TINYINT( 1 ) NOT NULL,
 `exportData` TEXT NULL
 );
-
 #
 #-----[ COPY ]------------------------------------------
 #
@@ -96,18 +95,15 @@ copy phpBB2/templates/subSilver/admin/gallery2_show_body.tpl to templates/subSil
 copy phpBB2/templates/subSilver/admin/gallery2_sync_intro_body.tpl to templates/subSilver/admin/gallery2_sync_intro_body.tpl
 copy phpBB2/templates/subSilver/images/exif_parser.gif to templates/subSilver/images/exif_parser.gif
 copy gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl to /gallery2/modules/core/templates/blocks/local/BreadCrumb.tpl
-
 #
 #-----[ OPEN ]------------------------------------------
 # 
 groupcp.php
-
 #
 #-----[ FIND ]------------------------------------------
 # 
 					$sql = "INSERT INTO " . USER_GROUP_TABLE . " (user_id, group_id, user_pending) 
 						VALUES (" . $row['user_id'] . ", $group_id, 0)";
-
 #
 #-----[ BEFORE, ADD ]------------------------------------------
 # 
@@ -115,7 +111,6 @@ groupcp.php
 					require($phpbb_root_path . 'g2helper.inc');
 					$g2h = new g2helper($db);
 					$g2h->addUserToGroup($row['user_id'], $group_id);
-
 #
 #-----[ FIND ]------------------------------------------
 # 
@@ -126,7 +121,6 @@ groupcp.php
 						$sql_select = "SELECT user_email 
 							FROM ". USERS_TABLE . " 
 							WHERE user_id IN ($sql_in)"; 
-
 #
 #-----[ BEFORE, ADD ]------------------------------------------
 # 
@@ -134,14 +128,12 @@ groupcp.php
 						require($phpbb_root_path . 'g2helper.inc');
 						$g2h = new g2helper($db);
 						$g2h->addUserToGroup($sql_in, $group_id);
-
 #
 #-----[ FIND ]------------------------------------------
 # 
 						$sql = "DELETE FROM " . USER_GROUP_TABLE . " 
 							WHERE user_id IN ($sql_in) 
 								AND group_id = $group_id";
-
 #
 #-----[ BEFORE, ADD ]------------------------------------------
 # 
@@ -149,18 +141,15 @@ groupcp.php
 						require($phpbb_root_path . 'g2helper.inc');
 						$g2h = new g2helper($db);
 						$g2h->removeUserFromGroup($sql_in, $group_id);
-
 #
 #-----[ OPEN ]------------------------------------------
 # 
 login.php
-
 #
 #-----[ FIND ]------------------------------------------
 # 
 	else if( ( isset($HTTP_GET_VARS['logout']) || isset($HTTP_POST_VARS['logout']) ) && $userdata['session_logged_in'] )
 	{
-
 #
 #-----[ AFTER, ADD ]------------------------------------------
 #
@@ -319,9 +308,6 @@ admin/admin_users.php
 #-----[ FIND ]------------------------------------------
 # 
 			$sql = "UPDATE " . USERS_TABLE . "
-				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) . "', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", $aim) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_sig_bbcode_uid = '$signature_bbcode_uid', user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowavatar = $user_allowavatar, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_allow_pm = $user_allowpm, user_notify_pm = $notifypm, user_popup_pm = $popuppm, user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_active = $user_status, user_rank = $user_rank" . $avatar_sql . "
-				WHERE user_id = $user_id";
-
 #
 #-----[ BEFORE, ADD ]------------------------------------------
 # 
@@ -462,9 +448,6 @@ includes/usercp_register.php
 #-----[ FIND ]------------------------------------------
 # 
 			$sql = "UPDATE " . USERS_TABLE . "
-				SET " . $username_sql . $passwd_sql . "user_email = '" . str_replace("\'", "''", $email) ."', user_icq = '" . str_replace("\'", "''", $icq) . "', user_website = '" . str_replace("\'", "''", $website) . "', user_occ = '" . str_replace("\'", "''", $occupation) . "', user_from = '" . str_replace("\'", "''", $location) . "', user_interests = '" . str_replace("\'", "''", $interests) . "', user_sig = '" . str_replace("\'", "''", $signature) . "', user_sig_bbcode_uid = '$signature_bbcode_uid', user_viewemail = $viewemail, user_aim = '" . str_replace("\'", "''", str_replace(' ', '+', $aim)) . "', user_yim = '" . str_replace("\'", "''", $yim) . "', user_msnm = '" . str_replace("\'", "''", $msn) . "', user_attachsig = $attachsig, user_allowsmile = $allowsmilies, user_allowhtml = $allowhtml, user_allowbbcode = $allowbbcode, user_allow_viewonline = $allowviewonline, user_notify = $notifyreply, user_notify_pm = $notifypm, user_popup_pm = $popup_pm, user_timezone = $user_timezone, user_dateformat = '" . str_replace("\'", "''", $user_dateformat) . "', user_lang = '" . str_replace("\'", "''", $user_lang) . "', user_style = $user_style, user_active = $user_active, user_actkey = '" . str_replace("\'", "''", $user_actkey) . "'" . $avatar_sql . "
-				WHERE user_id = $user_id";
-
 #
 #-----[ BEFORE, ADD ]------------------------------------------
 # 
@@ -535,7 +518,7 @@ templates/subSilver/overall_header.tpl
 #
 #-----[ FIND ]------------------------------------------
 #
- scrollbar-darkshadow-color: #98AAB1;
+ scrollbar-darkshadow-color: {T_TH_COLOR1};
 } 
 
 #
@@ -552,7 +535,7 @@ font-size: 1.6em;
 #
 #-----[ FIND ]------------------------------------------
 #
-font,th,td,p { font-family: Verdana, Arial, Helvetica, sans-serif }
+font,th,td,p { font-family: {T_FONTFACE1} }
 
 #
 #-----[ IN-LINE FIND ]------------------------------------------------
@@ -567,12 +550,12 @@ font-size: {T_FONTSIZE1}px;
 #
 #-----[ FIND ]------------------------------------------
 # 
-<img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" />{L_LOGIN_LOGOUT}</a>&nbsp;
+<img src="templates/subSilver/images/icon_mini_login.gif" width="12" height="13" border="0" alt="{L_LOGIN_LOGOUT}" hspace="3" />{L_LOGIN_LOGOUT}</a> 
 
 #
-#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+#-----[ AFTER, ADD ]------------------------------------------
 # 
-&nbsp;<a href="{U_GALLERY2}" class="mainmenu"><img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" />{L_GALLERY2}</a>&nbsp;
+ <a href="{U_GALLERY2}" class="mainmenu"><img src="templates/subSilver/images/exif_parser.gif" border="0" alt="{L_GALLERY2}" hspace="3" />{L_GALLERY2}</a> 
 
 #
 #-----[ OPEN ]------------------------------------------
@@ -671,3 +654,4 @@ templates/subSilver/admin/page_footer.tpl
 #-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
 #
 # EoM
+

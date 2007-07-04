@@ -1,3 +1,7 @@
+2007-07-03  Dariush Molavi  <dari@nukedgallery.net> 0.5.10
+	* Fix: CRLF encoding. Props to gmaki.
+	* Fix: MOD file now Easy-MOD compatible. Props to Taomyn
+
 2007-04-10  Dariush Molavi  <dari@nukedgallery.net> 0.5.9
 	* New: Nukedgallery.net logo.
 
