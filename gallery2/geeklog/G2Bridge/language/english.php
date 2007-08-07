@@ -1,11 +1,10 @@
 <?php
 // +---------------------------------------------------------------------------+
-// | G2Bridge Plugin formerly GL_Gallery2                                      |
+// | G2Bridge Plugin  [v.2.0]                                |
 // +---------------------------------------------------------------------------+
-// | english.php                                                                |
+// | english.php                                                               |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2005 Andy Maloney [asmaloney@users.sf.net]                  |
-// | Adapted for Gallery 2.1 by Wayne Patterson [suprsidr@gmail.com]           |
+// | Copyright (C) 2006 Wayne Patterson [suprsidr@gmail.com]                  |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |
@@ -28,7 +27,8 @@
 $LANG_G2B = array (
 	'admin_menu_title'	=> 'G2Bridge',
 	'install_header'	=> 'Install G2Bridge',
-	
+	'error' => 'Error',
+	'error_empty' => 'Empty or Missing Fields',
 	'access_denied' => 'Access Denied',
 	'access_denied_msg' => 'Only certain users have access to this page.  Your name and IP have been recorded.',
 	

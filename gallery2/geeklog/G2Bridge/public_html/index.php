@@ -1,11 +1,10 @@
 <?php
 // +---------------------------------------------------------------------------+
-// | G2Bridge Plugin formerly GL_Gallery2                                      |
+// | G2Bridge Plugin  [v.2.0]                                |
 // +---------------------------------------------------------------------------+
-// | index.php                                                                |
+// | public_html/index.php                                                              |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2005 Andy Maloney [asmaloney@users.sf.net]                  |
-// | Adapted for Gallery 2.1 by Wayne Patterson [suprsidr@gmail.com]           |
+// | Copyright (C) 2006 Wayne Patterson [suprsidr@gmail.com]                  |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |
@@ -26,9 +25,8 @@
 //
 
 require_once( '../lib-common.php' );
-require_once( $_G2B_CONF['G2_embed_path'] );
 
-if ( empty( $_USER['username'] ) && !$_G2B_CONF['allow_anon_access_gallery'] )
+if ( $_USER['uid'] < 2 && !$_G2B_CONF['allow_anon_access_gallery'] )
 {
     $display = COM_siteHeader( '' );
     $display .= COM_startBlock ($LANG_LOGIN[1], '',
@@ -50,41 +48,7 @@ if ( empty( $_USER['username'] ) && !$_G2B_CONF['allow_anon_access_gallery'] )
     exit;
 }
 
-$ret = G2B_G2_init();
-	   
-if ( $ret )
-{
-	if ( $ret->getErrorCode() & ERROR_MISSING_OBJECT )
-	{
-		$errStr = G2B_CreateG2User( G2B_GetG2UserFromGL() );
-		
-		if ( $errStr )
-		{
-			echo $errStr;
-			
-			return( false );
-		}
-
-		// Full G2 reinit with the new created user
-		$ret = G2B_G2_init( true );
-
-		if ( $ret )
-			$display = 'Reinit failed: ' . $ret->getAsHtml();
-	}
-	else
-	{
-		$display = 'G2 returned an error: <br>' . $ret->getAsHtml();
-	}
-	
-	if ( $display )
-	{
-		$display = COM_siteHeader() . $display;
-		$display .= COM_siteFooter();
-		echo $display;
-
-		exit;
-	}
-}
+G2B_G2_init();
 
 $g2data = GalleryEmbed::handleRequest();
 

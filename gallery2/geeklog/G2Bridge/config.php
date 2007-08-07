@@ -1,11 +1,10 @@
 <?php
 // +---------------------------------------------------------------------------+
-// | G2Bridge Plugin formerly GL_Gallery2                                      |
+// | G2Bridge Plugin  [v.2.0]                                |
 // +---------------------------------------------------------------------------+
 // | config.php                                                                |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2005 Andy Maloney [asmaloney@users.sf.net]                  |
-// | Adapted for Gallery 2.1 by Wayne Patterson [suprsidr@gmail.com]           |
+// | Copyright (C) 2006 Wayne Patterson [suprsidr@gmail.com]                  |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |
@@ -44,7 +43,7 @@ $_G2B_CONF['public_dir'] = 'G2Bridge';
 
 $_G2B_CONF['G2_path'] = $_CONF['path_html'].'/gallery2'; // full system path to your gallery2 install no trailing /
 
-$_G2B_CONF['embedUri'] = $_CONF['site_url'].'/'.$_G2B_CONF['public_dir'].'/index.php?';   // full url to your G2Bridge index.php with trailing ? 
+$_G2B_CONF['embedUri'] = $_CONF['site_url'].'/'.$_G2B_CONF['public_dir'].'/index.php';   // full url to your G2Bridge or public_dir index.php 
 
 $_G2B_CONF['g2Uri'] = $_CONF['site_url'].'/gallery2/';  // full url to you gallery2 with trailing /
 

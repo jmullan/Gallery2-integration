@@ -1,11 +1,10 @@
 <?php
 // +---------------------------------------------------------------------------+
-// | G2Bridge Plugin formerly GL_Gallery2                                      |
+// | G2Bridge Plugin  [v.2.0]                                |
 // +---------------------------------------------------------------------------+
 // | functions.inc                                                                |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2005 Andy Maloney [asmaloney@users.sf.net]                  |
-// | Adapted for Gallery 2.1 by Wayne Patterson [suprsidr@gmail.com]           |
+// | Copyright (C) 2006 Wayne Patterson [suprsidr@gmail.com]                  |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |
@@ -64,7 +63,7 @@ function G2Bridge()
 */
 function plugin_chkVersion_G2Bridge()
 {
-	return '1.1';
+	return '2.0';
 }
 
 /**
@@ -146,17 +145,8 @@ function plugin_user_login_G2Bridge( $uid )
 *
 */
 function plugin_user_logout_G2Bridge( $uid )
-{
-	global $_G2B_CONF;
-	
-	require_once( $_G2B_CONF['G2_embed_path'] );
-
-	$ret = G2B_G2_init();
-	
-	if ( $ret )
-		return;
-		
-	GalleryEmbed::logout( array('embedPath' => $_G2B_CONF['G2Bridge_path']) );
+{		
+	GalleryEmbed::logout( array('embedPath' => $_G2B_CONF['embedUri']) );
 }
 
 /**
@@ -213,28 +203,14 @@ function	plugin_getheadercode_G2Bridge()
 		// assume at least one is enabled if we can't find either block
 		//	[it's safe to init the gallery anyway - just inefficient]
 	}
- 
- 	require_once( $_G2B_CONF['G2_embed_path']);
 
  	$header_text = '';
 	$needDone = false;
-	
-	if ( $g2_data == '' )
-	{	
-		$ret = G2B_G2_init();
 		
-		if ( $ret )
-		{
-			COM_errorLog( 'Failed to init() G2.' );
-			COM_errorLog( '   Here is the error message from G2:' );
-			COM_errorLog( $ret->getAsText() );
-			
-			return;
-		}
+		 G2B_G2_init();
 		$g2_data = GalleryEmbed::handleRequest();
 		
 		$needDone = true;
-	}
 	
 	// get the javascript and css links from the <head> html from G2
 	if ( isset( $g2_data['headHtml'] ) )
@@ -245,10 +221,10 @@ function	plugin_getheadercode_G2Bridge()
 		list( $title, $css, $javascript ) = GalleryEmbed::parseHead( $g2_data['headHtml'] );
 	
 		foreach( $css as $stylesheet )
-			$header_text .= $stylesheet;
+			$header_text .= $stylesheet."\n";
 		
 		foreach( $javascript as $script )
-			$header_text .= $script;
+			$header_text .= $script."\n";
 	}
 
 	if ( $needDone )
@@ -275,13 +251,39 @@ function plugin_getadminoption_G2Bridge()
 */
 function plugin_getuseroption_G2Bridge()
 {
-global $_CONF, $_G2B_CONF;
+	global $_CONF, $_G2B_CONF, $_USER;
 
-if ( $_G2B_CONF['user_albums'] == true){
-            return array( 'My Gallery',  $_CONF['site_url'] . '/' . $_G2B_CONF['public_dir'] . '/index.php?g2_controller=useralbum.UserAlbum' , 0 );
-}else{
-	return array( 'Gallery 2', $_CONF['site_url'] . '/' . $_G2B_CONF['public_dir'] . '/index.php', 0 );
-}
+	if ( $_G2B_CONF['user_albums'] == true)
+	{
+		G2B_G2_init();
+		//check to see if useralbum module is available
+		list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
+		if ($ret) 
+		{
+			print "checking module:" . $ret->getAsHtml();
+		}
+		if($modules['useralbum']['active']&&$modules['useralbum']['available'] == 1){
+			$username = $_USER['username'];
+			list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($username);
+    			if ( !$ret)
+    			{
+               			 list ($ret, $albumId) = GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $user->getId());
+					if($albumId){
+                					return array( 'My Gallery', $_CONF['site_url'].'/'.$_G2B_CONF['public_dir'].'/index.php?g2_itemId='.$albumId , 0 );
+					}else{
+						global $gallery;
+						$urlGenerator =& $gallery->getUrlGenerator();
+						$theUrl = $urlGenerator->generateUrl(
+						array('controller' => 'useralbum.UserAlbum'),
+						array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
+						return array( 'My Gallery', $theUrl , 0 );
+					}
+           		}
+		}
+
+	}else{
+		return array( 'Gallery 2', $_CONF['site_url'] . '/' . $_G2B_CONF['public_dir'] . '/index.php', 0 );
+	}
 }
 
 // upgrade to latest version of G2Bridge
@@ -315,6 +317,16 @@ function G2B_doUpgrades( $current_G2Bridge_version )
 				$current_G2Bridge_version = '1.1';
 				$done = true;
 			}
+			case '1.1':
+			{
+				$current_G2Bridge_version = '1.2';
+				$done = true;
+			}
+			case '1.2':
+			{
+				$current_G2Bridge_version = '2.0';
+				$done = true;
+			}
 				break;
 				
 			default:
@@ -328,38 +340,73 @@ function G2B_doUpgrades( $current_G2Bridge_version )
 	return true;
 }
 
+function G2B_createBlock( $title, $id,  $on_left = 0, $tid, $width, $height, $args )
+{
+	global $_CONF, $_TABLES, $_USER;
+	
+	$content = G2B_generate_mini($width, $height, $args);
+	$name = 'G2B_mini_'. $id;
+
+	// add the block
+	$block_id = DB_getItem( $_TABLES['blocks'], 'bid ', "name = '{$name}'" );
+	
+	if( $block_id > 0){
+	 	$name .= +1;
+		$block_id = '';
+	}
+	
+	//COM_errorLog( "Adding block ($on_left, $title, $tid, $content), 1 );
+	
+    if ( $block_id == '' )
+	{
+		$block_title = addslashes( $title );		
+	
+		$sql = "INSERT INTO {$_TABLES['blocks']}
+			( is_enabled, name, type, title, blockorder, onleft, tid, content, group_id, owner_id )
+			VALUES( 1, '{$name}', 'normal', '{$block_title}', 10, $on_left, '{$tid}', '{$content}', 2, {$_USER['uid']} )
+			";
+
+		DB_query( $sql, 1 );
+		
+		if ( DB_error() )
+			return false;
+    }
+	else
+	{
+		DB_query( "UPDATE {$_TABLES['blocks']} SET group_id = {$group_id} WHERE bid = $block_id LIMIT 1", 1 );
+	}
+	
+	return COM_refresh ($_CONF['site_admin_url'] . '/plugins/G2Bridge/index.php?msg=11');
+}
+
+function G2B_generate_mini($width, $height, $args)
+{
+	global $_CONF, $_G2B_CONF;
+	
+	$display = '';
+	$content = '';
+	$content .= '<embed width="'. $width .'" height="'. $height .'" align="middle" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" name="minislide" wmode="transparent" quality="high" flashvars="xmlUrl='. $_CONF['site_url'].'/'.$_G2B_CONF['public_dir'].'/xml.php?'. $args .'" src="'. $_CONF['site_url'].'/'.$_G2B_CONF['public_dir'].'/minislideshow.swf"></embed>';
+	$display .= '<div align="center">'. $content .'</div>';
+	return $display;
+}
+
 function phpblock_G2B_block()
 {
-//COM_errorLog( "phpblock_G2B_block" );
+	global  $_CONF, $_USER, $_G2B_CONF,$LANG_G2B_block;
 
-	global $_CONF, $_USER, $_G2B_CONF, $g2_data, $LANG_G2B_block;
-
-	if ( empty( $_USER['username'] ) && !$_G2B_CONF['allow_anon_access_gallery'] )
+	if ( $_USER['uid'] < 2 && !$_G2B_CONF['allow_anon_access_gallery'] )
 		return $LANG_G2B_block['access'];
-
-	$needDone = false;
 	
-	if ( $g2_data == '' )
-	{	
-		$ret = G2B_G2_init();
-		
-		if ( $ret )
-		{
-			COM_errorLog( 'Failed to init() G2.' );
-			COM_errorLog( '   Here is the error message from G2:' );
-			COM_errorLog( $ret->getAsText() );
-			
-			return;
-		}
-        GalleryCapabilities::set( 'showSidebarBlocks', false );		
-		$g2_data = GalleryEmbed::handleRequest();
-		
-		$needDone = true;
-	}
+	G2B_G2_init();
+	global $gallery;
+           $gallery->setConfig('showSidebarBlocks', false);
+	$g2_data = GalleryEmbed::handleRequest();
+	$needDone = true;
+
 
 	if ( !isset( $g2_data['sidebarBlocksHtml'] ) )
 	{
-		$content = 'You need to enable sidebar blocks in your Gallery 2 theme configuration.';
+		$content .= 'You need to enable sidebar blocks in your Gallery 2 theme configuration.';
 	}
 	else
 	{		
@@ -399,29 +446,39 @@ function phpblock_G2B_block()
 	return $content;
 }
 
+function phpblock_G2B_albumSelect()
+{
+    $this_dir = basename( dirname( $_SERVER['SCRIPT_NAME'] ) );
+
+	if ( $this_dir == '' )
+	{
+		// we are browsing webroot
+	G2B_G2_init();
+	$gallery->setConfig('showSidebarBlocks', false);		
+	$g2_data = GalleryEmbed::handleRequest();	
+
+	$content = '<div id="gsSidebar">';
+	$content .= ($g2_data[sidebarBlocksHtml][1] );
+	$content .= '</div>';
+
+	GalleryEmbed::done();
+	return $content;
+	}
+	return;
+}
+
 function phpblock_G2B_rand_photo()
 {
-//COM_errorLog( "phpblock_G2B_rand_photo" );
-
 	global $_CONF, $_USER, $_G2B_CONF, $g2_data, $LANG_G2B_rand_photo;
 
-	if ( empty( $_USER['username'] ) && !$_G2B_CONF['allow_anon_access_random_photo'] )
+	if ( $_USER['uid'] < 2 && !$_G2B_CONF['allow_anon_access_random_photo'] )
 		return $LANG_G2B_rand_photo['access'];
 	
 	$needDone = false;
 
 	if ( $g2_data == '' )
 	{
-		$ret = G2B_G2_init();
-
-		if ( $ret )
-		{
-				COM_errorLog( 'Failed to init() G2.' );
-				COM_errorLog( '   Here is the error message from G2:' );
-				COM_errorLog( $ret->getAsText() );
-
-				return;
-		}
+		 G2B_G2_init();
 
 		$g2_data = GalleryEmbed::handleRequest();
 
@@ -440,8 +497,8 @@ function phpblock_G2B_rand_photo()
 
 	if ( $needDone )
 		GalleryEmbed::done();
-
-	return $content;
+    $display .= '<div align="center">'. $content .'</div>';
+	return $display;
 }
 
 
@@ -574,11 +631,10 @@ function G2B_MapLanguage( $GL_language )
 function G2B_GetG2UserFromGL()
 {
 	global $_USER;
-	if ( empty( $_USER['uid'] ) || $_USER['uid'] == 1 )
+	if ( empty( $_USER['uid'] ) || $_USER['uid'] < 2 )
 		$userID = '';
 	else
 		$userID = $_USER['uid'];
-	
 	return $userID;
 }
 
@@ -586,7 +642,7 @@ function G2B_CreateG2User( $GL_uid )
 {
 	global $_TABLES;
 	
-	$ret = G2B_G2_init();
+	 G2B_G2_init();
 
 	// make sure we are don't already have an user with the same name                                                                                                                    
 	$ret = GalleryEmbed::isExternalIdMapped( $GL_uid, 'GalleryUser' );
@@ -607,9 +663,9 @@ function G2B_CreateG2User( $GL_uid )
 	$args['creationtimestamp']= $row['registration_ts'];
 	$args['language'] = G2B_MapLanguage( $row['language'] );
 
-	$res = GalleryEmbed::createUser( $GL_uid, $args );
+	$ret = GalleryEmbed::createUser( $GL_uid, $args );
 	
-	if (($res) && ($res->getErrorCode() & ERROR_COLLISION))
+	if (($ret) && ($ret->getErrorCode() & ERROR_COLLISION ))
 	{
                      GL_addExternalIdMap($GL_uid);
 		return false;
@@ -623,16 +679,16 @@ function G2B_CreateG2User( $GL_uid )
 			creationtimestamp: [{$args['creationtimestamp']}]<br>
 	";
 	
-	if ( $res )
+	if ( $ret )
 		return $debug . '<br>Failed to create G2 user with extId ['.$GL_uid.' - '.G2B_GetG2UserFromGL().'] 
-						Here is the error message from G2: <br>' . $res->getAsHtml();
+						Here is the error message from G2: <br>' . $ret->getAsHtml();
 }
 
 function G2B_UpdateG2User( $GL_uid )
 {
 	global $_TABLES;
 	
-	$ret = G2B_G2_init();
+	G2B_G2_init();
 	
 	$sql = "SELECT uid, username, fullname, passwd, email, language, UNIX_TIMESTAMP( regdate ) AS registration_ts                                                                 
 				FROM {$_TABLES['users']} WHERE uid ='{$GL_uid}' LIMIT 1";
@@ -648,7 +704,7 @@ function G2B_UpdateG2User( $GL_uid )
 	$args['language'] = G2B_MapLanguage( $row['language'] );
 
 	
-	$res = GalleryEmbed::updateUser( $GL_uid, $args );
+	$ret = GalleryEmbed::updateUser( $GL_uid, $args );
 	
 	$debug = "username: [{$args['username']}]<br>                                                                                                                                
 		fullname: [{$args['fullname']}]<br>                                                                                                                          
@@ -657,13 +713,13 @@ function G2B_UpdateG2User( $GL_uid )
 		creationtimestamp: [{$args['creationtimestamp']}]<br>                                                                                                         
 	";
 	
-	if ($res)
-		COM_errorLog("GalleryEmbed::updateUser failed, G2 error: <br>". $res->getAsHtml());
+	if ($ret)
+		COM_errorLog("GalleryEmbed::updateUser failed, G2 error: <br>". $ret->getAsHtml());
 }
 
 function G2B_DeleteG2User( $GL_uid )
 {	
-	$ret = G2B_G2_init();
+	G2B_G2_init();
 	
 	// make sure user we're going to delete from G2 is actually a user of G2.                                                                                                            
 	$ret = GalleryEmbed::isExternalIdMapped( $GL_uid, 'GalleryUser' );
@@ -695,22 +751,50 @@ function G2B_G2_init( $full = false )
 		   'embedUri' => $_G2B_CONF['embedUri'],
 		   'g2Uri' => $_G2B_CONF['g2Uri'],
 		   'loginRedirect' => $_G2B_CONF['login_redirect'],
-		   'activeUserId' => G2B_GetG2UserFromGL(),
 		   'activeLanguage' => G2B_MapLanguage( $_CONF['language'] ),
 		   'fullInit' => $full ) );
 		   
 	if ( $ret )
-	{
-	global $_TABLES;
-	
-		$already_init = true;
-		
-		$where = DB_getItem( $_TABLES['G2B_vars'], 'value', "name = 'control_block'" );
-                    
-		GalleryCapabilities::set( 'showSidebarBlocks', $where == 'gallery2' );
+          {  
+	    COM_errorLog( 'Gallery2 failed to init' );
+	    COM_errorLog( 'Here is the error message from G2:' );
+	    COM_errorLog( $ret->getAsText() );
+	} else {
+	    $already_init = true;
+	    checkUser();
+	    return $ret;
 	}
-		
-	return( $ret );
+}
+
+function checkUser() 
+{
+	$userId = G2B_GetG2UserFromGL();
+	if ($userId > 1) {
+    		$ret = GalleryEmbed::isExternalIdMapped($userId, 'GalleryUser');
+		if (!$ret) {
+			list ($ret, $user) = GalleryCoreApi::loadEntityByExternalId($userId, 'GalleryUser');
+			if ($ret) {
+				$ret = GalleryCoreApi::removeMapEntry('ExternalIdMap', array('externalId' => $userId, 'entityType' => 'GalleryUser'));
+				$ret = "deleted";
+			}
+		}
+		if ($ret) {
+			G2B_CreateG2User($userId);
+		}
+
+		$ret = GalleryEmbed::checkActiveUser($userId);
+		if ($ret) {
+			$ret->getAsHtml();
+			return $ret;
+		}
+	} else {
+	// Otherwise Guest
+		$ret = GalleryEmbed::checkActiveUser('');
+		if ($ret) {
+			$ret->getAsHtml();
+			return $ret;
+		}
+	}
 }
 
 // Add user to Gallery Admin Group  

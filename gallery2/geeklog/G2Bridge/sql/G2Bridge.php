@@ -1,11 +1,10 @@
 <?php
 // +---------------------------------------------------------------------------+
-// | G2Bridge Plugin formerly GL_Gallery2                                      |
+// | G2Bridge Plugin  [v.2.0]                                |
 // +---------------------------------------------------------------------------+
-// | G2Bridge.php                                                                |
+// | G2Bridge.php                                                               |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2005 Andy Maloney [asmaloney@users.sf.net]                  |
-// | Adapted for Gallery 2.1 by Wayne Patterson [suprsidr@gmail.com]           |
+// | Copyright (C) 2006 Wayne Patterson [suprsidr@gmail.com]                  |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |

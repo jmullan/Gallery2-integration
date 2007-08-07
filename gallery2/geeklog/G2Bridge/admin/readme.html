@@ -3,14 +3,34 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<title>Geeklog G2Bridge Plugin</title>
+	<title>Geeklog G2Bridge Plugin [v2.0]</title>
 	<style type="text/css">
-		h2 { color: #FFCC00; background-color: #57658D; width: 100%; padding: 4px; }
-		h3 { color: #FFCC00; background-color: #57658D; width: 100%; padding: 4px; }
-		A:active { color: #00C; text-decoration: none; }
-		A:visited { color: #00C; }
-		A:hover { color: #00C; background-color: #FFCC00; }
-		A.target {}
+		h2 { color: #666; background-color: #f1f1f1; text-align: left; width: 90%; padding: 4px; border: solid 1px #ccc; }
+		h3 { color: #666; background-color: #f1f1f1; text-align: left; width: 90%; padding: 4px; border: solid 1px #ccc; }
+		a:link { 
+		color: #333; 
+		background:transparent;
+		text-decoration:none; 
+		}
+		a:visited { 
+		color: #333; 
+		background:transparent;
+		text-decoration:none; 
+		}
+		a:hover {
+		color: #ccc; 
+		background:transparent;
+		text-decoration:none; 
+		}
+		a:active { 
+		color: #333; 
+		background:transparent;
+		text-decoration:none; 
+		}
+		img {
+		border:0;
+		}
+		#wrapper { text-align: left; width:800px; margin: 4px; padding: 4px; border: solid 1px #ccc; }
 		.warn { color: red; font-weight: bold; }
 		A.warn { text-decoration: none; }
 		code, pre { font-family: monaco, monospace; font-size: 10px; }
@@ -22,28 +42,28 @@
 		.security { color: red; font-weight: bold; font-size: small; }
 		.thanks { font-size: small; }
 		.conf_option { color: purple; font-size: small; }
-	</style>
+.ds5 /*agl rulekind: base;*/ { font-size: 22px; font-weight: bold; }
+</style>
 </head>
 <body bgcolor="#ffffff">
-
-<h2>G2Bridge Plugin [v1.1] Formerly GL_Gallery2</h2>
-		by Andy Maloney [<a href="mailto://imol00@gmail.com">imol00@gmail.com</a>]<br>
-		<p>Adapted for Gallery 2.1 by Wayne Patterson [<a href="mailto://suprsidr@gmail.com">suprsidr@gmail.com</a>]</p>
-		<p>5th April 2006</p>
-		<h3>Table of Contents</h3>
-		<ul>
+<div align="center">
+<div id="wrapper">
+				<img src="G2Bridge.png" alt="" height="28" width="48" border="0">    <span class="ds5">G2Bridge Plugin [v2.0]</span> <br>
+				by Wayne Patterson [<a href="mailto://suprsidr@gmail.com">suprsidr@gmail.com</a>]<br>
+				5th Aug. 2007
+				<h3>Table of Contents</h3>
+				<ul>
 	<li><a href="#description">Description</a></li>
-	<li><a href="#version">Version History</a></li>
-	<li><a href="#thanks">Thanks!</a></li>
-	<li><a href="#install">Installing The Plugin</a></li>
-	<li><a href="#config">Configuring The Plugin</a></li>
-	<li><a href="#upgrade">Upgrading The Plugin</a></li>
-	<li><a href="#remove">Removing The Plugin</a></li>
-	<li><a href="#you">Things You Can Do</a></li>
-	<li><a href="#license">License</a></li>
-</ul>
+			<li><a href="#version">Version History</a></li>
+			<li><a href="#install">Installing The Plugin</a></li>
+			<li><a href="#config">Configuring The Plugin</a></li>
+			<li><a href="#admin">The Admin Section</a></li>
+			<li><a href="#upgrade">Upgrading The Plugin</a></li>
+			<li><a href="#remove">Removing The Plugin</a></li>
+			<li><a href="#license">License</a></li>
+		</ul>
 
-<a name=description></a><h3>Description</h3>
+<h3><a name=description></a>Description</h3>
 
 <p>G2Bridge is a geeklog plugin which allows integration of the <a href="http://gallery.menalto.com/">Gallery2</a> image gallery into your Geeklog site.
 
@@ -54,8 +74,15 @@ The control block is explained on the G2Bridge admin page.  <b>In order for the 
 		<p>Note that G2Bridge does not map group permissions from one to the other.
 
 
-		<h3>Version History</h3>
+		<h3><a name=version></a>Version History</h3>
 		<ul>
+			<li>v2.0 [5 Aug 2007]<ul>
+					<li><span class=fix>[fix]</span> Updated GL detection of anon user for 1.4.1. Minor cleanup of other functions.
+					<li><span class=fix>[fix]</span> Gallery2 sidebar now displays properly in rightblocks.
+				
+					<li><span class=new>[new]</span> Added option for displaying <b>Flash XML MiniSlideShow </b>in blocks.
+				</ul>
+			</li>
 			<li>v1.1 [5 Apr 2006] 
 				<ul>
 					<li><span class=new>[new]</span> Added option for displaying left and right blocks in <b>config.php</b></li>
@@ -63,61 +90,25 @@ The control block is explained on the G2Bridge admin page.  <b>In order for the 
 					<li><span class=fix>[fix]</span> Gallery2 sidebar now displays properly.
 				</ul>
 			</li>
-			<li>v1.0 [18 Mar 2006] Forked to G2Bridge for compatibility with Gallery 2.1 by Wayne Patterson [<a href="mailto:suprsidr@gmail.com">suprsidr@gmail.com]</a> <a href="http://www.4wiseguys.com" target="_blank">http://www.4wiseguys.com</a>
+			<li>v1.0 [18 Mar 2006] Forked to G2Bridge from GL_Gallery2 for compatibility with Gallery 2.1 by Wayne Patterson [<a href="mailto:suprsidr@gmail.com">suprsidr@gmail.com]</a> <a href="http://www.4wiseguys.com" target="_blank">http://www.4wiseguys.com</a>
 				<ul>
-					<ul>
-						<li><span class=new>[new]</span> Fully updated Gallery 2.1 API
-						<li><span class=new>[new]</span> Added option for My Gallery link (for use with User Album Module) as apposed to Gallery2 link in User Menu
-						<li><span class=new>[new]</span> Added option for alternate login redirect in <b>config.php </b>
-						<li><span class=fix>[fix]</span> Now adds installing user to G2 Admin Group instead of mapping user to G2 admin user
-						<li><span class=fix>[fix]</span> <b>No More Path Confusion</b> :)
-					</ul>
+					<li><span class=new>[new]</span> Fully updated Gallery 2.1 API
+					<li><span class=new>[new]</span> Added option for My Gallery link (for use with User Album Module) as apposed to Gallery2 link in User Menu
+					<li><span class=new>[new]</span> Added option for alternate login redirect in <b>config.php </b>
+					<li><span class=fix>[fix]</span> Now adds installing user to G2 Admin Group instead of mapping user to G2 admin user
+					<li><span class=fix>[fix]</span> <b>No More Path Confusion</b> :)
 				</ul>
-			
-			<li>v0.5.0 [01 Mar 2006]
-				<ul>
-					<li><span class=fix>[fix]</span> should work with register_globals off
-					<li><span class=fix>[fix]</span> addresses the problem of new users not being able to see the random photo block until after they've visited the gallery
-					<li><span class=new>[new]</span> maps users and their settings into G2 <span class=thanks>[thanks Anthony Yvanovich]</span>
-						<ul>
-							<li>whenever a user is added or removed from Geeklog, the user will be added or removed from G2
-							<li>whenever a user's info is changed in Geeklog, it will be updated in G2
-							<li>when updating to 0.5.0 or installing fresh, all Geeklog users will be mapped into G2
-						</ul>
-					
-				</ul>
-			<li>v0.4.2 [12 Nov 2005]
-				<ul>
-					<li><span class=fix>[fix]</span> try to clarify installation and configuration instructions
-					<li><span class=new>[new]</span> added config options <span class="conf_option">$_GLG_CONF['allow_anon_access_random_photo']</span> and <span class="conf_option">$_GLG_CONF['allow_anon_access_gallery']</span> to restrict viewing to logged-in users <span class=thanks>[thanks hatric]</span>
-				</ul>
-			<li>v0.4.1 [04 Nov 2005]
-				<ul>
-					<li><span class=fix>[fix]</span> comment in config.php had an incorrect example <span class=thanks>[reported by surgeon]</span>
-					<li><span class=fix>[fix]</span> copy-paste error prevented plugin from being removed cleanly <span class=thanks>[reported by surgeon]</span>
-					<li><span class=new>[new]</span> tries to map the user's language so G2 uses the same one if it can
-				</ul>
-			<li>v0.4.0 [28 Oct 2005]
-				<ul>
-					<li>initial public version
-				</ul>
-			
 		</ul>
-		<a name=thanks></a>
-		<h3>Thanks!</h3>
-<ul>
-	<li>Ajay Gopal, Wayne Patterson, and John Hughes for help testing the pre-release versions of GL_Gallery2</li>
-</ul>
-
-<a name=install></a><h3>Installing The Plugin</h3>
+		<h3><a name=install></a>Installing The Plugin</h3>
+		
+		
 A note on paths:
 <ul>
 	<li>a path beginning with ./ is where the plugin's config.php may be found</li>
 	<li>&lt;public_html&gt; is where your lib-common.php file may be found</li>
 	<li>&lt;geeklog_dir&gt; is where your config.php file for geeklog may be found</li>
 </ul>
-
-<ol>
+		<ol>
 <li>First off, make sure you have a working Gallery2 installation and a working Geeklog installation.</li>
 
 <li>If you have G2's <b>URL Rewrite module</b> installed, deactivate and remove it.  Re-install it <b>through the
@@ -149,26 +140,39 @@ what the problem was.  Fix it and re-install.</li>
 It is fine to disable them, but the plugin expects them to exist.
 They will be removed if you choose to remove the plugin.</li>
 </ol>
-
-<a name=config></a>
-		<h3>Configuring The Plugin</h3>
+		<h3><a name=config></a>Configuring The Plugin</h3>
+		
 		
 The only thing you <i>must</i> do is configure your paths  in your G2Bridge <b>config.php</b>.  These are explained in the  file.
 		<p><span class="conf_option">$_G2B_CONF['public_dir']</span> allows you to name the public_html portion of the G2Bridge plugin whatever you want.
-		<p><span class="conf_option">$_GLG_CONF['random_photo_fields']</span> allows you to specify what data should be displayed in the random photo block.
+		<p><span class="conf_option">$_G2B_CONF['random_photo_fields']</span> allows you to specify what data should be displayed in the random photo block.
 
-<p><span class="conf_option">$_GLG_CONF['allow_anon_access_random_photo']</span> and <span class="conf_option">$_GLG_CONF['allow_anon_access_gallery']</span> specify what should be visible to anonymous users.
+<p><span class="conf_option">$_G2B_CONF['allow_anon_access_random_photo']</span> and <span class="conf_option">$_G2B_CONF['allow_anon_access_gallery']</span> specify what should be visible to anonymous users.
 
 
 		<p><span class="conf_option">$_G2B_CONF['user_albums']</span> lets you select what type of link will appear in the user menu. &quot;My Gallery&quot; or  &quot;Gallery2&quot;</p>
 		<p><span class="conf_option">$_G2B_CONF['login_redirect']</span> can be set if you use a custom login page for your geeklog site. <b><font color="#ff3300">Note: if you are experiencing unresolvable redirects in your browser set this to ' '</font></b></p>
 		<p>All other configuration is done through your Gallery2 admin page.
 
-<a name=upgrade></a><h3>Upgrading The Plugin</h3>
+		
+		
+		
+		
+		<br>
+		<h3><a name=admin></a>The Admin Section</h3>
+		<ul>
+			<li>Within the admin page &lt;site_admin_url&gt;/plugins/G2Bridge/index.php there are a few option for your control.
+			<li>Control the Gallery2 SideBar Block's visibility.
+			<li>Sync your Geeklog&amp; Gallery2 users should they ever fall out of sync.
+			<li><span class=new>[new]</span>Create Blocks containing my Flash XML MiniSlideShow to display your albums like the random photo block.</ul>
+		<h3><a name=upgrade></a>Upgrading The Plugin</h3>
+		
+		
 
 Upgrading G2Bridge is very similar to installation:
 
-<ol>
+
+		<ol>
 <li>Backup your Geeklog database because upgrading may add or modify database tables.
 You can do this with the built in database backup facility in the Admin menu.</li>
 
@@ -180,10 +184,8 @@ You can do this with the built in database backup facility in the Admin menu.</l
 
 <li>Go back to the plugin editor for G2Bridge [Admin->Plugins->G2Bridge] and click the 'Update' button.</li>
 </ol>
-
-<a name=remove></a><h3>Removing The Plugin</h3>
-
-<ol>
+		<h3><a name=remove></a>Removing The Plugin</h3>
+		<ol>
 <li>Because the plugin modifies several database tables, it should <b>always</b> be removed through the interface provided.
 Log in to your Geeklog as a root user and go to the plugin administration page.  Click the 'G2Bridge'
 link and then click the 'Delete' button.  It will ask you to confirm it.  Confirm it.</li>
@@ -195,38 +197,13 @@ link and then click the 'Delete' button.  It will ask you to confirm it.  Confir
 		<li>&lt;public_html&gt;/admin/plugins/G2Bridge/</li>
 	</ul>
 </li>
-<li>There is no step three.</li>
-</ol>
-
-<a name=you></a><h3>Things You Can Do</h3>
-<ul>
-			<li>Link to my site [<a href="http://imol.gotdns.com">http://imol.gotdns.com</a>] somewhere on yours.
-	
-			<li>Support development by making a donation:
-		<p>
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-		<input type="hidden" name="cmd" value="_s-xclick">
-		<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
-		<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----MIIHdwYJKoZIhvcNAQcEoIIHaDCCB2QCAQExggEwMIIBLAIBADCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwDQYJKoZIhvcNAQEBBQAEgYBAySdwJ5C0+DqB2c6SMCtA4dSw/Gedna1hspRluWa6ZBCzHEA5+6fHMNgBb0scSHZOAaGhPyi8zSBEfIq7v6rOB883++BrHSBR1qYPAN8swro2BUjhQP3pVrEmqagMG4eNtfDI0gQGeTF0v2YvTR1CH7AWIKdfhXG8j2I0TEAR5TELMAkGBSsOAwIaBQAwgfQGCSqGSIb3DQEHATAUBggqhkiG9w0DBwQIZeVXPJ16tTiAgdBzjUyTpnLDsXz5U/e4464UDXU8Ftun9V3ojsjBusdHUDTuuuHZ9l8XvctfeOvJKquI+Gfr6rZl7RrNNF1dVm/J+MkBlj8OlVzTS8y6OTuGHMwMAOxzwV+rGcOS1UwLcGq31Mgm/F95UTaemZaw9BjxQi9r+lhMndSsLXGyo7B17z4NXHg92b1+Gnu0zjeSeqQOwmpNYf1VaHHfY09XUPZesXcHhidRvA/QyqSmNqKudM8YyxitFfPMvULtsM9SlxNPmq5brwu+ouHIeJ42IJSOoIIDhzCCA4MwggLsoAMCAQICAQAwDQYJKoZIhvcNAQEFBQAwgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tMB4XDTA0MDIxMzEwMTMxNVoXDTM1MDIxMzEwMTMxNVowgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBR07d/ETMS1ycjtkpkvjXZe9k+6CieLuLsPumsJ7QC1odNz3sJiCbs2wC0nLE0uLGaEtXynIgRqIddYCHx88pb5HTXv4SZeuv0Rqq4+axW9PLAAATU8w04qqjaSXgbGLP3NmohqM6bV9kZZwZLR/klDaQGo1u9uDb9lr4Yn+rBQIDAQABo4HuMIHrMB0GA1UdDgQWBBSWn3y7xm8XvVk/UtcKG+wQ1mSUazCBuwYDVR0jBIGzMIGwgBSWn3y7xm8XvVk/UtcKG+wQ1mSUa6GBlKSBkTCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb22CAQAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQCBXzpWmoBa5e9fo6ujionW1hUhPkOBakTr3YCDjbYfvJEiv/2P+IobhOGJr85+XHhN0v4gUkEDI8r2/rNk1m0GA8HKddvTjyGw/XqXa+LSTlDYkqI8OwR8GEYj4efEtcRpRYBxV8KxAW93YDWzFGvruKnnLbDAF6VR5w/cCMn5hzGCAZowggGWAgEBMIGUMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbQIBADAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMDUxMDIxMTQzOTMzWjAjBgkqhkiG9w0BCQQxFgQU5e9mDdoIxn/sjEIrBVDoVl6IIjYwDQYJKoZIhvcNAQEBBQAEgYBKSlCRSk8myDtfnOnA03X34TI2wXEowKUSNMq4Evm4YVFpwOC7DnhhAvXVRLvO+kAxsbqjc+5OqQRtmSdEqHbUU6qM9r86G0D+7XR5qbVWd6fMsGLMF12UZUTlbCeOi61kuxGLxFkSD762gd7ilbz/ireRIQORrntmImEkGNc3gw==-----END PKCS7-----
-		">
-		</form>
-		or by using one of the following links to shop at amazon:
-		<ul>
-		<li><a href="http://www.amazon.com/exec/obidos/redirect?tag=imol-20&amp;path=http://amazon.com">amazon.com</a></li>
-		<li><a href="http://www.amazon.ca/exec/obidos/redirect?tag=imol0a-20&amp;path=http://amazon.ca">amazon.ca</a></li>
-		<li><a href="http://www.amazon.co.uk/exec/obidos/redirect?tag=imol-21&amp;path=http%3A//amazon.co.uk">amazon.co.uk</a></li> 
-		<li><a href="http://www.amazon.fr/exec/obidos/redirect?tag=imol08-21&amp;path=http%3A//amazon.fr">amazon.fr</a></li>
-		<li><a href="http://www.amazon.de/exec/obidos/redirect?tag=imol05-21&amp;path=http%3A//amazon.de">amazon.de</a></li>
-		<li><a href="http://www.amazon.co.jp/exec/obidos/redirect?tag=imol-22&amp;path=http%3A//amazon.co.jp">amazon.co.jp</a></li>
-		</ul>
-		<br>or by going to [<a href="http://imol.gotdns.com">http://imol.gotdns.com</a>] and clicking on an interesting Google ad or two  [<b>easiest option - one minute of your time!</b>]
-	</li>
-</ul>
-
-
-<a name=license></a><h3>License</h3>
+			<li>There is no step three.</li>
+		</ol>
+		<h3><a name=license></a>License</h3>
+		
+		
 The G2Bridge plugin is licensed under the GPL even though I don't really understand it and all its implications.
-<p>Why do we let <a href="http://en.wikipedia.org/wiki/Legalese">legalese</a> control the world?
+</div></div>
 </body>
 
 </html>
