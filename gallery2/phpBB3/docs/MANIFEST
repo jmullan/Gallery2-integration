@@ -1,0 +1,381 @@
+ Directory of integration\0.0.4
+
+11/14/2007  10:37 AM    <DIR>          .
+11/14/2007  10:37 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          dev-tools
+11/14/2007  10:37 AM    <DIR>          docs
+11/13/2007  09:30 AM    <DIR>          gallery2
+11/13/2007  09:30 AM    <DIR>          mods
+11/13/2007  09:30 AM    <DIR>          phpBB3
+11/10/2007  11:24 PM               549 Readme_first.txt
+               1 File(s)            549 bytes
+
+ Directory of integration\0.0.4\dev-tools
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM               785 lightbox-test.html
+11/02/2007  08:25 AM             3,235 populate_table.php
+               2 File(s)          4,020 bytes
+
+ Directory of integration\0.0.4\docs
+
+11/14/2007  10:37 AM    <DIR>          .
+11/14/2007  10:37 AM    <DIR>          ..
+11/07/2007  10:33 PM               354 CHANGELOG
+11/13/2007  09:30 AM    <DIR>          images
+12/01/2006  01:14 PM            18,351 LICENSE
+11/14/2007  10:38 AM                34 MANIFEST
+11/11/2007  02:51 PM             3,639 readme.css
+11/14/2007  09:56 AM            38,237 Readme.html
+11/08/2007  09:17 AM             2,497 readme.js
+11/11/2007  11:21 PM            24,482 Readme.txt
+               7 File(s)         87,594 bytes
+
+ Directory of integration\0.0.4\docs\images
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+04/03/2006  06:26 PM               979 closelabel.gif
+10/05/2006  07:19 AM             6,395 g2Logo.gif
+03/10/2006  02:40 AM             2,767 loading.gif
+11/08/2007  11:31 AM             4,809 ngLogo.png
+11/02/2007  08:25 AM               275 nukedgallery.png
+11/11/2007  11:30 PM            75,935 sample-gallery_admin-full.jpg
+11/11/2007  11:26 PM            74,229 sample-gallery_admin-permissions.jpg
+11/11/2007  11:02 PM            76,901 sample-gallery_admin-roles.jpg
+11/11/2007  11:16 PM            84,825 sample-gallery_admin-settings.jpg
+11/11/2007  11:34 PM            94,855 sample-gallery_admin-settings2.jpg
+11/11/2007  11:23 PM            75,114 sample-gallery_admin-user.jpg
+11/11/2007  10:24 PM            78,234 sample-gallery_adminset.jpg
+11/11/2007  10:08 PM            65,901 sample-gallery_config.jpg
+11/11/2007  10:14 PM            77,211 sample-gallery_default.jpg
+11/11/2007  10:49 PM           109,841 sample-gallery_existing.jpg
+11/11/2007  06:00 PM            64,939 sample-gallery_export.jpg
+11/11/2007  06:25 PM            88,952 sample-gallery_g2image.jpg
+11/11/2007  10:54 PM            57,340 sample-gallery_latest.jpg
+11/11/2007  05:54 PM            72,521 sample-gallery_link.jpg
+11/11/2007  07:24 PM            72,610 sample-gallery_link2.jpg
+11/11/2007  10:28 PM            69,102 sample-gallery_links.jpg
+11/11/2007  06:42 PM            60,678 sample-gallery_memberlist.jpg
+11/11/2007  09:52 PM            74,631 sample-gallery_module-board.jpg
+11/11/2007  10:00 PM            87,434 sample-gallery_module-enable.jpg
+11/11/2007  09:47 PM            98,356 sample-gallery_module-gallery2.jpg
+11/11/2007  09:30 PM            79,697 sample-gallery_module-general.jpg
+11/11/2007  05:55 PM            65,375 sample-gallery_module.jpg
+11/11/2007  07:13 PM            72,505 sample-gallery_nuked.jpg
+11/11/2007  06:56 PM            77,914 sample-gallery_profileitems.jpg
+11/11/2007  06:50 PM            66,406 sample-gallery_profilelink.jpg
+11/11/2007  10:51 PM            12,955 sample-gallery_progress.jpg
+11/11/2007  10:20 PM            81,207 sample-gallery_submit.jpg
+11/11/2007  11:38 PM            62,799 sample-gallery_unsynchronize.jpg
+11/11/2007  06:36 PM            93,314 sample-gallery_userlink.jpg
+11/11/2007  11:30 PM             3,411 t_sample-gallery_admin-full.jpg
+11/11/2007  11:27 PM             3,310 t_sample-gallery_admin-permissions.jpg
+11/11/2007  11:02 PM             3,673 t_sample-gallery_admin-roles.jpg
+11/11/2007  11:16 PM             4,031 t_sample-gallery_admin-settings.jpg
+11/11/2007  11:35 PM             4,279 t_sample-gallery_admin-settings2.jpg
+11/11/2007  11:23 PM             2,974 t_sample-gallery_admin-user.jpg
+11/11/2007  10:24 PM             3,391 t_sample-gallery_adminset.jpg
+11/11/2007  10:09 PM             3,230 t_sample-gallery_config.jpg
+11/11/2007  10:15 PM             3,330 t_sample-gallery_default.jpg
+11/11/2007  10:49 PM             4,337 t_sample-gallery_existing.jpg
+11/11/2007  06:00 PM             2,871 t_sample-gallery_export.jpg
+11/11/2007  06:25 PM             5,227 t_sample-gallery_g2image.jpg
+11/11/2007  10:55 PM             2,576 t_sample-gallery_latest.jpg
+11/11/2007  05:54 PM             4,413 t_sample-gallery_link.jpg
+11/11/2007  07:25 PM             4,228 t_sample-gallery_link2.jpg
+11/11/2007  10:29 PM             3,193 t_sample-gallery_links.jpg
+11/11/2007  06:43 PM             4,324 t_sample-gallery_memberlist.jpg
+11/11/2007  09:53 PM             3,369 t_sample-gallery_module-board.jpg
+11/11/2007  10:00 PM             4,037 t_sample-gallery_module-enable.jpg
+11/11/2007  09:48 PM             4,523 t_sample-gallery_module-gallery2.jpg
+11/11/2007  09:22 PM             3,737 t_sample-gallery_module-general.jpg
+11/11/2007  05:55 PM             3,263 t_sample-gallery_module.jpg
+11/11/2007  07:13 PM             4,146 t_sample-gallery_nuked.jpg
+11/11/2007  06:56 PM             4,768 t_sample-gallery_profileitems.jpg
+11/11/2007  06:50 PM             4,059 t_sample-gallery_profilelink.jpg
+11/11/2007  10:51 PM             1,233 t_sample-gallery_progress.jpg
+11/11/2007  10:20 PM             3,515 t_sample-gallery_submit.jpg
+11/11/2007  11:38 PM             2,738 t_sample-gallery_unsynchronize.jpg
+11/11/2007  06:36 PM             4,738 t_sample-gallery_userlink.jpg
+              63 File(s)      2,293,930 bytes
+
+ Directory of integration\0.0.4\gallery2
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          modules
+               0 File(s)              0 bytes
+
+ Directory of integration\0.0.4\gallery2\modules
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          core
+               0 File(s)              0 bytes
+
+ Directory of integration\0.0.4\gallery2\modules\core
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          data
+               0 File(s)              0 bytes
+
+ Directory of integration\0.0.4\gallery2\modules\core\data
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:25 AM               275 nukedgallery.png
+               1 File(s)            275 bytes
+
+ Directory of integration\0.0.4\mods
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/12/2007  08:17 AM             1,717 gallery-embed_mods.txt
+11/13/2007  09:45 AM             7,693 gallery2_mods.txt
+11/12/2007  08:17 AM            24,407 integration_mods.txt
+11/12/2007  08:18 AM            10,318 lightbox_mods.txt
+11/12/2007  08:18 AM            11,326 prosilver_mods.txt
+11/13/2007  10:37 AM            11,626 subsilver2_mods.txt
+11/13/2007  10:41 AM             3,071 url-rewrite_mods.txt
+               7 File(s)         70,158 bytes
+
+ Directory of integration\0.0.4\phpBB3
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          adm
+11/14/2007  09:44 AM            24,207 g2helper.inc
+11/13/2007  09:30 AM    <DIR>          g2image
+11/14/2007  09:45 AM             2,093 gallery2.php
+11/13/2007  09:30 AM    <DIR>          includes
+11/13/2007  09:30 AM    <DIR>          language
+11/13/2007  09:30 AM    <DIR>          styles
+               2 File(s)         26,300 bytes
+
+ Directory of integration\0.0.4\phpBB3\adm
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:25 AM            17,785 G2EmbedDiscoveryUtilities.class
+11/13/2007  09:30 AM    <DIR>          style
+               1 File(s)         17,785 bytes
+
+ Directory of integration\0.0.4\phpBB3\adm\style
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:25 AM             8,919 acp_gallery2.html
+               1 File(s)          8,919 bytes
+
+ Directory of integration\0.0.4\phpBB3\g2image
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:25 AM            10,789 CHANGELOG.HTML
+11/02/2007  08:25 AM             6,586 config.php.original
+11/02/2007  08:26 AM             2,294 CREDITS.HTML
+11/13/2007  09:30 AM    <DIR>          css
+11/02/2007  08:26 AM             5,125 editor_plugin.js
+11/02/2007  08:26 AM             8,020 editor_plugin_src.js
+11/02/2007  08:26 AM             1,018 fckplugin.js
+11/02/2007  08:26 AM            36,065 g2image.php
+11/02/2007  08:26 AM             3,873 g2image.xml
+11/02/2007  08:26 AM             4,875 gettext.inc
+11/02/2007  08:26 AM            11,284 gettext.php
+11/13/2007  09:30 AM    <DIR>          images
+11/13/2007  09:30 AM    <DIR>          img
+11/05/2007  09:03 AM             3,277 init.php
+11/02/2007  08:26 AM             8,156 init.php.original
+11/13/2007  09:30 AM    <DIR>          jscripts
+11/13/2007  09:30 AM    <DIR>          langs
+11/02/2007  08:26 AM            19,020 LICENSE.HTML
+11/02/2007  08:26 AM             1,021 popup_wpg2.htm
+11/02/2007  08:26 AM             1,004 popup_wpg2id.htm
+11/02/2007  08:26 AM             7,052 README.HTML
+11/02/2007  08:26 AM             3,736 streams.php
+              17 File(s)        133,195 bytes
+
+ Directory of integration\0.0.4\phpBB3\g2image\css
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM               895 dtree.css
+11/02/2007  08:26 AM             2,283 g2image.css
+11/02/2007  08:26 AM             1,652 lightbox.css
+11/02/2007  08:26 AM               289 readme.css
+               4 File(s)          5,119 bytes
+
+ Directory of integration\0.0.4\phpBB3\g2image\images
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM                43 blank.gif
+11/02/2007  08:26 AM               222 close.gif
+11/02/2007  08:26 AM               979 closelabel.gif
+11/02/2007  08:26 AM               577 g2image-wpg2.gif
+11/02/2007  08:26 AM               211 g2image.gif
+11/02/2007  08:26 AM             2,767 loading.gif
+11/02/2007  08:26 AM               963 magnifier.gif
+11/02/2007  08:26 AM               305 next.gif
+11/02/2007  08:26 AM             1,252 nextlabel.gif
+11/02/2007  08:26 AM               307 prev.gif
+11/02/2007  08:26 AM             1,264 prevlabel.gif
+11/02/2007  08:26 AM            23,574 wpg2_placeholder.jpg
+              12 File(s)         32,464 bytes
+
+ Directory of integration\0.0.4\phpBB3\g2image\img
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM             1,040 base.gif
+11/02/2007  08:26 AM                62 empty.gif
+11/02/2007  08:26 AM               372 folder.gif
+11/02/2007  08:26 AM               376 folderopen.gif
+11/02/2007  08:26 AM                69 join.gif
+11/02/2007  08:26 AM                66 joinbottom.gif
+11/02/2007  08:26 AM                66 line.gif
+11/02/2007  08:26 AM                86 minus.gif
+11/02/2007  08:26 AM                85 minusbottom.gif
+11/02/2007  08:26 AM               861 nolines_minus.gif
+11/02/2007  08:26 AM               870 nolines_plus.gif
+11/02/2007  08:26 AM               372 page.gif
+11/02/2007  08:26 AM                89 plus.gif
+11/02/2007  08:26 AM                88 plusbottom.gif
+              14 File(s)          4,502 bytes
+
+ Directory of integration\0.0.4\phpBB3\g2image\jscripts
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM            12,410 dtree.js
+11/02/2007  08:26 AM            38,228 effects.js
+11/05/2007  09:41 AM             8,943 functions.js
+11/02/2007  08:26 AM            13,362 functions.js.original
+11/07/2007  01:33 PM            24,649 lightbox.js
+11/02/2007  08:26 AM             1,559 popup.js
+11/02/2007  08:26 AM            96,311 prototype.js
+11/02/2007  08:26 AM             2,665 scriptaculous.js
+               8 File(s)        198,127 bytes
+
+ Directory of integration\0.0.4\phpBB3\g2image\langs
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM               595 de.js
+11/02/2007  08:26 AM             5,701 de.mo
+11/02/2007  08:26 AM               624 en.js
+11/02/2007  08:26 AM               659 es.js
+11/02/2007  08:26 AM             5,810 es.mo
+11/02/2007  08:26 AM               713 fr.js
+11/02/2007  08:26 AM             5,881 fr.mo
+11/02/2007  08:26 AM             5,390 g2image.pot
+11/02/2007  08:26 AM               698 hu.js
+11/02/2007  08:26 AM             5,941 hu.mo
+11/02/2007  08:26 AM               376 it.js
+11/02/2007  08:26 AM             5,972 it.mo
+11/02/2007  08:26 AM               623 ko.js
+11/02/2007  08:26 AM             3,106 ko.mo
+11/02/2007  08:26 AM               624 nb.js
+11/02/2007  08:26 AM             3,016 nb.mo
+11/02/2007  08:26 AM               600 nl.js
+11/02/2007  08:26 AM             5,739 nl.mo
+11/02/2007  08:26 AM               476 pl.js
+11/02/2007  08:26 AM             5,684 pl.mo
+11/02/2007  08:26 AM               416 zh_TW.js
+11/02/2007  08:26 AM             3,816 zh_TW.mo
+              22 File(s)         62,460 bytes
+
+ Directory of integration\0.0.4\phpBB3\includes
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          acp
+               0 File(s)              0 bytes
+
+ Directory of integration\0.0.4\phpBB3\includes\acp
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/09/2007  06:53 PM            48,754 acp_gallery2.php
+11/13/2007  09:30 AM    <DIR>          info
+               1 File(s)         48,754 bytes
+
+ Directory of integration\0.0.4\phpBB3\includes\acp\info
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM             1,479 acp_gallery2.php
+               1 File(s)          1,479 bytes
+
+ Directory of integration\0.0.4\phpBB3\language
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          en
+               0 File(s)              0 bytes
+
+ Directory of integration\0.0.4\phpBB3\language\en
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          acp
+               0 File(s)              0 bytes
+
+ Directory of integration\0.0.4\phpBB3\language\en\acp
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM            14,217 gallery2.php
+               1 File(s)         14,217 bytes
+
+ Directory of integration\0.0.4\phpBB3\styles
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          imageset
+11/13/2007  09:30 AM    <DIR>          template
+11/13/2007  09:30 AM    <DIR>          theme
+               0 File(s)              0 bytes
+
+ Directory of integration\0.0.4\phpBB3\styles\imageset
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/13/2007  09:30 AM    <DIR>          en
+11/02/2007  08:26 AM             1,692 icon_user_gallery.gif
+               1 File(s)          1,692 bytes
+
+ Directory of integration\0.0.4\phpBB3\styles\imageset\en
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM             1,064 button_gallery.gif
+               1 File(s)          1,064 bytes
+
+ Directory of integration\0.0.4\phpBB3\styles\template
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM                98 gallery2.html
+               1 File(s)             98 bytes
+
+ Directory of integration\0.0.4\phpBB3\styles\theme
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM               423 g2embed_overrides.css
+11/13/2007  09:30 AM    <DIR>          images
+               1 File(s)            423 bytes
+
+ Directory of integration\0.0.4\phpBB3\styles\theme\images
+
+11/13/2007  09:30 AM    <DIR>          .
+11/13/2007  09:30 AM    <DIR>          ..
+11/02/2007  08:26 AM               328 icon_gallery.gif
+               1 File(s)            328 bytes
+
+     Total Files Listed:
+             170 File(s)      3,013,452 bytes

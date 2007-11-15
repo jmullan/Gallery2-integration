@@ -1,0 +1,282 @@
+##############################################################
+## $Revision:  $
+## $Date: 2007-04-10 17:26:24 +0200 (Tue, 10 Apr 2007) $
+##
+## MOD Title: Gallery2 Integration Subsilver2 Mods 
+## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
+## MOD Description: This mod integrates phpBB3rc7 and Gallery2.2.3
+## MOD Version: 0.0.4
+##
+## Installation Level: Advanced
+## Installation Time: 10 Minutes
+## Files To Edit: 
+##	     styles/subsilver2/template/memberlist_body.html,
+##	     styles/subsilver2/template/memberlist_view.html,
+##	     styles/subsilver2/template/overall_header.html,
+##	     styles/subsilver2/template/posting_buttons.html,
+##	     styles/subsilver2/template/viewtopic_body.html
+## Included Files:
+##	     phpBB3/styles/imageset/en/button_gallery.gif,
+##	     phpBB3/styles/template/gallery2.html,
+##	     phpBB3/styles/theme/gallery_overrides.css,
+##	     phpBB3/styles/theme/images/icon_gallery.gif,
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+##############################################################
+## Author Notes:
+##
+##############################################################
+## MOD History:
+##
+## 2007-10-27 - Version 0.0.4
+##      - phpBB3rc7 Developmental Release
+##
+## 2007-04-10 - Version 0.0.3
+##      - phpBB3b4 Developmental Release
+##
+## 2006-12-16 - Version 0.0.2
+##      - Initial Beta Developmental Release
+##
+## Version 0.0.1
+##      - Initial Developmental Test
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ SQL ]------------------------------------------
+# (Use correct table prefix if not phpbb)
+# 
+INSERT INTO `phpbb_styles_imageset_data` ( `image_name` , `image_filename` , `image_lang` , `image_height` , `image_width` , `imageset_id` ) VALUES ('icon_user_gallery' , 'button_gallery.gif', 'en', '18', '59', '2');
+
+INSERT INTO `phpbb_styles_imageset_data` ( `image_name` , `image_filename` , `image_lang` , `image_height` , `image_width` , `imageset_id` ) VALUES ('button_gallery' , 'button_gallery.gif', 'en', '18', '59', '2');
+
+#
+#-----[ COPY ]------------------------------------------
+#
+copy phpBB3/styles/imageset/en/button_gallery.gif to styles/subsilver2/imageset/en/button_gallery.gif
+copy phpBB3/styles/template/gallery2.html to styles/subsilver2/template/gallery2.html
+copy phpBB3/styles/theme/gallery_overrides.css to styles/subsilver2/theme/gallery_overrides.css
+copy phpBB3/styles/theme/images/icon_gallery.gif to styles/subsilver2/theme/images/icon_gallery.gif
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+styles/subsilver2/template/memberlist_body.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	<th nowrap="nowrap" width="25%" align="{S_CONTENT_FLOW_BEGIN}"><a href="{U_SORT_USERNAME}">{L_USERNAME}</a></th>
+	<th nowrap="nowrap" width="15%"><a href="{U_SORT_JOINED}">{L_JOINED}</a></th>
+	<th nowrap="nowrap" width="10%"><a href="{U_SORT_POSTS}">{L_POSTS}</a></th>
+	<th nowrap="nowrap" width="15%"><a href="{U_SORT_RANK}">{L_RANK}</a></th>
+	<th nowrap="nowrap" width="11%">{L_SEND_MESSAGE}</th>
+	<th nowrap="nowrap" width="11%"><a href="{U_SORT_EMAIL}">{L_EMAIL}</a></th>
+	<th nowrap="nowrap" width="11%"><a href="{U_SORT_WEBSITE}">{L_WEBSITE}</a></th>
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+	<!-- IF S_GALLERY -->
+	<th nowrap="nowrap" width="25%" align="{S_CONTENT_FLOW_BEGIN}"><a href="{U_SORT_USERNAME}">{L_USERNAME}</a></th>
+	<th nowrap="nowrap" width="13%"><a href="{U_SORT_JOINED}">{L_JOINED}</a></th>
+	<th nowrap="nowrap" width="9%"><a href="{U_SORT_POSTS}">{L_POSTS}</a></th>
+	<th nowrap="nowrap" width="13%"><a href="{U_SORT_RANK}">{L_RANK}</a></th>
+	<th nowrap="nowrap" width="9%">{L_SEND_MESSAGE}</th>
+	<th nowrap="nowrap" width="9%"><a href="{U_SORT_EMAIL}">{L_EMAIL}</a></th>
+	<th nowrap="nowrap" width="9%"><a href="{U_SORT_WEBSITE}">{L_WEBSITE}</a></th>
+	<th nowrap="nowrap" width="9%">{L_GALLERY}</th>
+	<!-- ELSE -->
+	<th nowrap="nowrap" width="25%" align="{S_CONTENT_FLOW_BEGIN}"><a href="{U_SORT_USERNAME}">{L_USERNAME}</a></th>
+	<th nowrap="nowrap" width="15%"><a href="{U_SORT_JOINED}">{L_JOINED}</a></th>
+	<th nowrap="nowrap" width="10%"><a href="{U_SORT_POSTS}">{L_POSTS}</a></th>
+	<th nowrap="nowrap" width="15%"><a href="{U_SORT_RANK}">{L_RANK}</a></th>
+	<th nowrap="nowrap" width="11%">{L_SEND_MESSAGE}</th>
+	<th nowrap="nowrap" width="11%"><a href="{U_SORT_EMAIL}">{L_EMAIL}</a></th>
+	<th nowrap="nowrap" width="11%"><a href="{U_SORT_WEBSITE}">{L_WEBSITE}</a></th>
+	<!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		<td class="gen" align="center">&nbsp;<!-- IF memberrow.U_WWW --><a href="{memberrow.U_WWW}">{WWW_IMG}</a><!-- ENDIF -->&nbsp;</td>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		<!-- IF memberrow.S_GALLERY -->
+		<td class="gen" align="center">&nbsp;<!-- IF memberrow.U_GALLERY --><a href="{memberrow.U_GALLERY}">{GALLERY_IMG}</a><!-- ENDIF -->&nbsp;</td>
+		<!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		<td class="row1" colspan="<!-- IF S_IN_SEARCH_POPUP -->9<!-- ELSE -->8<!-- ENDIF -->" align="center">
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+		<!-- IF memberrow.S_GALLERY -->
+		<td class="row1" colspan="<!-- IF S_IN_SEARCH_POPUP -->10<!-- ELSE -->9<!-- ENDIF -->" align="center">
+		<!-- ELSE -->
+		<td class="row1" colspan="<!-- IF S_IN_SEARCH_POPUP -->9<!-- ELSE -->8<!-- ENDIF -->" align="center">
+		<!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	<td class="cat" colspan="<!-- IF S_IN_SEARCH_POPUP -->9<!-- ELSE -->8<!-- ENDIF -->" align="center"><!-- IF S_IN_SEARCH_POPUP and not S_SELECT_SINGLE --><input class="btnlite" type="submit" value="{L_SELECT_MARKED}" /><!-- ELSE --><span class="gensmall">{L_SELECT_SORT_METHOD}:</span>&nbsp;<select name="sk">{S_MODE_SELECT}</select>&nbsp; <span class="gensmall">{L_ORDER}</span>&nbsp;<select name="sd">{S_ORDER_SELECT}</select>&nbsp; <input type="submit" name="submit" value="{L_SUBMIT}" class="btnlite" /><!-- ENDIF --></td>
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+	<!-- IF S_GALLERY -->
+	<td class="cat" colspan="<!-- IF S_IN_SEARCH_POPUP -->10<!-- ELSE -->9<!-- ENDIF -->" align="center"><!-- IF S_IN_SEARCH_POPUP and not S_SELECT_SINGLE --><input class="btnlite" type="submit" value="{L_SELECT_MARKED}" /><!-- ELSE --><span class="gensmall">{L_SELECT_SORT_METHOD}:</span>&nbsp;<select name="sk">{S_MODE_SELECT}</select>&nbsp; <span class="gensmall">{L_ORDER}</span>&nbsp;<select name="sd">{S_ORDER_SELECT}</select>&nbsp; <input type="submit" name="submit" value="{L_SUBMIT}" class="btnlite" /><!-- ENDIF --></td>
+	<!-- ELSE -->
+	<td class="cat" colspan="<!-- IF S_IN_SEARCH_POPUP -->9<!-- ELSE -->8<!-- ENDIF -->" align="center"><!-- IF S_IN_SEARCH_POPUP and not S_SELECT_SINGLE --><input class="btnlite" type="submit" value="{L_SELECT_MARKED}" /><!-- ELSE --><span class="gensmall">{L_SELECT_SORT_METHOD}:</span>&nbsp;<select name="sk">{S_MODE_SELECT}</select>&nbsp; <span class="gensmall">{L_ORDER}</span>&nbsp;<select name="sd">{S_ORDER_SELECT}</select>&nbsp; <input type="submit" name="submit" value="{L_SUBMIT}" class="btnlite" /><!-- ENDIF --></td>
+	<!-- ENDIF -->
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+styles/subsilver2/template/memberlist_view.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+				<td><!-- IF U_WWW --><b><a class="genmed" href="{U_WWW}">{U_WWW}</a></b><!-- ENDIF --></td>
+			</tr>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+			<!-- IF U_GALLERY -->
+			<tr>
+				<td class="gen" align="{S_CONTENT_FLOW_END}" nowrap="nowrap">{L_GALLERY}: </td>
+				<td><b><a class="genmed" href="{U_GALLERY}">{GALLERY_IMG}</a></b></td>
+			</tr>
+			<!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			<td class="row1" colspan="2"><div class="postbody" style="padding: 10px;">{SIGNATURE}</div></td>
+		</tr>
+	<!-- ENDIF -->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	<!-- IF S_GALLERY -->
+	<tr>
+		<td class="cat" colspan="2" style="text-align: center;"><h4>{L_GALLERY_HEADER}</h4></td>
+	</tr>
+	<tr>
+		<td class="row1" colspan="2" align="center"><div style="padding: 10px;">
+		<!-- BEGIN gallery -->
+		<a href="{gallery.ITEM_LINK}"><img style="padding: 2px;" src="{gallery.ITEM_THUMB}"></a>
+		<!-- END gallery -->
+		<!-- IF S_GALLERY_MORE -->
+		<p><b><a href="{U_GALLERY}">{L_GALLERY_MORE}</a></b></p>
+		<!-- ENDIF -->
+		</div></td>
+	</tr>
+	<!-- ENDIF -->
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/subsilver2/template/overall_header.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+<link rel="stylesheet" href="{T_STYLESHEET_LINK}" type="text/css" />
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+<!-- IF S_GALLERY2 -->
+{GALLERY2_CSS}
+<link rel="stylesheet" type="text/css" href="{T_THEME_PATH}/g2embed_overrides.css" />
+{GALLERY2_JAVASCRIPT}
+<!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			<td class="genmed" align="{S_CONTENT_FLOW_END}">
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+				<a href="{U_GALLERY2}"><img src="{T_THEME_PATH}/images/icon_gallery.gif" width="13" height="13" border="0" alt="{L_GALLERY2}" /> {L_GALLERY2}</a>&nbsp;&nbsp;
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/subsilver2/template/posting_buttons.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			e: '{LA_BBCODE_E_HELP}',
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+			g: '{LA_BBCODE_G_HELP}',
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		<script type="text/javascript" src="{T_TEMPLATE_PATH}/editor.js"></script>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		<script language="javascript" type="text/javascript">
+		<!--
+		function g2ic_open(form, field) {
+			var url = './g2image/g2image.php?g2ic_form='+form+'&g2ic_field='+field;
+			var name = 'g2image';
+			var w = 600;
+			var h = 600;
+			var valLeft = (screen.width) ? (screen.width-w)/2 : 0;
+			var valTop = (screen.height) ? (screen.height-h)/2 : 0;
+			var features = 'width='+w+',height='+h+',left='+valLeft+',top='+valTop+',resizable=1,scrollbars=1';
+			window.open(url, name, features);
+		}
+		//-->
+		</script>
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			<input type="button" class="btnbbcode" accesskey="p" name="addbbcode14" value="Img" style="width: 40px" onclick="bbstyle(14)" onmouseover="helpline('p')" onmouseout="helpline('tip')" />
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+			<input type="button" class="btnbbcode" name="g2image" value="g2Img" onclick="g2ic_open('postform', 'message');" title="{L_BBCODE_G_HELP}" />
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/subsilver2/template/viewtopic_body.html
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------
+# 
+<td><div class="gensmall" style="float: {S_CONTENT_FLOW_BEGIN};">&nbsp;
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+# 
+<!-- IF postrow.U_GALLERY --><a href="{postrow.U_GALLERY}">{GALLERY_IMG}</a> <!-- ENDIF -->
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM

@@ -1,0 +1,833 @@
+##############################################################
+## $Revision: 16279 $
+## $Date: 2007-04-10 17:26:24 +0200 (Tue, 10 Apr 2007) $
+##
+## MOD Title: Gallery2 Integration Mods 
+## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
+## MOD Description: This mod integrates phpBB3rc7 and Gallery2.2.3
+## MOD Version: 0.0.4
+##
+## Installation Level: Advanced
+## Installation Time: 30 Minutes
+## Files To Edit: 
+##	     memberlist.php,
+##	     viewtopic.php,
+##	     adm/style/admin.css,
+##	     adm/style/overall_footer.html,
+##	     includes/constants.php,
+##	     includes/functions.php,
+##	     includes/functions_user.php,
+##	     includes/message_parser.php,
+##	     includes/acp/acp_users.php,
+##	     includes/acp/auth.php,
+##	     includes/ucp/ucp_profile.php,
+##	     language/en/common.php,
+##	     language/en/memberlist.php,
+##	     language/en/posting.php,
+##	     language/en/viewtopic.php,
+##	     language/en/acp/common.php,
+##	     language/en/acp/permissions_phpbb.php,
+## Included Files:
+##	     phpBB3/gallery2.php,
+##	     phpBB3/g2helper.inc,
+##	     phpBB3/adm/G2EmbedDiscoveryUtilities.class,
+##	     phpBB3/adm/style/acp_gallery2.html,
+##	     phpBB3/g2image/,
+##	     phpBB3/includes/acp/acp_gallery2.php,
+##	     phpBB3/includes/acp/info/acp_gallery2.php,
+##	     phpBB3/language/en/g2image.php,
+##	     phpBB3/language/en/acp/gallery2.php,
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+##############################################################
+## Author Notes:
+##
+##############################################################
+## MOD History:
+##
+## 2007-10-27 - Version 0.0.4
+##      - phpBB3rc7 Development Release
+##
+## 2007-04-10 - Version 0.0.3
+##      - phpBB3b4 Development Release
+##
+## 2006-12-16 - Version 0.0.2
+##      - Initial Beta Development Release
+##
+## Version 0.0.1
+##      - Initial Development Test
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ SQL ]------------------------------------------
+# (Use correct table prefix if not phpbb)
+# 
+CREATE TABLE `phpbb_gallery2` (
+`fullPath` VARCHAR( 255 ) NOT NULL,
+`embedUri` VARCHAR( 255 ) NOT NULL,
+`g2Uri` VARCHAR( 255 ) NOT NULL,
+`activeAdminId` INT NOT NULL,
+`exportData` TEXT NULL,
+`link` TINYINT( 1 ) NOT NULL,
+`allLinks` TINYINT( 1 ) NOT NULL,
+`allLinksAlbums` TINYINT( 1 ) NOT NULL,
+`allLinksLimit` VARCHAR( 10 ) NOT NULL
+);
+
+INSERT INTO `phpbb_acl_options` ( `auth_option_id` , `auth_option` , `is_global` , `is_local` , `founder_only` ) VALUES (NULL , 'a_gallery2', '1', '0', '0');
+
+ALTER TABLE `phpbb_users` ADD `user_gallery` VARCHAR(10) NULL DEFAULT NULL; 
+
+#
+#-----[ COPY ]------------------------------------------
+#
+copy phpBB3/gallery2.php to gallery2.php
+copy phpBB3/g2helper.inc to g2helper.inc
+copy phpBB3/adm/G2EmbedDiscoveryUtilities.class to adm/G2EmbedDiscoveryUtilities.class
+copy phpBB3/adm/style/acp_gallery2.html to adm/style/acp_gallery2.html
+copy phpBB3/g2image/ to g2image
+copy phpBB3/includes/acp/acp_gallery2.php to includes/acp/acp_gallery2.php
+copy phpBB3/includes/acp/info/acp_gallery2.php to includes/acp/info/acp_gallery2.php
+copy phpBB3/language/en/acp/gallery2.php to language/en/acp/gallery2.php
+
+#
+#-----[ DIY INSTRUCTIONS ]------------------------------------------
+# 
+After installing all files and mods, browse to acp->system->acp->general->board config->add module gallery2 settings - then enable the module
+
+To configure the integration, browse to acp->general->board config - gallery2 settings
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+memberlist.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		$template->assign_vars(show_profile($member));
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+		// Grab Gallery link permission
+		$sql = 'SELECT link FROM ' . GALLERY2_TABLE;
+		$row = $db->sql_fetchrow($db->sql_query_limit($sql, 1));
+		$gallery_link = $row['link'];
+
+		// Fetch all gallery items for this user if allowed and they exist
+		$member['gallery_totalcount'] = $member['gallery_count'] = 0;
+
+		if (!empty($member['user_gallery']) && !empty($gallery_link))
+		{
+			$sql = 'SELECT link, allLinks, allLinksAlbums, allLinksLimit FROM ' . GALLERY2_TABLE;
+			$row = $db->sql_fetchrow($db->sql_query_limit($sql, 1));
+			$member['link'] = (!empty($row['link'])) ? true : false;
+			$member['allLinks'] = (!empty($row['allLinks'])) ? true : false;
+			if (isset($member['allLinks']))
+			{
+				require($phpbb_root_path . 'g2helper.inc');
+				$g2h = new g2helper($db);
+				list($member['gallery_totalcount'], $itemLinks) = $g2h->mapAllGalleryLinks($member['user_id'], $row['allLinksAlbums'], $row['allLinksLimit']);
+				$member['gallery_count'] = (count($itemLinks) > 0) ? count($itemLinks) : 0;
+				if (!empty($member['gallery_count']))
+				{
+					foreach($itemLinks as $id => $url)
+					{
+						$template->assign_block_vars('gallery', array(
+							'ITEM_LINK' => append_sid("{$phpbb_root_path}gallery2.$phpEx", "g2_view=core.ShowItem&amp;g2_itemId=$id"),
+							'ITEM_THUMB' => $url)
+						);
+					}
+				}
+			}
+		}
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			'U_REMOVE_FOE'		=> ($foe) ? append_sid("{$phpbb_root_path}ucp.$phpEx", 'i=zebra&amp;remove=1&amp;mode=foes&amp;usernames[]=' . $user_id) : '',
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+			'GALLERY_IMG'		=> $user->img('button_gallery', $user->lang['GALLERY']),
+			'L_GALLERY'			=> $user->lang['GALLERY'],
+			'L_GALLERY_HEADER'	=> (isset($member['gallery_count'])) ? sprintf($user->lang['GALLERY2_LINKMOD'], $member['username'], $member['gallery_count']) : '',
+			'L_GALLERY_MORE'	=> $user->lang['GALLERY_MORE'],
+			'S_GALLERY'			=> (!empty($member['allLinks'])) ? true : false,
+			'S_GALLERY_MORE'	=> ($member['gallery_totalcount'] > $member['gallery_count']) ? true : false,
+			'U_GALLERY'			=> ($member['user_gallery'] && !empty($member['link'])) ? append_sid("{$phpbb_root_path}gallery2.$phpEx", 'g2_view=core.ShowItem&amp;g2_itemId=' . $member['user_gallery']) : '',
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			$id_cache = array();
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+			// Grab Gallery link permission
+			$sql = 'SELECT link FROM ' . GALLERY2_TABLE;
+			$row = $db->sql_fetchrow($db->sql_query_limit($sql, 1));
+			$gallery_link = $row['link'];
+
+#
+#-----[ FIND ]------------------------------------------
+#
+				$memberrow = array_merge(show_profile($row), array(
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+				$row['gallery_link'] = $gallery_link;
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			'SEARCH_IMG'	=> $user->img('icon_user_search', $user->lang['SEARCH']),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+			'GALLERY_IMG'	=> $user->img('button_gallery', $user->lang['GALLERY']),
+			'L_GALLERY'		=> $user->lang['GALLERY'],
+			'S_GALLERY'		=> (!empty($gallery_link)) ? true : false,
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		'L_VIEWING_PROFILE'	=> sprintf($user->lang['VIEWING_PROFILE'], $username),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		'L_GALLERY_VISIT'	=> $user->lang['GALLERY_VISIT'],
+		'S_GALLERY'			=> (!empty($data['gallery_link'])) ? true : false,
+		'U_GALLERY'			=> ($data['user_gallery'] && !empty($data['gallery_link'])) ? append_sid("{$phpbb_root_path}gallery2.$phpEx", 'g2_view=core.ShowItem&amp;g2_itemId=' . $data['user_gallery']) : '',
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+viewtopic.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	trigger_error('NO_TOPIC');
+}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+// Grab Gallery link permission
+$sql = 'SELECT link FROM ' . GALLERY2_TABLE;
+$row = $db->sql_fetchrow($db->sql_query_limit($sql, 1));
+$gallery_link = $row['link'];
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	'INFO_IMG' 			=> $user->img('icon_post_info', 'VIEW_INFO'),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	'GALLERY_IMG' 		=> $user->img('icon_user_gallery', 'GALLERY_VIEW'),
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+				'pm'				=> '',
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+				'gallery'			=> '',
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+				'www'			=> $row['user_website'],
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+				'gallery'		=> ($row['user_gallery'] && !empty($gallery_link)) ? "{$phpbb_root_path}gallery2.$phpEx$SID&amp;g2_view=core.ShowItem&amp;g2_itemId=" . $row['user_gallery'] : '',
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		'U_WWW'			=> $user_cache[$poster_id]['www'],
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		'U_GALLERY' 	=> $user_cache[$poster_id]['gallery'],
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+adm/style/admin.css
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+/* Submit button fieldset or paragraph
+---------------------------------------- */
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+fieldset.gallery-buttons {
+	text-align: left;
+	border: none;
+	background-color: transparent;
+}
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+adm/style/overall_footer.html
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	<div id="page-footer">
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		<!-- IF S_INTEGRATION_VERSION -->
+			Gallery 2 <--> phpBB {VERSION} Integration {S_INTEGRATION_VERSION}<br />
+		<!-- ENDIF -->
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/constants.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+// Additional constants
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+define('E_G2_ERROR', 255);
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+// Additional tables
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+define('GALLERY2_TABLE', 			$table_prefix . 'gallery2');
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/functions.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			// We do not want the cron script to be called on error messages
+			define('IN_CRON', true);
+			
+			if (defined('IN_ADMIN') && isset($user->data['session_admin']) && $user->data['session_admin'])
+			{
+				adm_page_footer();
+			}
+			else
+			{
+				page_footer();
+			}
+
+			exit;
+		break;
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		case E_G2_ERROR:
+
+			if (isset($db))
+			{
+				$db->sql_close();
+			}
+
+			if (isset($cache))
+			{
+				$cache->unload();
+			}
+			
+			echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+			echo '<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">';
+			echo '<head>';
+			echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
+			echo '<title>' . $msg_title . '</title>';
+			echo '<link href="' . $phpbb_root_path . 'adm/style/admin.css" rel="stylesheet" type="text/css" media="screen" />';
+			echo '</head>';
+			echo '<body id="errorpage">';
+			echo '<div id="wrap">';
+			echo '	<div id="page-header">';
+			echo '		<a href="' . $phpbb_root_path . '">Return to forum index</a>';
+			echo '	</div>';
+			echo '	<div id="page-body">';
+			echo '		<div class="panel">';
+			echo '			<span class="corners-top"><span></span></span>';
+			echo '			<div id="content">';
+			echo '				<h1>Gallery Integration Error</h1>';
+			echo '				<h2>File: ' . $errfile . '<br />Line: ' . $errline . '</h2>';
+			echo '				<h2>' . $msg_text . '</h2>';
+			echo '				<p>Please notify the board administrator or webmaster : <a href="mailto:' . $config['board_contact'] . '">' . $config['board_contact'] . '</a></p>';
+			echo '			</div>';
+			echo '			<span class="corners-bottom"><span></span></span>';
+			echo '		</div>';
+			echo '	</div>';
+			echo '	<div id="page-footer">';
+			echo '		Powered by phpBB &copy; ' . date('Y') . ' <a href="http://www.phpbb.com/">phpBB Group</a>';
+			echo '	</div>';
+			echo '</div>';
+			echo '</body>';
+			echo '</html>';
+			
+			exit;
+		break;
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		'L_ONLINE_EXPLAIN'	=> $l_online_time,
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		'L_GALLERY2' 		=> $user->lang['GALLERY2'],
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		'U_RESTORE_PERMISSIONS'	=> ($user->data['user_perm_from'] && $auth->acl_get('a_switchperm')) ? append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=restore_perm') : '',
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		'U_GALLERY2'			=> append_sid("{$phpbb_root_path}gallery2.$phpEx"),
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/functions_user.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	foreach ($table_ary as $table)
+	{
+		$sql = "DELETE FROM $table
+			WHERE user_id = $user_id";
+		$db->sql_query($sql);
+	}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	// Delete user in Gallery
+	require($phpbb_root_path . 'g2helper.inc');
+	$g2h = new g2helper($db);
+	$g2h->deleteUser($user_id);
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			$sql = 'INSERT INTO ' . GROUPS_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
+			$db->sql_query($sql);
+		}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		if ($group_id) {
+			// Update group in Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->updateGroup($group_id, $sql_ary['group_name']);
+		}
+		elseif (!$group_id) {
+			// Create group in Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->createGroup($sql_ary['group_name']);
+		}
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	// Delete group
+	$sql = 'DELETE FROM ' . GROUPS_TABLE . "
+		WHERE group_id = $group_id";
+	$db->sql_query($sql);
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+	// Delete group in Gallery
+	require($phpbb_root_path . 'g2helper.inc');
+	$g2h = new g2helper($db);
+	$g2h->deleteGroup($group_id);
+
+#
+#-----[ FIND ]------------------------------------------
+#
+function group_user_add($group_id, $user_id_ary = false, $username_ary = false, $group_name = false, $default = false, $leader = 0, $pending = 0, $group_attributes = false)
+{
+	global $db, $auth;
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+function group_user_add($group_id, $user_id_ary = false, $username_ary = false, $group_name = false, $default = false, $leader = 0, $pending = 0, $group_attributes = false)
+{
+	global $db, $auth, $phpbb_root_path;
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		foreach ($add_id_ary as $user_id)
+		{
+			$sql_ary[] = array(
+				'user_id'		=> (int) $user_id,
+				'group_id'		=> (int) $group_id,
+				'group_leader'	=> (int) $leader,
+				'user_pending'	=> (int) $pending,
+			);
+		}
+
+		$db->sql_multi_insert(USER_GROUP_TABLE, $sql_ary);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		// Add users to group in Gallery
+		require($phpbb_root_path . 'g2helper.inc');
+		$g2h = new g2helper($db);
+		$g2h->addUserToGroup($add_id_ary, $group_id);
+
+#
+#-----[ FIND ]------------------------------------------
+#
+function group_user_del($group_id, $user_id_ary = false, $username_ary = false, $group_name = false)
+{
+	global $db, $auth;
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+function group_user_del($group_id, $user_id_ary = false, $username_ary = false, $group_name = false)
+{
+	global $db, $auth, $phpbb_root_path;
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	$sql = 'DELETE FROM ' . USER_GROUP_TABLE . "
+		WHERE group_id = $group_id
+			AND " . $db->sql_in_set('user_id', $user_id_ary);
+	$db->sql_query($sql);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	// Delete users from group in Gallery
+	require($phpbb_root_path . 'g2helper.inc');
+	$g2h = new g2helper($db);
+	$g2h->removeUserFromGroup($user_id_ary, $group_id);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/message_parser.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			if ($stats === false)
+			{
+				$error = true;
+				$this->warn_msg[] = $user->lang['UNABLE_GET_IMAGE_SIZE'];
+			}
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+			if ($stats === false)
+			{
+				if  (strpos($in, 'g2_view=core.DownloadItem') && strpos($in, 'g2_itemId=')  && strpos($in, 'width=') && strpos($in, 'height='))
+				{
+					$img_array = array();
+					$img_array = explode('&amp;', $in);
+
+					foreach ($img_array as $value)
+					{
+						if (strstr($value, 'width='))
+						{
+							$width = (int) substr(strrchr($value, '='), 1, strlen($value));
+							if ($config['max_' . $this->mode . '_img_width'] < $width)
+							{
+								$error = true;
+								$this->warn_msg[] = sprintf($user->lang['MAX_IMG_WIDTH_EXCEEDED'], $config['max_' . $this->mode . '_img_width']);
+							}
+						}
+						elseif (strstr($value, 'height='))
+						{
+							$height = (int) substr(strrchr($value, '='), 1, strlen($value));
+							if ($config['max_' . $this->mode . '_img_height'] < $height)
+							{
+								$error = true;
+								$this->warn_msg[] = sprintf($user->lang['MAX_IMG_HEIGHT_EXCEEDED'], $config['max_' . $this->mode . '_img_height']);
+							}
+						}
+					}
+				}
+				else
+				{
+					$error = true;
+					$this->warn_msg[] = $user->lang['UNABLE_GET_IMAGE_SIZE'];
+				}
+			}
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			if ($pos_domain !== false && $pos_path >= $pos_domain && $pos_ext >= $pos_path)
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+			if ($pos_domain !== false && $pos_path >= $pos_domain && $pos_ext >= $pos_path && strpos($url, "/gallery2.$phpEx?g2_itemId=") == false && strpos($url, '&g2_view=core.DownloadItem') == false)
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/acp/acp_users.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+						if (sizeof($sql_ary))
+						{
+							$sql = 'UPDATE ' . USERS_TABLE . '
+								SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
+								WHERE user_id = ' . $user_id;
+							$db->sql_query($sql);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+							// Update user in Gallery
+							require($phpbb_root_path . 'g2helper.inc');
+							$g2h = new g2helper($db);
+							$g2h->updateUser($user_id, $sql_ary);
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/acp/auth.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	function acl_set($ug_type, $forum_id, $ug_id, $auth, $role_id = 0, $clear_prefetch = true)
+	{
+		global $db;
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+	function acl_set($ug_type, $forum_id, $ug_id, $auth, $role_id = 0, $clear_prefetch = true)
+	{
+		global $db, $phpbb_root_path;
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		if ($clear_prefetch)
+		{
+			$this->acl_clear_prefetch();
+		}
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+		if ($auth['a_gallery2'] < 1) 
+		{
+			// Strip admin permissions from user in Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->mapAdminToUser($ug_id);
+		}
+		elseif ($auth['a_gallery2'] === 1)
+		{
+			// Grant admin permissions to user in Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->mapUserToAdmin($ug_id);
+		}
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	function acl_delete($mode, $ug_id = false, $forum_id = false, $permission_type = false)
+	{
+		global $db;
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+	function acl_delete($mode, $ug_id = false, $forum_id = false, $permission_type = false)
+	{
+		global $db, $phpbb_root_path;
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		$this->acl_clear_prefetch();
+	}
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+		if ($permission_type !== false)
+		{
+			// Strip admin permissions from user in Gallery
+			require($phpbb_root_path . 'g2helper.inc');
+			$g2h = new g2helper($db);
+			$g2h->mapAdminToUser($ug_id);
+		}
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+includes/ucp/ucp_profile.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+						if (sizeof($sql_ary))
+						{
+							$sql = 'UPDATE ' . USERS_TABLE . '
+								SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
+								WHERE user_id = ' . $user->data['user_id'];
+							$db->sql_query($sql);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+							// Update user in Gallery
+							require($phpbb_root_path . 'g2helper.inc');
+							$g2h = new g2helper($db);
+							$g2h->updateUser($user->data['user_id'], $sql_ary);
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+language/en/common.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	'GENERAL_ERROR'				=> 'General Error',
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+	'GALLERY2'					=> 'Gallery 2',
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+language/en/memberlist.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	'GROUP_LEADER'			=> 'Group leader',
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+	'GALLERY'				=> 'Gallery',
+	'GALLERY2_LINKMOD'		=> 'Gallery Items For %s :: %u Items',
+	'GALLERY_MORE'			=> 'More Gallery Items...',
+	'GALLERY_VISIT'			=> 'User Gallery',
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+language/en/posting.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	'BBCODE_F_HELP'				=> 'Font size: [size=85]small text[/size]',
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	'BBCODE_G_HELP'				=> 'Insert Gallery2 image',
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+language/en/viewtopic.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	'FORK_TOPIC'			=> 'Copy topic',
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	'GALLERY_VIEW'			=> 'User Gallery',
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+language/en/acp/common.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	'ACP_GENERAL_CONFIGURATION'		=> 'General configuration',
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+#
+	'ACP_GALLERY2' 					=> 'Gallery2 Settings',
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+language/en/acp/permissions_phpbb.php
+
+#
+#-----[ FIND ]------------------------------------------
+#
+	'acl_a_phpinfo'		=> array('lang' => 'Can view php settings', 'cat' => 'settings'),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	'acl_a_gallery2'	=> array('lang' => 'Can be administrator in Gallery 2', 'cat' => 'settings'),
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM

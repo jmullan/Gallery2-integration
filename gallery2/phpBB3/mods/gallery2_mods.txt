@@ -1,0 +1,250 @@
+##############################################################
+## $Revision:  $
+## $Date: 2007-04-10 17:26:24 +0200 (Tue, 10 Apr 2007) $
+##
+## MOD Title: Gallery2 Integration Gallery2 Mods 
+## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
+## MOD Description: This mod integrates phpBB3rc7 and Gallery2.2.3
+## MOD Version: 0.0.4
+##
+## Installation Level: Advanced
+## Installation Time: 15 Minutes
+## Files To Edit: 
+##	     gallery2/modules/core/classes/GalleryTemplateAdapter.class,
+##		 gallery2/themes/ajaxian/templates/local/theme.tpl
+##		 gallery2/themes/carbon/templates/local/theme.tpl
+##		 gallery2/themes/classic/templates/local/theme.tpl
+##		 gallery2/themes/floatrix/templates/local/theme.tpl
+##		 gallery2/themes/hybrid/templates/local/theme.tpl
+##		 gallery2/themes/matrix/templates/local/theme.tpl
+##		 gallery2/themes/siriux/templates/local/theme.tpl
+##		 gallery2/themes/slider/templates/local/theme.tpl
+##		 gallery2/themes/tile/templates/local/theme.tpl
+## Included Files:
+##	     gallery2/modules/core/data/nukedgallery.png,
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+##############################################################
+## Author Notes:
+##
+##############################################################
+## MOD History:
+##
+## 2007-10-27 - Version 0.0.4
+##      - phpBB3rc7 Developmental Release
+##
+## 2007-04-10 - Version 0.0.3
+##      - phpBB3b4 Developmental Release
+##
+## 2006-12-16 - Version 0.0.2
+##      - Initial Beta Developmental Release
+##
+## Version 0.0.1
+##      - Initial Developmental Test
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ DIY INSTRUCTIONS ]------------------------------------------
+# 
+mkdir gallery2/themes/ajaxian/templates/local
+mkdir gallery2/themes/carbon/templates/local
+mkdir gallery2/themes/classic/templates/local
+mkdir gallery2/themes/floatrix/templates/local
+mkdir gallery2/themes/hybrid/templates/local
+mkdir gallery2/themes/matrix/templates/local
+mkdir gallery2/themes/siriux/templates/local
+mkdir gallery2/themes/slider/templates/local
+mkdir gallery2/themes/tile/templates/local
+
+#
+#-----[ COPY ]------------------------------------------
+#
+copy ../gallery2/themes/ajaxian/templates/theme.tpl to ../gallery2/themes/ajaxian/templates/local/theme.tpl
+copy ../gallery2/themes/carbon/templates/theme.tpl to ../gallery2/themes/carbon/templates/local/theme.tpl
+copy ../gallery2/themes/classic/templates/theme.tpl to ../gallery2/themes/classic/templates/local/theme.tpl
+copy ../gallery2/themes/floatrix/templates/theme.tpl to ../gallery2/themes/floatrix/templates/local/theme.tpl
+copy ../gallery2/themes/hybrid/templates/theme.tpl to ../gallery2/themes/hybrid/templates/local/theme.tpl
+copy ../gallery2/themes/matrix/templates/theme.tpl to ../gallery2/themes/matrix/templates/local/theme.tpl
+copy ../gallery2/themes/siriux/templates/theme.tpl to ../gallery2/themes/siriux/templates/local/theme.tpl
+copy ../gallery2/themes/slider/templates/theme.tpl to ../gallery2/themes/slider/templates/local/theme.tpl
+copy ../gallery2/themes/tile/templates/theme.tpl to ../gallery2/themes/tile/templates/local/theme.tpl
+copy gallery2/modules/core/data/nukedgallery.png to ../gallery2/modules/core/data/nukedgallery.png
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/modules/core/classes/GalleryTemplateAdapter.class
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	case 'gallery2-version':
+	    if (!$isAdminOrShowAll) {
+		return;
+	    }
+	    return sprintf(
+		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
+		    $useLink ? '' : '',
+		    $urlGenerator->generateUrl(
+			array('href' => 'modules/core/data/g22-double_double.png')),
+		    $core->translate('G2.2: Double Double'),
+		    $core->translate('G2.2: Double Double'),
+		    'border-style: none',
+		    $useLink ? '' : '');
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	case 'nuked-gallery':
+	    return sprintf(
+		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
+		    $useLink ? '<a href="http://www.nukedgallery.net"' . $linkTarget . '>' : '',
+		    $urlGenerator->generateUrl(
+			array('href' => 'modules/core/data/nukedgallery.png')),
+		    $core->translate('Integration by NukedGallery.net'),
+		    $core->translate('Integration by NukedGallery.net'),
+		    'border-style: none',
+		    $useLink ? '</a>' : '');
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/ajaxian/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	{g->logoButton type="gallery2-version"}</p>
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+	{g->logoButton type="gallery2-version"}
+	{g->logoButton type="nuked-gallery"}</p>
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/carbon/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	      {g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		  {g->logoButton type="nuked-gallery"}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/classic/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+    {g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	{g->logoButton type="nuked-gallery"}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/floatrix/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	{g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	{g->logoButton type="nuked-gallery"}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/hybrid/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+      {g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+      {g->logoButton type="nuked-gallery"}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/matrix/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	{g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	{g->logoButton type="nuked-gallery"}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/siriux/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	{g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	  {g->logoButton type="nuked-gallery"}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/slider/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	{g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	  {g->logoButton type="nuked-gallery"}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/themes/tile/templates/local/theme.tpl
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	  {g->logoButton type="donate"}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+	  {g->logoButton type="nuked-gallery"}
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM

@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" />
+		<title>README: Gallery 2 - phpBB3 Integration Package</title>
+
+		<link rel="stylesheet" href="./readme.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../phpbb3/g2image/css/lightbox.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../phpbb3/g2image/jscripts/prototype.js"></script>
+		<script type="text/javascript" src="../phpbb3/g2image/jscripts/scriptaculous.js?load=effects"></script>
+		<script type="text/javascript" src="../phpbb3/g2image/jscripts/lightbox.js"></script>
+	</head>
+
+	<body>
+
+		<div id="floatdiv" class="toc">
+			<h2><a href="#contents">Contents</a></h2>
+			<ul class="toc-level-1">
+				<li><a href="#introduction">Introduction</a>
+					<ul class="toc-level-2">
+						<li><a href="#description">Description</a></li>
+						<li><a href="#dodont">What This Package Does</a></li>
+						<li><a href="#requirements">Requirements</a></li>
+					</ul>
+				</li>
+				<li><a href="#configuration">Core Installation / Configuration</a>
+					<ul class="toc-level-2">
+						<li><a href="#step1">Gallery Theme Mods</a></li>
+						<li><a href="#step2">Core Integration Mods</a></li>
+						<li><a href="#step3">phpBB Style Mods</a></li>
+						<li><a href="#step4">Add Gallery Module</a></li>
+						<li><a href="#step5">Configuration Settings</a></li>
+						<li><a href="#step6">Synchronize Users</a></li>
+						<li><a href="#step8">Link Settings</a></li>
+						<li><a href="#step10">Gallery Embed Mods</a></li>
+					</ul>
+				</li>
+				<li><a href="#additional">Additional Configuration</a>
+					<ul class="toc-level-2">
+						<li><a href="#additional1">G2 Image</a></li>
+						<li><a href="#additional2">Lightbox Mods</a></li>
+						<li><a href="#additional3">URL Rewrite Mods</a></li>
+						<li><a href="#additional4">Gallery Admin Permissions</a></li>
+						<li><a href="#additional5">Un-Synchronize Users</a></li>
+						<li><a href="#additional6">Latest Export Results</a></li>
+						<li><a href="#additional7">Accessing Outside phpBB3</a></li>
+					</ul>
+				</li>
+				<li><a href="#help">Help!</a>
+					<ul class="toc-level-2">
+						<li><a href="#getting_help">Getting Help</a></li>
+						<li><a href="#known_issues">Known Issues / Bugs</a></li>
+					</ul>
+				</li>
+			</ul>
+			<p class="ng"><a href="http://nukedgallery.net"><img alt="nukedgallery.net" src="./images/nukedgallery.png" /></a></p>
+		</div>
+		<script type="text/javascript" src="./readme.js"></script>
+
+		<table><tr><td>
+		<a name="contents"></a>
+		<div>
+			<img alt="Gallery 2" src="./images/g2Logo.gif" />
+			<img alt="Nuked Gallery" src="./images/ngLogo.png" />
+		</div>
+
+		<h2><a name="introduction">Introduction</a></h2>
+		<p>Welcome to the phpBB3 and Gallery integration. This integration package is part of the ongoing effort to seamlessly integrate Gallery 2 in phpBB3. There is no need for users to register and login to two seperate applications. They simply register and login through phpBB3 and the integration automatically creates accounts in Gallery for them if they don't have one. Users registered and logged in to phpBB3 are automatically registered and logged in when they visit Gallery 2 through the integration. Think of it as having Gallery 2 built in as a part of your phpBB3 installation.</p>
+		<p>Please read through this document carefully before attempting to integrate Gallery 2 into phpBB3 and before asking for help. We have taken care to try to answer as many of your questions here as possible. If you don't read this and have problems, we may refer you back to this document as a first resource.</p>
+		<br />
+
+		<h2><a name="description">Description</a></h2>
+		<p>This package contains all the files, directories and modification instructions you will need in order to integrate Gallery 2 into your phpBB3 website.</p>
+
+		<h2><a name="dodont">What This Package Does</a></h2>
+		<p>Simply put, this package allows you to integrate Gallery 2 into phpBB3. Among it's many features, it:</p>
+		<ul>
+			<li>Creates a Gallery 2 link in the forum pages.</li>
+			<li>Creates a Gallery 2 integration administration module in the phpBB3 Administration Control Panel.</li>
+			<li>Allows you to export your existing phpBB3 users and groups to Gallery 2.</li>
+			<li>Automatically maintains synchronization between phpBB3 and Gallery 2 user databases.</li>
+			<li>Allows users to link Gallery 2 images directly into phpBB3 posts using several different options.</li>
+			<li>Has the capability to add Gallery 2 links and features in your users posts and profiles.</li>
+		</ul>
+		&nbsp;<a href="./images/sample-gallery_link.jpg" rel="lightbox['dodont']" title="phpBB3 page with Gallery 2 link."><img src="./images/t_sample-gallery_link.jpg" alt="sample-gallery_link" /></a>
+		&nbsp;<a href="./images/sample-gallery_module.jpg" rel="lightbox['dodont']" title="phpBB3 ACP Gallery 2 module."><img src="./images/t_sample-gallery_module.jpg" alt="sample-gallery_module" /></a>
+		&nbsp;<a href="./images/sample-gallery_export.jpg" rel="lightbox['dodont']" title="phpBB3 ACP Gallery 2 module export screen."><img src="./images/t_sample-gallery_export.jpg" alt="sample-gallery_export" /></a>
+		&nbsp;<a href="./images/sample-gallery_g2image.jpg" rel="lightbox['dodont']" title="phpBB3 posting page with g2image photo links screen and insert options."><img src="./images/t_sample-gallery_g2image.jpg" alt="sample-gallery_g2image" /></a>
+		<br /><br />
+		&nbsp;<a href="./images/sample-gallery_userlink.jpg" rel="lightbox['dodont']" title="Gallery 2 link in view topic user information."><img src="./images/t_sample-gallery_userlink.jpg" alt="sample-gallery_userlink" /></a>
+		&nbsp;<a href="./images/sample-gallery_memberlist.jpg" rel="lightbox['dodont']" title="Gallery 2 link in member listing page."><img src="./images/t_sample-gallery_memberlist.jpg" alt="sample-gallery_memberlist" /></a>
+		&nbsp;<a href="./images/sample-gallery_profilelink.jpg" rel="lightbox['dodont']" title="Gallery 2 link in member profile page."><img src="./images/t_sample-gallery_profilelink.jpg" alt="sample-gallery_profilelink" /></a>
+		&nbsp;<a href="./images/sample-gallery_profileitems.jpg" rel="lightbox['dodont']" title="Gallery 2 items in member profile page."><img src="./images/t_sample-gallery_profileitems.jpg" alt="sample-gallery_profileitems" /></a>
+		<h2><a name="requirements">Requirements</a></h2>
+ 		<p>This mod requires:</p>
+ 		<ol>
+			<li>phpBB3rc7 or higher be installed and running and you must have access to the adminisitration control panel.</li>
+			<li>Gallery 2.1 or higher be installed and running in standalone mode and you have administrative privileges.</li>
+			<li>Files be added to phpBB3.</li>
+			<li>Existing phpBB3 files be modified.</li>
+			<li>Files be added to Gallery 2.</li>
+			<li>Existing Gallery 2 files be modified.</li>
+			<li>Access to your phpBB3 database and the ability to directly execute SQL queries on it.</li>
+			<li>A general knowledge of phpBB3 and Gallery 2 so you know what the integration is all about and what it is attempting to do.</li>
+		</ol>
+		<p>If you are unsure about doing any of the above yourself, then you should probably stop now and seek the advice and help of someone who has more experience with this sort of thing. <i>You've been warned!</i></p>
+
+		<h2><a name="configuration">Core Installation / Configuration</a></h2>
+		<p>This is a fairly complex mod. You are going to need approximately two hours to devote to this integration in order to carry out all mods from start to finish and properly setup the integration. If you have done mods on phpbb before, you should not have much trouble with it. However, if you have not performed mods on phpbb before, this is probably not the best one to start out with.</p>
+
+		<div class="important">
+			<h3>NOTICE</h3>
+			<p>This integration package <b>does not</b> install or configure Gallery 2 for you, and it <b>does not</b> install or configure phpBB3 for you. Before you proceed with this integration, you <b>must</b> install and configure Gallery 2 and have it working in stand alone mode and you <b>must</b> install and configure phpBB3 and have it working and be able to access the administration control panel.</p>
+		</div>
+		<br />
+
+		<div class="important">
+			<h3>NOTICE</h3>
+			<p>Back up all files related to Gallery 2 and it's associated database, then backup all files related to phpBB3 and it's associated database. If you fail to take this precaution and things get screwed up later, then it will be your own fault!</p>
+		</div>
+		<br />
+
+		<div class="important">
+			<h3>NOTICE</h3>
+			<p>Regarding easymod, it is recommended these mods be carried out by hand. It is <b>not</b> garaunteed that easymod will be be able to process all of these mods correctly. Because:</p>
+			<ol>
+				<li>The integration has not been tested with easymod.</li>
+				<li>The # sign is a valid .css character and it is the comment character for phpBB mod files.</li>
+				<li>Directories named 'local' need to be created in the gallery themes templates directories and files copied there.</li>
+				<li>There are mods to Gallery 2 files that normally reside outside of the phpBB directory.</li>
+				<li>The entire g2image directory needs to be copied to the phpBB3 directory.</li>
+			</ol>
+			<p>If you insist on using easymod, it will be up to you to ensure that all mods are carried out correctly and you do so at your own risk!</p>
+		</div>
+		<br />
+
+		<div class="important">
+			<h3>IMPORTANT</h3>
+			<p>The use of the Gallery 2 rewrite module in an integrated environment has proven to be a tricky task. It is highly recommended that you deactivate the Gallery 2 rewrite module prior to attempting this integration. You can reactivate the module after everything is working with the integration.</p>
+		</div>
+		<br />
+
+		<p>So, let's get on with it! The mods have been broken into pieces relevant to different aspects of the integration so you don't have to wade through one huge mod file all at once. Just be aware that the integration will not function properly until you have made it through all of the ten installation and configuration steps. The following are the 10 step by step installation and configuration instructions.</p>
+
+		<h3><a name="step1">Step 1: Gallery Theme Mods</a></h3>
+		<p>a) Open gallery2_mods.txt and perform all the mods contained in this file or at least perform the mods for the Gallery 2 theme that you intend to use. They can all co-exist together. It is recommended to install all the theme mods, then you can switch between them, unless you are certain you will only be using one theme or another. These mods are optional as far as the integration function is concerned, but it is requested they be carried out so that nukedgallery.net can be recognized as the source of the integration package.</p>
+		&nbsp;<a href="./images/sample-gallery_nuked.jpg" rel="lightbox" title="Embedded Gallery 2 with nukedgallery link."><img src="./images/t_sample-gallery_nuked.jpg" alt="sample-gallery_nuked" /></a>
+		<br />
+
+		<h3><a name="step2">Step 2: Core Integration Mods</a></h3>
+		<p>a) Open integration_mods.txt and follow the instructions from start to finish in this file. All of these mods are required for the integration to be fully functional.</p>
+		<p>b) Execute the SQL queries on your phpBB3 database. There must not be any errors returned from your database server or you will have to sort them out for the integration to be successful.</p>
+		<p>c) Copy the included files to the appropriate phpBB3 directories. All of these files are required for proper operation of the integration.</p>
+		<p>d) Skip the DIY instructions for the moment. (We will return to these after the rest of the mods are carried out.)</p>
+		<p>e) Perform the phpBB3 file edits as specified in the remainder of the integration_mods.txt file. All of these mods are required for proper integration operation.</p>
+		<br />
+
+		<h3><a name="step3">Step 3: phpBB Style Mods</a></h3>
+		<p>a) You must now decide if you are going to use the prosilver style or the subsilver2 style or install both style mods and be able to switch between the two styles. (prosilver_mods.txt and/or subsilver2_mods.txt) They can both co-exist together. It is recommended to install both style mods unless you are certain you will only be using one style and not the other. If you install one style and then switch to the other without installing the appropriate mods for that style, the integration will be broken. If you will be using a style other than the two default phpBB styles, you will have to find and make the appropriate changes yourself. Use the included style mods to see where and what needs to be changed for the integration to work in your chosen style.</p>
+		&nbsp;<a href="./images/sample-gallery_link.jpg" rel="lightbox['style']" title="phpBB3 prosilver page with Gallery 2 link."><img src="./images/t_sample-gallery_link.jpg" alt="sample-prosilver gallery_link" /></a>
+		&nbsp;<a href="./images/sample-gallery_link2.jpg" rel="lightbox['style']" title="phpBB3 subsilver2 page with Gallery 2 link."><img src="./images/t_sample-gallery_link2.jpg" alt="sample-subsilver gallery_link" /></a>
+		<br />
+
+		<h3><a name="step4">Step 4: Add Gallery Module</a></h3>
+		<p>a) Returning to the integration_mods.txt file DIY instructions, start up a web browser and make your way to the phpBB3 Administration Control Panel, then click the 'SYSTEM' tab. Click 'Administration Control Panel' under 'MODULE MANAGEMENT' in the left hand pane. Then click 'General' under 'Module management - ACP' in the center pane. Then click 'Board configuration' under 'Module management - ACP -> General' in the center pane. Now in the 'Add module' drop-down-box select 'Gallery2 Settings' and then click the 'Add module' button. Select 'Yes' at the confirmation screen. Then click the 'Back to previous page' link and select 'Enable' at the 'Gallery2 Settings' options. The Gallery2 acp module should now be installed and enabled.</p>
+		<p>b) Now select the 'GENERAL' tab under 'BOARD CONFIGURATION' in the left hand pane select 'Gallery2 Settings'. This should take you to the main Gallery2 integration administration options page. You must execute certain portions of these settings in order for the integration to function properly.</p>
+		&nbsp;<a href="./images/sample-gallery_module-general.jpg" rel="lightbox['module']" title="phpBB3 ACP-&gt;SYSTEM-&gt;Administration Control Panel-&gt;General."><img src="./images/t_sample-gallery_module-general.jpg" alt="sample-gallery_module-general" /></a>
+		&nbsp;<a href="./images/sample-gallery_module-board.jpg" rel="lightbox['module']" title="phpBB3 ACP-&gt;SYSTEM-&gt;Administration Control Panel-&gt;General-&gt;Board configuration."><img src="./images/t_sample-gallery_module-board.jpg" alt="sample-gallery_module-board" /></a>
+		&nbsp;<a href="./images/sample-gallery_module-gallery2.jpg" rel="lightbox['module']" title="phpBB3 ACP-&gt;SYSTEM-&gt;Administration Control Panel-&gt;General-&gt;Board configuration-&gt;Add Gallery 2 Settings module."><img src="./images/t_sample-gallery_module-gallery2.jpg" alt="sample-gallery_module-gallery2" /></a>
+		&nbsp;<a href="./images/sample-gallery_module-enable.jpg" rel="lightbox['module']" title="phpBB3 ACP-&gt;SYSTEM-&gt;Administration Control Panel-&gt;General-&gt;Board configuration-&gt;Gallery 2 Settings module Enable."><img src="./images/t_sample-gallery_module-enable.jpg" alt="sample-gallery_module-enable" /></a>
+		<br />
+
+		<h3><a name="step5">Step 5: Configuration Settings</a></h3>
+		<p>a) Click the 'Configure Settings' button to setup the basic integration settings. These settings are essential to the core operation of the integration.</p>
+		<p>b) Configure the 'URL path to the gallery2 directory:'. This value is the web address of your Gallery 2 installation. It can be either a full web address or an address relative to the webserver DocumentRoot address. A full web address would be something like http://example.com/gallery2/. Or it can simply be a root relative address such as  /gallery2/. If your Gallery installation is running on a url path that is different than your phpBB3 url path, you should enter a full web url address, or if it is running on the same url path, you may just enter the relative path. The default setting for this is '/gallery2/', if yours is different then you must change it accordingly.</p>
+		Example:
+		<div class="instructions">
+			http://example.com/gallery2/&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;/phpbb2/gallery2/&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;/gallery2/
+		</div>
+		<p>c) Configure the 'URL path to gallery2.php:'. This value is the web address of your integration installation. The integration scripts will attempt to determine this setting automatically. As with the previous setting, this can either be a full url address or a relative address as in http://example.com/phpbb/gallery2.php for a full address, or just /phpbb/gallery2.php for a relative address. This is the address to your phpBB3 directory and then the file name gallery2.php which is the primary Gallery 2 embed handling file.</p>
+		Example:
+		<div class="instructions">
+			http://www.yoursite.com/phpbb2/gallery2.php&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;/phpbb2/gallery2.php
+		</div>
+		<p>d) The 'Full file path to embed.php:' setting will be automatically detected by the configure script when you hit the 'submit' button. This may fail if you are using aliased directories for Gallery 2 and phpBB3. This will also fail under certain web host configurations as well. You should at least try this with the field empty the first time around. If the automatic discovery fails, then you will have to enter the real value here yourself. This is a real file path to the gallery2/embed.php file, not a url path. An example might look like 'C:/htdocs/gallery2/embed.php' for a windows server. Use whatever is appropriate for the operating system your server is running on. It is normal for this setting to be blank until after you hit the 'submit' button for the first time and it will remain blank if the automatic detection fails.</p>
+		Example:
+		<div class="instructions">
+			C:/htdocs/gallery2/embed.php&nbsp;&nbsp;&nbsp;OR&nbsp;&nbsp;&nbsp;/home/user/public_html/gallery2/embed.php
+		</div>
+		<p>e) The 'Active Admin ID:' is critical to almost all functions of the integration. This value will be automatically generated and managed by the integration package when the initial user export is executed. It is provided here in case something goes wrong with the integration and this setting needs to be manually adjusted. Do not change it unless you are certain you know what you are doing! Entering a bad value here will adversely affect the integration. It is normal for this setting to be blank until after you run the user export function for the first time.</p>
+		Example:
+		<div class="instructions">
+			2
+		</div>
+		<p><b>IMPORTANT:</b> You must click 'Submit' on this page even if you don't change anything!</p>
+		&nbsp;<a href="./images/sample-gallery_config.jpg" rel="lightbox['config']" title="Gallery 2 Integration Administration Options."><img src="./images/t_sample-gallery_config.jpg" alt="sample-gallery_config" /></a>
+		&nbsp;<a href="./images/sample-gallery_default.jpg" rel="lightbox['config']" title="Gallery 2 Integration default path configurations."><img src="./images/t_sample-gallery_default.jpg" alt="sample-gallery_default" /></a>
+		&nbsp;<a href="./images/sample-gallery_submit.jpg" rel="lightbox['config']" title="Gallery 2 Integration path configurations after hitting submit once."><img src="./images/t_sample-gallery_submit.jpg" alt="sample-gallery_submit" /></a>
+		&nbsp;<a href="./images/sample-gallery_adminset.jpg" rel="lightbox['config']" title="Gallery 2 Integration path configurations after running the user synchronization."><img src="./images/t_sample-gallery_adminset.jpg" alt="sample-gallery_adminset" /></a>
+		<br />
+
+		<h3><a name="step6">Step 6: Main Gallery Module Menu</a></h3>
+		<p>Under 'BOARD CONFIGURATION' in the left hand pane select 'Gallery2 Settings' again and this should take you back to the main integration administration options page.</p>
+		<br />
+
+		<h3>Step 7: Synchronize Users</h3>
+		<p>a) Click the 'Synchronize Users' button to export your phpBB users to Gallery. This must be run at least once as this is when the integration will determine who the admins are in phpBB and create accounts for them in Gallery, create the phpBB guest account in Gallery, and create any existing phpBB groups in Gallery. Also, the first run will allow the integration to fill in the 'Active Admin ID' described above in Step 5e above.</p>
+		<p>b) If there are no Gallery users that do not exist in phpBB you will only have two choices at this point and you can skip the rest of this step (7b), however, if you have existing Gallery users that do not exist in phpBB, you will have more options to consider. Existing Gallery users will be listed in a table with four choices each that will determine what happens to them during the user synchronization.</p>
+		<ul>
+			<li>'Import To PHPBB DB': This option will create an account for the Gallery user in phpBB, thereby maintaining synchronization in the two user databases. One caveat to this approach is that the password stored in phpBB will be the same as the user name because of the different password encoding schemes used by phpBB and Gallery and these users should change their passwords upon login to phpBB. (You will have to inform them of their password.) If you wish to keep the Gallery users, this is the recommended option.</li>
+			<li>'Delete User, Delete Items': This option will delete the Gallery user and any Gallery items (albums, photos, etc.) belonging to the user.</li>
+			<li>'Delete User, Keep Items': This option will delete the Gallery user, but keep any Gallery items (albums, photos, etc.) belonging to this user. In order to keep the items, they must be reassigned to a new owner. The integration will search for the first Gallery admin and the items will be assigned to this admin as the new owner.</li>
+			<li>'Leave As Is': This option simply leaves the Gallery user untouched. This is the least recommended option since it will leave the two databases unsynchronized from the very start and when Gallery is set to embedded mode, these users will no longer be able to even login to Gallery. Also, if a user account is created in phpBB with the same user name as one of the existing Gallery users, they will get a collision error when they try to visit Gallery.</li>
+		</ul>
+		<p>c) Now you will need to choose between 'Export Users Now' or 'Export User At Gallery 2 Access'. The 'Export Users Now' option will immediately create accounts for all phpBB users when you hit the submit button. The 'Export User At Gallery 2 Access' option will defer the creation of user accounts until the user logs into phpBB and visits the integrated Gallery for the first time. The latter option is the default, fastest and preferred option. If you have more than a few hundred phpBB users this option is strongly recommended, otherwise the export function will likely time out and not be completed, leaving the 'Active Admin ID' blank, and rendering the integration unfinished. Even if you choose the 'Export User At Gallery 2 Access' option, you must still hit the submit button for the reasons described in step 7a above for the integration to be complete.</p>
+		&nbsp;<a href="./images/sample-gallery_export.jpg" rel="lightbox['export']" title="Gallery 2 Integration Synchronize Users page with no existing Gallery users."><img src="./images/t_sample-gallery_export.jpg" alt="sample-gallery_export" /></a>
+		&nbsp;<a href="./images/sample-gallery_existing.jpg" rel="lightbox['export']" title="Gallery 2 Integration Synchronize Users page with existing Gallery users."><img src="./images/t_sample-gallery_existing.jpg" alt="sample-gallery_existing" /></a>
+		&nbsp;<a href="./images/sample-gallery_progress.jpg" rel="lightbox['export']" title="Gallery 2 Integration Exporting Users progress page."><img src="./images/t_sample-gallery_progress.jpg" alt="sample-gallery_progress" /></a>
+		&nbsp;<a href="./images/sample-gallery_latest.jpg" rel="lightbox['export']" title="Gallery 2 Integration Export Results page."><img src="./images/t_sample-gallery_latest.jpg" alt="sample-gallery_latest" /></a>
+		<br />
+
+		<h3><a name="step8">Step 8: Main Gallery Module Menu</a></h3>
+		<p>Under 'BOARD CONFIGURATION' in the left hand pane select 'Gallery2 Settings' again and this should take you back to the main integration administration options page.</p>
+		<br />
+
+		<h3>Step 9: Link Settings</h3>
+		<p>a) Click the 'Link Settings' button to configure how the integration displays links to Gallery in the phpBB pages for users that have Gallery albums and whether or not thumbnails will be shown in users profiles if they have albums or photos.</p>
+		<p>b) The 'Gallery profile links' option determines if links to Gallery will be shown on the users profile page, the member list page, and in the users information on each of their posted messages.</p>
+		<p>c) The 'Gallery show all item links' option determines if thumbnails of user items with links to the actual item in Gallery will be shown on the users profile page. If this is set to 'No', then the next two options are meaningless.</p>
+		<p>d) The 'Gallery show only album item links' option allows either all Gallery items to be shown with thumbnails and links to the actual Gallery item or only albums be shown as thumbnails and links to the actual Gallery album. To help clarify this, consider a user has 5 albums with 100 photos in each album. If this option is set to 'No' then all items will be shown and there could possibly (see step 10e below) be 500 thumbnails and links to Gallery in the users profile page. If this option is set to 'Yes' then only Gallery albums will be shown and there will be only 5 thumbnail and links to Gallery in the users profile page. This option only has meaning if the 'Gallery show all item links' in step 9c above is set to 'Yes'.</p>
+		<p>e) The 'Gallery show all item links limit' option allows you to control how many items are displayed on the users profile page. So, instead of having 500 item thumbnails and links shown, you can limit this to 10 or whatever number you choose. If there are more items than the limit is set to there will be a 'More Gallery Items...' links shown that will take the viewer to the users actual Gallery and they view all they want from within Gallery. Again, this option only has meaning if the 'Gallery show all item links' in step 9c above is set to 'Yes'.</p>
+		&nbsp;<a href="./images/sample-gallery_links.jpg" rel="lightbox" title="Gallery Link Settings page."><img src="./images/t_sample-gallery_links.jpg" alt="sample-gallery_links" /></a>
+		<br />
+
+		<h3><a name="step10">Step 10: Gallery Embed Mods</a></h3>
+		<p>a) Perform the mods contained in gallery-embed_mods.txt to finalize the integration. This is necessary to prevent access and registration to stand-alone Gallery. This is important for several reasons:</p>
+		<ol>
+			<li>To keep the two databases synchronized.</li>
+			<li>Because user registration in Gallery does not create accounts in phpBB.</li>
+			<li>Access to stand-alone Gallery is no longer required.</li>
+		</ol>
+		<p>b) If you have the full download version of Gallery 2 installed or have the Registration module installed in Gallery, you must make sure it is either disabled or uninstalled because this module allows direct Gallery registration and is bad for the above mentioned reasons.</p>
+
+		<h2><a name="additional">Additional Configuration</a></h2>
+
+		<h3><a name="additional1">G2 Image</a></h3>
+		<p>This is an add-on package that allows the integration to insert Gallery images into phpBB posts. It works as is and does not require additional configuration, however, there are some settings you may wish to change, including the default language. G2image uses localization for language interpretations and you will need a .mo file for your chosen language if one doesn't already exist in the g2image/langs directory. These settings are contained in the phpBB3/g2image/init.php file. Only the first few variables should need to be altered, if so desired.</p>
+		<p>Also note, the Gallery 2 Image Chooser window has a couple of insertion options that cannot be used with phpBB bbcode. They are the 'G2Image Alignment Class' and the 'Lightbox Group' options. They are left in for ease of future upgrades of g2image and are ignored in the phpBB3 integration. Feel free to disable them in the g2image code if you so desire.</p>
+		<br />
+
+		<h3><a name="additional2">Lightbox Mods</a></h3>
+		<p>These mods are not required as part of the core integration, but are highly recommended. This allows Gallery images posted in phpBB messages via G2image to use the lightbox insert option. This effect allows thumbnails to be posted in messages and when clicked on, the full size image pops up over the page being displayed. This is the same effect being used in this file. Open lightbox_mods.txt and perform all the mods contained in this file to install this effect.</p>
+		<br />
+
+		<h3><a name="additional3">URL Rewrite Mods</a></h3>
+		<p>If you are going to use the Gallery 2 url rewrite module, then you will probably need to install these mods. You know you need to install this if you get url rewrite working, but the phpBB index page images and css are messed up. As noted above, the use of the Gallery 2 rewrite module in an integrated environment has proven to be a tricky task and may not work at all for you depending on your host server setup. Also note, there is an issue with these mods if you are using aliased directories where the script auto-detection of its operating path will not work correctly due to the aliased directory structure. If this is the case, you will need to hard code the script directory path instead of allowing the script to try and auto-detect it. Open url-rewrite_mods.txt and perform all the mods contained in this file to install.</p>
+		Hard code example for gallery2.php:
+		<div class="instructions">
+			$template->assign_block_vars('switch_phpbb_base', 'http://yourhost.com/phpbb3/');
+		</div>
+		<br />
+
+		<h3><a name="additional4">Gallery Admin Permissions</a></h3>
+		<p>This allows you to control which users have admin permissions in Gallery 2 from within phpBB3. For example, say you have two phpBB administrators, but you only want one to have administrator access to Gallery. With this feature, you can accomplish exactly that by using particular role, group and permission settings. There are several ways to reach and configure this setting depending on permissions, groups and roles. One way is described below to make you aware of the existence of this permission and how to apply it. By default all phpBB admins are mapped as admins in Gallery upon the initial user export. If you are happy with this, then you are fine. However, if you want to control which phpBB admins can be Gallery admins, then you need to learn and understand the phpBB role, group and user permission system. A sample setup is described:</p>
+		<p>a) Go to the phpBB Administration Control Panel and click the 'PERMISSIONS' tab.</p>
+		<p>b) Under 'PERMISSION ROLES' in the left hand pane select 'Admin roles'.</p>
+		<p>c) Click the edit icon for whichever administrator role you want to give Gallery admin access to or create a new role for Gallery access.</p>
+		<p>d) Then click the 'Settings' tab under 'Administrative permissions' in the center pane.</p>
+		<p>e) Click 'Yes' to the 'Can be administrator in Gallery 2' option.</p>
+		<p>f) Under 'Global Permissions' in the left hand pane select 'User's permissions'.</p>
+		<p>g) Type the name of the user you want to set permissions for in the 'Find a member' box and click 'Submit'.</p>
+		<p>h) Switch to 'Admin permissions' in the 'Select type' drop down list and click 'Go'.</p>
+		<p>i) In the 'Role' drop down list select under 'Administrative permissions' select the role you assigned 'Can be administrator in Gallery 2' permissions to.</p>
+		<p>j) Then click 'Advanced permissions' followed by the 'Settings' tab.</p>
+		<p>k) In the 'Settings' list you will find the option 'Can be administrator in Gallery 2' and you can set this to 'Yes', 'No' or 'Never' and then 'Apply all permissions'.</p>
+		<p>Refer to the phpBB3 documentation to learn more about using this permission system.</p>
+		&nbsp;<a href="./images/sample-gallery_admin-roles.jpg" rel="lightbox['admin']" title="phpBB3 Admin Roles screen."><img src="./images/t_sample-gallery_admin-roles.jpg" alt="sample-gallery_admin-roles" /></a>
+		&nbsp;<a href="./images/sample-gallery_admin-settings.jpg" rel="lightbox['admin']" title="phpBB3 Admin Roles Settings screen."><img src="./images/t_sample-gallery_admin-settings.jpg" alt="sample-gallery_admin-settings" /></a>
+		&nbsp;<a href="./images/sample-gallery_admin-user.jpg" rel="lightbox['admin']" title="phpBB3 Users Permissions screen."><img src="./images/t_sample-gallery_admin-user.jpg" alt="sample-gallery_admin-user" /></a>
+		&nbsp;<a href="./images/sample-gallery_admin-permissions.jpg" rel="lightbox['admin']" title="phpBB3 Users Admin permissions screen."><img src="./images/t_sample-gallery_admin-permissions.jpg" alt="sample-gallery_admin-permissions" /></a>
+		<br /><br />
+		&nbsp;<a href="./images/sample-gallery_admin-full.jpg" rel="lightbox['admin']" title="phpBB3 Setting Administrators permissions screen."><img src="./images/t_sample-gallery_admin-full.jpg" alt="sample-gallery_admin-full" /></a>
+		&nbsp;<a href="./images/sample-gallery_admin-settings2.jpg" rel="lightbox['admin']" title="phpBB3 Setting Administrators Settings permissions screen."><img src="./images/t_sample-gallery_admin-settings2.jpg" alt="sample-gallery_admin-settings2" /></a>
+		<br />
+
+		<h3><a name="additional5">Un-Synchronize Users</a></h3>
+		<p>This is one of the 'Gallery2 Settings' options not discussed previously. Only use this if you wish to remove all externally mapped users and their items from Gallery 2. Use this carefully, as it cannot be undone! This is mostly for initial installation problems. <b>Warning:</b> This will remove all exported users and their Gallery items and it is permanent! Only use this if you are having initial installation problems. The only way to recover from using this accidentally is from backups.</p>
+		&nbsp;<a href="./images/sample-gallery_unsynchronize.jpg" rel="lightbox" title="Gallery 2 Integration Un-Synchronize Users screen."><img src="./images/t_sample-gallery_unsynchronize.jpg" alt="sample-gallery_unsynchronize" /></a>
+		<br />
+
+		<h3><a name="additional6">Latest Export Results</a></h3>
+		<p>This is another one of the 'Gallery2 Settings' options not discussed previously. Here you can view the results from the last time the export function was run. This is mostly for initial installation problems and diagnostics. You can view it all you want; it won't hurt anything.</p>
+		&nbsp;<a href="./images/sample-gallery_latest.jpg" rel="lightbox" title="Gallery 2 Integration Latest Export Results page."><img src="./images/t_sample-gallery_latest.jpg" alt="sample-gallery_latest" /></a>
+		<br />
+
+		<h3><a name="additional7">Accessing Outside phpBB3</a></h3>
+		<p>If you wish to have a Gallery link on your website outside of the forum. Add some code similar to that below wherever you would like the link to appear. Make sure the path matches your actual path to gallery2.php. If the user does not have a current session ID from phpBB3, they will simply be logged in to Gallery as 'guest' with guest access priveleges.</p>
+		Example:
+		<div class="instructions">
+			&lt;a href=&quot;/phpBB3/gallery2.php&quot;&gt;Gallery 2&lt;/a&gt;
+		</div>
+		<br />
+
+		<h2><a name="help">Help!</a></h2>
+		<h3><a name="getting_help">Getting Help</a></h3>
+		<p>If you are having problems getting your integration completed successfully, start out by searching the Forums at <a href="http://www.nukedgallery.net"> NukedGallery.net</a>.  Gallery2 specific help is offered in <a href="http://www.nukedgallery.net/forum18.html"> this forum</a> on NukedGallery.</p>
+		<p>If you are having general Gallery 2 problems, you should start by looking in the <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22">Gallery 2 Support Forum</a> on the <a href="http://gallery.sourceforge.net">Gallery Website</a>. Search the forum to see if somebody else has posted a similar problem and maybe there's an answer there, otherwise start a new topic to get help. If the problem seems like a bug in the Gallery 2 software you can <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130">file a bug</a> in our bug tracker on SourceForge.  Please read our <a href="http://gallery.sourceforge.net/wiki.php?page=Feature%20Requests%20and%20Bug%20Reports">tracker guidelines</a> before filing a bug so that we can cut down on the number of spurious reports. If you're unsure whether to file a bug you can always post in the forums first and we'll ask you to file a bug if needed. If you want to chat in real time, you can talk on our user-to-user irc support channel, <a href="irc://irc.freenode.net/#gallery-support">#gallery-support on irc.freenode.net</a>.</p>
+		<br />
+
+		<h3><a name="known_issues">Known Issues</a></h3>
+		<p>The following are known issues with this integration package:</p>
+		<ol>
+			<li>
+				<b>None at this time.</b>
+			</li>
+		</ol>
+		<br />
+
+ 		<hr />
+
+		<p class="fineprint">$Revision$ $Date$</p>
+		</td></tr></table>
+	</body>
+
+</html>

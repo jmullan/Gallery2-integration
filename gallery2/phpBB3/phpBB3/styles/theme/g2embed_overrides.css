@@ -1,0 +1,17 @@
+/* ********************************************************************************
+ * fix font size in embedded Gallery
+ */
+#gallery {
+    font-size: 100%;
+}
+
+/* ********************************************************************************
+ * fix form checkboxes that use label tag in embedded Gallery
+ */
+#gallery label {
+	position: static;
+	float: none;
+	margin: 0px;
+	padding: 0px;
+	border: none;
+}

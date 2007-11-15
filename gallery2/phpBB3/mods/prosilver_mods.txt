@@ -1,0 +1,349 @@
+##############################################################
+## $Revision:  $
+## $Date: 2007-04-10 17:26:24 +0200 (Tue, 10 Apr 2007) $
+##
+## MOD Title: Gallery2 Integration Prosilver Mods 
+## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
+## MOD Description: This mod integrates phpBB3rc7 and Gallery2.2.3
+## MOD Version: 0.0.4
+##
+## Installation Level: Advanced
+## Installation Time: 15 Minutes
+## Files To Edit: 
+##	     styles/prosilver/template/memberlist_body.html,
+##	     styles/prosilver/template/memberlist_view.html,
+##	     styles/prosilver/template/overall_header.html,
+##	     styles/prosilver/template/posting_buttons.html,
+##	     styles/prosilver/template/viewtopic_body.html
+##	     styles/prosilver/theme/buttons.css
+##	     styles/prosilver/theme/colours.css
+## Included Files:
+##	     phpBB3/styles/imageset/icon_user_gallery.gif,
+##	     phpBB3/styles/imageset/en/button_gallery.gif,
+##	     phpBB3/styles/template/gallery2.html,
+##	     phpBB3/styles//theme/gallery_overrides.css,
+##	     phpBB3/styles/theme/images/icon_gallery.gif,
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+##############################################################
+## Author Notes:
+##
+##############################################################
+## MOD History:
+##
+## 2007-10-27 - Version 0.0.4
+##      - phpBB3rc7 Developmental Release
+##
+## 2007-04-10 - Version 0.0.3
+##      - phpBB3b4 Developmental Release
+##
+## 2006-12-16 - Version 0.0.2
+##      - Initial Beta Developmental Release
+##
+## Version 0.0.1
+##      - Initial Developmental Test
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ SQL ]------------------------------------------
+# (Use correct table prefix if not phpbb)
+# 
+INSERT INTO `phpbb_styles_imageset_data` ( `image_name` , `image_filename` , `image_lang` , `image_height` , `image_width` , `imageset_id` ) VALUES ('icon_user_gallery' , 'icon_user_gallery.gif', '', '20', '25', '1');
+
+INSERT INTO `phpbb_styles_imageset_data` ( `image_name` , `image_filename` , `image_lang` , `image_height` , `image_width` , `imageset_id` ) VALUES ('button_gallery' , 'button_gallery.gif', 'en', '18', '59', '1');
+
+#
+#-----[ COPY ]------------------------------------------
+#
+copy phpBB3/styles/imageset/icon_user_gallery.gif to styles/prosilver/imageset/icon_user_gallery.gif
+copy phpBB3/styles/imageset/en/button_gallery.gif to styles/prosilver/imageset/en/button_gallery.gif
+copy phpBB3/styles/template/gallery2.html to styles/prosilver/template/gallery2.html
+copy phpBB3/styles/theme/gallery_overrides.css to styles/prosilver/theme/gallery_overrides.css
+copy phpBB3/styles/theme/images/icon_gallery.gif to styles/prosilver/theme/images/icon_gallery.gif
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+styles/prosilver/template/memberlist_body.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			<th class="info"><a href="{U_SORT_WEBSITE}#memberlist">{L_WEBSITE}</a>{L_COMMA_SEPARATOR}<a href="{U_SORT_LOCATION}">{L_LOCATION}</a></th>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+			<!-- IF S_GALLERY --><th class="gallery">{L_GALLERY}</th><!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+					<td colspan="<!-- IF U_SORT_ACTIVE -->5<!-- ELSE -->4<!-- ENDIF -->">&nbsp;</td>
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+					<!-- IF S_GALLERY -->
+					<td colspan="<!-- IF U_SORT_ACTIVE -->6<!-- ELSE -->5<!-- ENDIF -->">&nbsp;</td>
+					<!-- ELSE -->
+					<td colspan="<!-- IF U_SORT_ACTIVE -->5<!-- ELSE -->4<!-- ENDIF -->">&nbsp;</td>
+					<!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		<th class="info">&nbsp;</th>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		<!-- IF S_GALLERY --><th class="gallery">&nbsp;</th><!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		<td class="info"><!-- IF memberrow.U_WWW or memberrow.LOCATION --><!-- IF memberrow.U_WWW --><div><a href="{memberrow.U_WWW}" title="{L_VISIT_WEBSITE}: {memberrow.U_WWW}">{memberrow.U_WWW}</a></div><!-- ENDIF --><!-- IF memberrow.LOCATION --><div>{memberrow.LOCATION}</div><!-- ENDIF --><!-- ELSE -->&nbsp;<!-- ENDIF --></td>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		<!-- IF memberrow.S_GALLERY --><td class="gallery"><!-- IF memberrow.U_GALLERY --><a href="{memberrow.U_GALLERY}">{GALLERY_IMG}</a><!-- ENDIF --></td><!-- ENDIF -->
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+styles/subSilver/template/memberlist_view.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		<!-- IF U_WWW --><dt>{L_WEBSITE}:</dt> <dd><a href="{U_WWW}" title="{L_VISIT_WEBSITE}: {U_WWW}">{U_WWW}</a></dd><!-- ENDIF -->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		<!-- IF U_GALLERY --><dt>{L_GALLERY}:</dt> <dd><a href="{U_GALLERY}" title="{L_GALLERY_VISIT}">{USERNAME} {L_GALLERY}</a></dd><!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+<!-- IF SIGNATURE -->
+<div class="panel bg1">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+		<h3>{L_SIGNATURE}</h3>
+
+		<div class="postbody"><div class="signature" style="border-top:none; margin-top: 0;">{SIGNATURE}</div></div>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+<!-- IF S_GALLERY -->
+<div class="panel bg2">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+		<h3>{L_GALLERY_HEADER}</h3>
+
+		<!-- BEGIN gallery -->
+		<a href="{gallery.ITEM_LINK}"><img style="padding: 2px;" src="{gallery.ITEM_THUMB}"></a>
+		<!-- END gallery -->
+
+		<!-- IF S_GALLERY_MORE -->
+		<p><b><a href="{U_GALLERY}">{L_GALLERY_MORE}</a></b></p>
+		<!-- ENDIF -->
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/prosilver/template/overall_header.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+<!-- IF S_CONTENT_DIRECTION eq 'rtl' -->
+	<link href="{T_THEME_PATH}/bidi.css" rel="stylesheet" type="text/css" media="screen, projection" />
+<!-- ENDIF -->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+<!-- IF S_GALLERY2 -->
+{GALLERY2_CSS}
+<link rel="stylesheet" type="text/css" href="{T_THEME_PATH}/g2embed_overrides.css" />
+{GALLERY2_JAVASCRIPT}
+<!-- ENDIF -->
+
+#
+#-----[ FIND ]------------------------------------------
+#
+			<ul class="linklist rightside">
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+				<li class="icon-gallery"><a href="{U_GALLERY2}" title="{L_GALLERY2}">{L_GALLERY2}</a></li>
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/prosilver/template/posting_buttons.html
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		e: '{LA_BBCODE_E_HELP}',
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		g: '{LA_BBCODE_G_HELP}',
+
+#
+#-----[ FIND ]------------------------------------------
+#
+<script type="text/javascript" src="{T_TEMPLATE_PATH}/editor.js"></script>
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+<script type="text/javascript">
+<!--
+function g2ic_open(form, field) {
+	var url = './g2image/g2image.php?g2ic_form='+form+'&g2ic_field='+field;
+	var name = 'g2image';
+	var w = 600;
+	var h = 600;
+	var valLeft = (screen.width) ? (screen.width-w)/2 : 0;
+	var valTop = (screen.height) ? (screen.height-h)/2 : 0;
+	var features = 'width='+w+',height='+h+',left='+valLeft+',top='+valTop+',resizable=1,scrollbars=1';
+	window.open(url, name, features);
+}
+//-->
+</script>
+
+#
+#-----[ FIND ]------------------------------------------
+#
+		<input type="button" class="button2" accesskey="p" name="addbbcode14" value="Img" style="width: 40px" onclick="bbstyle(14)" title="{L_BBCODE_P_HELP}" />
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+		<input type="button" class="button2" name="g2image" value="g2Img" onclick="g2ic_open('postform', 'message');" title="{L_BBCODE_G_HELP}" />
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/prosilver/template/viewtopic_body.html
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------
+# 
+postrow.U_AIM
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+# 
+ or postrow.U_GALLERY
+
+#
+#-----[ FIND ]------------------------------------------
+#
+					<!-- IF postrow.U_JABBER --><li class="jabber-icon"><a href="{postrow.U_JABBER}" onclick="popup(this.href, 550, 320); return false;" title="{L_JABBER}"><span>{L_JABBER}</span></a></li><!-- ENDIF -->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+#
+					<!-- IF postrow.U_GALLERY --><li class="gallery-icon"><a href="{postrow.U_GALLERY}" title="{L_GALLERY_VIEW}"><span>{L_GALLERY_VIEW}</span></a></li><!-- ENDIF -->
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/prosilver/theme/buttons.css
+
+#
+#-----[ IN-LINE FIND ]------------------------------------------
+# 
+.icon-search
+
+#
+#-----[ IN-LINE AFTER, ADD ]------------------------------------------
+# 
+, .icon-gallery
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+.quote-icon, .quote-icon a		{ background: none top left no-repeat; }
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+.gallery-icon, .gallery-icon a		{ background: none top left no-repeat; }
+.gallery-button, .gallery-button a		{ background: none top left no-repeat; }
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+ul.profile-icons li.warn-icon	{ width: {IMG_ICON_USER_WARN_WIDTH}px; height: {IMG_ICON_USER_WARN_HEIGHT}px; }
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+ul.profile-icons li.gallery-icon	{ width: {IMG_ICON_USER_GALLERY_WIDTH}px; height: {IMG_ICON_USER_GALLERY_HEIGHT}px; }
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/prosilver/theme/colours.css
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+.icon-search					{ background-image: url("{T_THEME_PATH}/images/icon_search.gif"); }
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+.icon-gallery					{ background-image: url("{T_THEME_PATH}/images/icon_gallery.gif"); }
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+.quote-icon, .quote-icon a		{ background-image: url("{IMG_ICON_POST_QUOTE_SRC}"); }
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+.gallery-icon, .gallery-icon a		{ background-image: url("{IMG_ICON_USER_GALLERY_SRC}"); }
+
+#
+#-----[ OPEN ]------------------------------------------
+# 
+styles/prosilver/theme/common.css
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+table.table1 .info		{ text-align: left; width: 30%; }
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+table.table1 .gallery	{ text-align: center; width: 7%; }
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM

@@ -1,0 +1,56 @@
+##############################################################
+## $Revision:  $
+## $Date: 2007-04-10 17:26:24 +0200 (Tue, 10 Apr 2007) $
+##
+## MOD Title: Gallery2 Integration Gallery Embed Mods 
+## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
+## MOD Description: This mod integrates phpBB3rc7 and Gallery2.2.3
+## MOD Version: 0.0.4
+##
+## Installation Level: Advanced
+## Installation Time: 1 Minute
+## Files To Edit: 
+##		 gallery2/config.php
+## Included Files:
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+##############################################################
+## Author Notes:
+##
+##############################################################
+## MOD History:
+##
+## 2007-10-27 - Version 0.0.4
+##      - phpBB3rc7 Developmental Release
+##
+## 2007-04-10 - Version 0.0.3
+##      - phpBB3b4 Developmental Release
+##
+## 2006-12-16 - Version 0.0.2
+##      - Initial Beta Developmental Release
+##
+## Version 0.0.1
+##      - Initial Developmental Test
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ OPEN ]------------------------------------------
+#
+../gallery2/config.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+$gallery->setConfig('mode.embed.only', false);
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+$gallery->setConfig('mode.embed.only', true);
+
+#
+#-----[ SAVE/CLOSE ALL FILES ]------------------------------------------
+#
+# EoM

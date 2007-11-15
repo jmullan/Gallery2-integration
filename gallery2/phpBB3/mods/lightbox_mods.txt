@@ -1,0 +1,360 @@
+##############################################################
+## $Revision:  $
+## $Date: 2007-04-10 17:26:24 +0200 (Tue, 10 Apr 2007) $
+##
+## MOD Title: Gallery2 Integration G2Image Lightbox Mods 
+## MOD Author: jettyrat <jettyrat@jettyfishing.com> (Scott Gregory) http://jettyfishing.com 
+## MOD Description: This mod integrates phpBB3rc7 and Gallery2.2.3
+## MOD Version: 0.0.4
+##
+## Installation Level: Advanced
+## Installation Time: 10 Minutes
+## Files To Edit: 
+##	     posting.php,
+##	     viewtopic.php,
+##	     includes/constants.php,
+##	     includes/bbcode.php,
+##	     includes/message_parser.php,
+##	     styles/prosilver/template/bbcode.html,
+##	     styles/prosilver/template/overall_header.html,
+##	     styles/subsilver2/template/bbcode.html,
+##	     styles/subsilver2/template/overall_header.html
+## Included Files:
+## License: http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+##############################################################
+##############################################################
+## Author Notes:
+##
+##############################################################
+## MOD History:
+##
+## 2007-10-27 - Version 0.0.4
+##      - phpBB3rc7 Developmental Release
+##
+## 2007-04-10 - Version 0.0.3
+##      - phpBB3b4 Developmental Release
+##
+## 2006-12-16 - Version 0.0.2
+##      - Initial Beta Developmental Release
+##
+## Version 0.0.1
+##      - Initial Developmental Test
+##
+##############################################################
+## Before Adding This MOD To Your Forum, You Should Back Up All Files Related To This MOD
+##############################################################
+#
+#-----[ OPEN ]------------------------------------------
+#
+posting.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+$message_parser->decode_message($post_data['bbcode_uid']);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+$template->assign_vars(array(
+	'S_G2IC_LBURL' => ($message_parser->g2ic_lburl) ? true : false
+));
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+viewtopic.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		$bbcode->bbcode_second_pass($message, $row['bbcode_uid'], $row['bbcode_bitfield']);
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		if (empty($g2ic_lburl))
+		{
+			$g2ic_lburl = ($bbcode->g2ic_lburl) ? true : false;
+			if (!empty($g2ic_lburl))
+			{
+				$template->assign_vars(array(
+					'S_G2IC_LBURL' => true
+				));
+			}
+		}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+includes/constants.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+define('NUM_CORE_BBCODES', 12);
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+define('NUM_CORE_BBCODES', 13);
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+includes/bbcode.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	function bbcode_second_pass(&$message, $bbcode_uid = '', $bbcode_bitfield = false)
+	{
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+		if (strpos($message, 'lburl'))
+		{
+			$this->g2ic_lburl = true;
+		}
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+				case 3:
+					$this->bbcode_cache[$bbcode_id] = array(
+						'preg' => array(
+							'#\[url:$uid\]((.*?))\[/url:$uid\]#s'			=> $this->bbcode_tpl('url', $bbcode_id),
+							'#\[url=([^\[]+?):$uid\](.*?)\[/url:$uid\]#s'	=> $this->bbcode_tpl('url', $bbcode_id),
+						)
+					);
+				break;
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+				case 13:
+					$this->bbcode_cache[$bbcode_id] = array(
+						'preg' => array(
+							'#\[lburl=([^\[]+?):$uid\](.*?)\[/lburl:$uid\]#s'	=> $this->bbcode_tpl('lburl', $bbcode_id),
+						)
+					);
+				break;
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+		if ($bbcode_id != -1 && !$skip_bitfield_check && !$this->template_bitfield->get($bbcode_id))
+
+#
+#-----[ REPLACE WITH ]------------------------------------------
+#
+		if ($bbcode_id != -1 && $bbcode_id != 13 && !$skip_bitfield_check && !$this->template_bitfield->get($bbcode_id))
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			'url'					=> array('{URL}'		=> '$1', '{DESCRIPTION}'	=> '$2'),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			'lburl'					=> array('{LBURL}'		=> '$1', '{DESCRIPTION}'	=> '$2'),
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+includes/message_parser.php
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+			'url'			=> array('bbcode_id' => 3,	'regexp' => array('#\[url(=(.*))?\](.*)\[/url\]#iUe' => "\$this->validate_url('\$2', '\$3')")),
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+			'lburl'			=> array('bbcode_id' => 13,	'regexp' => array('#\[lburl(=(.*))?\](.*)\[/lburl\]#iUe' => "\$this->validate_lburl('\$2', '\$3')")),
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+	/**
+	* Validate url
+	*
+	* @param string $var1 optional url parameter for url bbcode: [url(=$var1)]$var2[/url]
+	* @param string $var2 url bbcode content: [url(=$var1)]$var2[/url]
+	*/
+	function validate_url($var1, $var2)
+	{
+		global $config;
+
+		$var1 = str_replace("\r\n", "\n", str_replace('\"', '"', trim($var1)));
+		$var2 = str_replace("\r\n", "\n", str_replace('\"', '"', trim($var2)));
+
+		$url = ($var1) ? $var1 : $var2;
+
+		if (!$url || ($var1 && !$var2))
+		{
+			return '';
+		}
+
+		$valid = false;
+
+		$url = str_replace(' ', '%20', $url);
+
+		// Checking urls
+		if (preg_match('#^' . get_preg_expression('url') . '$#i', $url) ||
+			preg_match('#^' . get_preg_expression('www_url') . '$#i', $url) ||
+			preg_match('#^' . preg_quote(generate_board_url(), '#') . get_preg_expression('relative_url') . '$#i', $url))
+		{
+			$valid = true;
+		}
+
+		if ($valid)
+		{
+			$this->parsed_items['url']++;
+
+			// if there is no scheme, then add http schema
+			if (!preg_match('#^[a-z][a-z\d+\-.]*:/{2}#i', $url))
+			{
+				$url = 'http://' . $url;
+			}
+
+			// Is this a link to somewhere inside this board? If so then remove the session id from the url
+			if (strpos($url, generate_board_url()) !== false && strpos($url, 'sid=') !== false)
+			{
+				$url = preg_replace('/(&amp;|\?)sid=[0-9a-f]{32}&amp;/', '\1', $url);
+				$url = preg_replace('/(&amp;|\?)sid=[0-9a-f]{32}$/', '', $url);
+				$url = append_sid($url);
+			}
+
+			return ($var1) ? '[url=' . $this->bbcode_specialchars($url) . ':' . $this->bbcode_uid . ']' . $var2 . '[/url:' . $this->bbcode_uid . ']' : '[url:' . $this->bbcode_uid . ']' . $this->bbcode_specialchars($url) . '[/url:' . $this->bbcode_uid . ']';
+		}
+
+		return '[url' . (($var1) ? '=' . $var1 : '') . ']' . $var2 . '[/url]';
+	}
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+	/**
+	* Validate lburl
+	*/
+	function validate_lburl($var1, $var2)
+	{
+		global $config;
+
+		$var1 = str_replace("\r\n", "\n", str_replace('\"', '"', trim($var1)));
+		$var2 = str_replace("\r\n", "\n", str_replace('\"', '"', trim($var2)));
+
+		$url = ($var1) ? $var1 : $var2;
+
+		if (!$url || ($var1 && !$var2))
+		{
+			return '';
+		}
+
+		$valid = false;
+
+		$url = str_replace(' ', '%20', $url);
+
+		// Checking urls
+		if (preg_match('#^' . get_preg_expression('url') . '$#i', $url) ||
+			preg_match('#^' . get_preg_expression('www_url') . '$#i', $url) ||
+			preg_match('#^' . preg_quote(generate_board_url(), '#') . get_preg_expression('relative_url') . '$#i', $url))
+		{
+			$valid = true;
+		}
+
+		if ($valid)
+		{
+			$this->parsed_items['lburl']++;
+
+			// if there is no scheme, then add http schema
+			if (!preg_match('#^[a-z][a-z\d+\-.]*:/{2}#i', $url))
+			{
+				$url = 'http://' . $url;
+			}
+
+			// Is this a link to somewhere inside this board? If so then remove the session id from the url
+			if (strpos($url, generate_board_url()) !== false && strpos($url, 'sid=') !== false)
+			{
+				$url = preg_replace('/(&amp;|\?)sid=[0-9a-f]{32}&amp;/', '\1', $url);
+				$url = preg_replace('/(&amp;|\?)sid=[0-9a-f]{32}$/', '', $url);
+				$url = append_sid($url);
+			}
+
+			return '[lburl=' . $this->bbcode_specialchars($url) . ':' . $this->bbcode_uid . ']' . $var2 . '[/lburl:' . $this->bbcode_uid . ']';
+		}
+	}
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+styles/prosilver/template/bbcode.html
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+<!-- BEGIN url --><a href="{URL}" class="postlink">{DESCRIPTION}</a><!-- END url -->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+<!-- BEGIN lburl --><a href="{LBURL}" rel="lightbox[g2image]" class="postlink">{DESCRIPTION}</a><!-- END lburl -->
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+styles/prosilver/template/overall_header.html
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+</head>
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+<!-- IF S_G2IC_LBURL -->
+<script type="text/javascript" src="./g2image/jscripts/prototype.js"></script>
+<script type="text/javascript" src="./g2image/jscripts/scriptaculous.js?load=effects"></script>
+<script type="text/javascript" src="./g2image/jscripts/lightbox.js"></script>
+<link rel="stylesheet" href="./g2image/css/lightbox.css" type="text/css" media="screen" />
+<!-- ENDIF -->
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+style/subsilver2/template/bbcode.html
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+<!-- BEGIN url --><a href="{URL}" class="postlink">{DESCRIPTION}</a><!-- END url -->
+
+#
+#-----[ AFTER, ADD ]------------------------------------------
+# 
+<!-- BEGIN lburl --><a href="{LBURL}" rel="lightbox[g2image]" class="postlink">{DESCRIPTION}</a><!-- END lburl -->
+
+#
+#-----[ OPEN ]------------------------------------------
+#
+styles/subsilver2/template/overall_header.html
+
+#
+#-----[ FIND ]------------------------------------------
+# 
+<script type="text/javascript">
+
+#
+#-----[ BEFORE, ADD ]------------------------------------------
+# 
+<!-- IF S_G2IC_LBURL -->
+<script type="text/javascript" src="./g2image/jscripts/prototype.js"></script>
+<script type="text/javascript" src="./g2image/jscripts/scriptaculous.js?load=effects"></script>
+<script type="text/javascript" src="./g2image/jscripts/lightbox.js"></script>
+<link rel="stylesheet" href="./g2image/css/lightbox.css" type="text/css" media="screen" />
+<!-- ENDIF -->
