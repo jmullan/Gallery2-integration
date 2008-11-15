@@ -1,10 +1,9 @@
-<?php
 // +---------------------------------------------------------------------------+
-// | G2Bridge Plugin  [v.2.0]                                |
+// | G2Bridge Plugin  [v.2.3]                                                  |
 // +---------------------------------------------------------------------------+
-// | english.php                                                               |
+// | readme.txt                                                                |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2006 Wayne Patterson [suprsidr@gmail.com]                  |
+// | Copyright (C) 2008 Wayne Patterson [suprsidr@flashyourweb.com]            |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |
@@ -23,26 +22,5 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 //
-
-$LANG_G2B = array (
-	'admin_menu_title'	=> 'G2Bridge',
-	'install_header'	=> 'Install G2Bridge',
-	'error' => 'Error',
-	'error_empty' => 'Empty or Missing Fields',
-	'access_denied' => 'Access Denied',
-	'access_denied_msg' => 'Only certain users have access to this page.  Your name and IP have been recorded.',
-	
-	'admin'		=> 'G2Bridge'
-);
-
-$LANG_G2B_rand_photo = array (
-	'title'		=> 'Random Photo',
-	'access'	=> 'You must be logged in to view photos from the gallery.'
-);
-
-$LANG_G2B_block = array (
-	'title'		=> 'Gallery2',
-	'access'	=> 'You must be logged in to access the photo gallery.'
-);
-
-?>
+G2Bridge installation instructions and downloads can be found:
+http://www.flashyourweb.com/staticpages/index.php?page=g2bridge_readme
